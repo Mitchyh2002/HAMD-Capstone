@@ -1,0 +1,41 @@
+{	"ModuleName": "PrototypeModule",
+	"Tables": [{
+			"TableName": "Quiz",
+			"Columns": [
+              {
+                	"rowName": "id",
+					"Type": "Integer",
+					"PrimaryKey": "True",
+                     "Unique": "True",
+					"AutoIncrement": "True"
+				},
+                {"rowName": "UserID",
+					"Type": "Integer",
+					"ForeignKey": "users.id"
+				}]},
+          {
+            "TableName": "Hives",
+            "Columns": [
+				{"rowName":"id",
+				"Type": "Integer",
+				"PrimaryKey": "True",
+					"Unique": "True",
+				"AutoIncrement": "True"
+			},
+			{"rowName":"UserID",
+				"Type": "Integer",
+				"ForeignKey": "users.id",
+				"Unique": "True"
+			},
+			{"rowName": "HiveName",
+				"Type": "String(60)",
+				"Nullable": "False"
+			},
+			{"rowName":"HiveLocation",
+				"Type": "String(60)",
+				"ForeignKey": "Locations.region",
+				"Unique": "True"
+			}
+		]
+	}]
+}
