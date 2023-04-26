@@ -1,5 +1,7 @@
 import copy
 import os.path
+import py_compile
+
 from flask import Blueprint, render_template, request, session, redirect, url_for
 import time
 import zipfile

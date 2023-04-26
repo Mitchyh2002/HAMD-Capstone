@@ -110,3 +110,4 @@ def reload():
     return "reloaded"
 
 application = AppReloader(init_app)
+
