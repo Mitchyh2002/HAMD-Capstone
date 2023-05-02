@@ -14,11 +14,12 @@ export default function Upload(props){
     };
 
     const uploadPlugin = () => {
-        axios({
+        const formData = new FormData();
+        formData.append("file", selectedFile)
+
+        fetch("http://localhost:5000/module/upload", {
             method: "POST",
-            url:"/upload",
-            data: selectedFile,
-            headers: {"Contant-Type": "application/json"}
+            body: formData,
         }).then((response) => {
             setResponse(response.data);
             console.log(response.data);

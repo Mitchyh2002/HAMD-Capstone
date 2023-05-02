@@ -103,7 +103,7 @@ def upload_module():
     This will add the tables to the DB & New endpoints to the application.
     '''
     if request.method == 'POST':
-        dl_file = request.files['fileToUpload']
+        dl_file = request.files['file']
         modulename = dl_file.filename.strip(".zip")
         if TESTING:
             try:
@@ -167,3 +167,4 @@ def upload_module():
         reload()
 
         return 'File uploaded successfully!'
+    return "Module is Not  POST"

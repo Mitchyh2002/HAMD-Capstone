@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, session, redirect, url_for
 import time
+
+from flask import Blueprint
 
 blueprint = Blueprint('testmodule3', __name__, url_prefix='/testmodule3')
 
