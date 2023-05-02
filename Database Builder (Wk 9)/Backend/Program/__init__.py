@@ -61,7 +61,6 @@ def init_app() -> Flask:
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
     walk = next(os.walk('Program/Module'))[1]
-    walk.pop(walk.index("__pycache__"))
     for moduleName in walk:
         files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
         if "__pycache__" in files:
