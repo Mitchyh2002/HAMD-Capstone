@@ -4,12 +4,12 @@ import time
 import zipfile
 import shutil
 import ast
-from Program.ErrorHandler import HandleError
+from Program.ResponseHandler import on_error, on_success
 from os.path import splitext
 from os import mkdir
 from re import search
 
-from Program.DB.Models.master.Modules import Module
+from Program.DB.Models.master.Modules import Module, create_module
 
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
@@ -22,6 +22,18 @@ blueprint = Blueprint('main', __name__, url_prefix="/module")
 TESTING = True
 
 def scan_file(in_file):
+    '''
+    Function To Scan a python file for correct syntax & imports.
+
+    Parameters:
+        in_file (File): Object containing a file connection to be read.
+
+    Returns:
+        None - If file passes all checks
+        Error Packet - File doesn't pass a check
+
+    '''
+
     modules = []
     if in_file == []:
         return 0
@@ -30,7 +42,7 @@ def scan_file(in_file):
         in_file.seek(0)
         ast.parse(in_file.read())
     except SyntaxError:
-        return HandleError(12, f"Syntax Error Found in {os.path.basename(in_file.name)}")
+        return on_error(12, f"Syntax Error Found in {os.path.basename(in_file.name)}")
 
     regex_dict = {"from": "(?<=from ).+(?= import)",
                   "__import__": """(?<=__import__\(['"]).+(?=['"]\))""",
@@ -47,9 +59,9 @@ def scan_file(in_file):
         elif "import" in line:
             modules.append(search(regex_dict["import"], line)[0])
         elif "os." in line:
-            return HandleError(11, "Restricted Module found in application")
+            return on_error(11, "Restricted Module found in application")
         elif "subproccess." in line:
-            return HandleError(11, "Restricted Module found in application")
+            return on_error(11, "Restricted Module found in application")
 
     in_file.seek(0)
     with open(r'Program\templates\whitelisted_modules.txt') as whitelist:
@@ -59,7 +71,7 @@ def scan_file(in_file):
             res = search(f"{module}(?=\n)|{module}.+(?=\n)", lines)
 
             if res is None:
-                return HandleError(11, "Restricted Module found in application")
+                return on_error(11, "Restricted Module found in application")
         return 0
 
 
@@ -72,9 +84,23 @@ def QueryInsertModule(new_module: Module):
     db.session.add(new_module)
     db.session.commit()
 
-@blueprint.route('/get')
+@blueprint.route('/getactive')
 def get_plugins():
-    return Module.query.filter_by(Module.status == True).all()
+    '''
+    Get Request that returns all active modules.
+
+    Paramaters:
+        None
+
+    Returns:
+        Success JSON, containing the Module Prefix & Display Name of all active modules.
+    '''
+    if request.method == "GET":
+        valid_modules = []
+        for module in Module.query.filter(Module.status == True).all():
+            valid_modules.append(module.toJSON(True))
+        return on_success(valid_modules)
+    return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
 
 @blueprint.route('/')
@@ -88,7 +114,7 @@ def Hello_World():
   <body>
     <h1>File Upload Example</h1>
     <form action="/module/upload" method="POST" enctype="multipart/form-data">
-      <input type="file" name="fileToUpload" id="fileToUpload">
+      <input type="file" name="file" id="file">
       <br><br>
       <input type="submit" value="Upload File" name="submit">
     </form>
@@ -103,7 +129,7 @@ def upload_module():
     This will add the tables to the DB & New endpoints to the application.
     '''
     if request.method == 'POST':
-        dl_file = request.files['file']
+        dl_file = request.files['fileToUpload']
         modulename = dl_file.filename.strip(".zip")
         if TESTING:
             try:
@@ -127,7 +153,7 @@ def upload_module():
         Table_outdir = rf"Program\DB\Models\{modulename}"
         if os.path.exists(API_outdir) or os.path.exists(Table_outdir):
             shutil.rmtree(temp_dir)
-            return HandleError(1, "Module Already Exists")
+            return on_error(1, "Module Already Exists")
 
         for file in API_Files:
             with open(file) as api_file:
@@ -159,12 +185,11 @@ def upload_module():
         from Program.DB.Builder import create_db
         create_db(tables)
 
-        new_Module = Modules.create_module(str(modulename), "Discussion Forum", "Test123", True)
-
+        new_Module = create_module(str(modulename), "Discussion Forum", "Test123", True)
         QueryInsertModule(new_Module)
 
         # Reload Flask to initialise blueprints for backend
         reload()
 
-        return 'File uploaded successfully!'
-    return "Module is Not  POST"
+        return new_Module.toJSON()
+    return on_error(-1, "Incorrect Request Type, request should be POST")
