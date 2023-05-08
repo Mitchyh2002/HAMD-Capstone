@@ -7,6 +7,8 @@ export default function Upload(props){
     const [selectedFile, setSelectedFile] = useState();
     const [isSelected, setIsSelected] = useState(false);
     const [response, setResponse] = useState();
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
 
     const changeFile = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -15,15 +17,27 @@ export default function Upload(props){
 
     const uploadPlugin = () => {
         const formData = new FormData();
-        formData.append("file", selectedFile)
+        formData.append("fileToUpload", selectedFile)
 
         fetch("http://localhost:5000/module/upload", {
             method: "POST",
             body: formData,
-        }).then((response) => {
-            setResponse(response.data);
-            console.log(response.data);
-        }).catch(function (error) {
+        }).then(response => (response.json()
+        )).then((response) => {
+            setResponse(response);
+            if (response.Success == true) {
+                    setSuccess(true);
+                    setError(false);
+                } else {
+                    setSuccess(false);
+                    setError(true);
+                }
+            
+            console.log("success: " + success);
+            console.log("error :" + error);
+            console.log(response);
+            }
+        ).catch(function (error) {
              console.log(error);
         })
     };
@@ -32,6 +46,7 @@ export default function Upload(props){
     return(
         <div>
             <h1>Upload</h1>
+            {(success == true)? <p>Your filles has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
             <input type="file" id="pluginFile" name="PluginFile" onChange={changeFile}/> 
             {isSelected ? 
             (<div>
