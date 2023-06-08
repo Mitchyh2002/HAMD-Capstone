@@ -159,7 +159,7 @@ def upload_module():
         from Program.DB.Builder import create_db
         create_db(tables)
 
-        new_Module = Modules.create_module(str(modulename), "Discussion Forum", "Test123", True)
+        new_Module = Module.create_module(str(modulename), "Discussion Forum", "Test123", True)
 
         QueryInsertModule(new_Module)
 

@@ -95,12 +95,15 @@ def get_plugins():
     Returns:
         Success JSON, containing the Module Prefix & Display Name of all active modules.
     '''
-    if request.method == "GET":
-        valid_modules = []
-        for module in Module.query.filter(Module.status == True).all():
-            valid_modules.append(module.toJSON(True))
-        return on_success(valid_modules)
-    return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
+    try:
+        if request.method == "GET":
+            valid_modules = []
+            for module in Module.query.filter(Module.status == True).all():
+                valid_modules.append(module.toJSON(True))
+            return on_success(valid_modules)
+        return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
+    except RuntimeError:
+        return Module.query.filter(Module.status == True).first().toJSON(True)
 
 
 @blueprint.route('/')
@@ -122,7 +125,7 @@ def Hello_World():
 </html> """
 
 @blueprint.route('/upload', methods=['GET', 'POST'])
-def upload_module():
+def upload_module(test=False, zip=None):
     '''
     API Endpoint to process a Module in a compressed zip file.
 
@@ -173,7 +176,7 @@ def upload_module():
 
         # All Modules are Valid, now move to the correct directories.
         shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
-        os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/df1")
+        os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
         shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
 
@@ -185,11 +188,11 @@ def upload_module():
         from Program.DB.Builder import create_db
         create_db(tables)
 
-        new_Module = create_module(str(modulename), "Discussion Forum", "Test123", True)
+        new_Module = (str(modulename), "Discussion Forum", "Test123", True)
         QueryInsertModule(new_Module)
-
+        create_module
         # Reload Flask to initialise blueprints for backend
         reload()
 
-        return new_Module.toJSON()
+        return on_success(200, new_Module.toJSON(True))
     return on_error(-1, "Incorrect Request Type, request should be POST")
