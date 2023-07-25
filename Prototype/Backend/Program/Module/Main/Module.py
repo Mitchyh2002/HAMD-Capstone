@@ -193,3 +193,4 @@ def upload_module(test=False, zip=None):
 
         return on_success(new_Module.toJSON(True))
     return on_error(-1, "Incorrect Request Type, request should be POST")
+

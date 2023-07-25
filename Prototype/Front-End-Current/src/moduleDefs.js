@@ -1,4 +1,5 @@
 //Module Imports, this will be appended by custom Python script on install
+//REGEX_START
 import test from "./modules/ModuleExample/main.js";
 import Test2 from "./modules/ModuleTest2/main.js";
 import upload from "./modules/UploadPlugin/main.js";
@@ -11,6 +12,7 @@ export const Components = {
     df3: Test2
 }
 
+//REGEX_END
 //This takes a object passed from the content.js matches it to a module and creates that component to return to the DOM
 export default block => {
     //Check module exists within defintion
