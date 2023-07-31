@@ -16,8 +16,8 @@ export default function Upload(props){
     };
 
     const uploadPlugin = () => {
-        const formData = new FormData();
-        formData.append("fileToUpload", selectedFile)
+        const form = document.getElementById("upload");
+        const formData = new FormData(form);
 
         fetch("http://localhost:5000/module/upload", {
             method: "POST",
@@ -44,19 +44,32 @@ export default function Upload(props){
 
 
     return(
-        <div>
+        <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
+        <div style={{padding: "32px 180px 180px", maxWidth: "400px"}}>
             <h1>Upload</h1>
-            {(success == true)? <p>Your filles has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
-            <input type="file" id="pluginFile" name="PluginFile" onChange={changeFile}/> 
-            {isSelected ? 
-            (<div>
-                <p>Filename: {selectedFile.name}</p>
-				<p>Filetype: {selectedFile.type}</p>
-				<p>Size in bytes: {selectedFile.size}</p>
-            </div>) : (
-                <p>Select A File</p>
-            )};
-            <button onClick={uploadPlugin}>Submit</button>
+            <form id="upload">
+                <div style={{display: "flex", flexDirection: "column"}}>
+                {(success == true)? <p>Your filles has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
+                <label>Module Prefix</label>
+                <input type="text" id="prefixName" name="prefixName" />
+                <label>Plugin Display Name</label>
+                <input type="text" id="pluginDisplayName" name="displayName" />
+                <label>Module Code</label>
+                <input type="file" id="pluginFile" name="fileToUpload" onChange={changeFile}/>
+                <label>Module Password</label>
+                <input type="password" id="modulePass" name="modulePass" />
+                {isSelected ? 
+                (<div>
+                    <p>Filename: {selectedFile.name}</p>
+                    <p>Filetype: {selectedFile.type}</p>
+                    <p>Size in bytes: {selectedFile.size}</p>
+                </div>) : (
+                    <p>Select A File</p>
+                )}
+                </div>
+            </form>
+                <button onClick={uploadPlugin}>Submit</button>
+        </div>
         </div>
     )
 };
