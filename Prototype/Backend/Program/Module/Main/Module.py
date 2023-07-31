@@ -249,10 +249,12 @@ def upload_module():
         from Program.DB.Builder import create_db
 
         create_db(tables)
-
-        new_Module = create_module(str(modulename), "Discussion Forum", "Test123", True)
+        DisplayName = request.values['displayName']
+        ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
+        new_Module = create_module(str(modulename),DisplayName, ModulePass, True)
         QueryInsertModule(new_Module)
         os.chdir(master_dir)
+
         shutil.rmtree(f"Program/Temp_Module")
         # Reload Flask to initialise blueprints for backend
         reload()

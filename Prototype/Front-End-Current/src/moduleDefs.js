@@ -5,9 +5,10 @@ import React from "react";
 
 //Defintion of components, correlates the module id of the database to the component
 export const Components = {
-    mst: Upload,
+    mst: Upload
 }
 //REGEX_END
+
 
 
 //This takes a object passed from the content.js matches it to a module and creates that component to return to the DOM
