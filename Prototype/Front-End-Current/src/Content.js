@@ -52,7 +52,7 @@ export default function Content(props){
   }
 
     return (
-        //Create Navigation Menu then
+      <>
         <div style={{display: "flex"}}>
           <div style={{width:"25%", display: "flex", flexDirection: "column"}}>
             {modules.map(module  => <button onClick={e => handler(module.prefix)} key={module.prefix}>{module.displayName}</button>)}
@@ -61,5 +61,6 @@ export default function Content(props){
           <div style={{width:"75%"}}>
             {(loaded == false)? <p>Loading modules...</p> : <Components module={moduleMap.get(index)} /> }
             </div>
-        </div>)
+        </div>
+      </>)
 }
