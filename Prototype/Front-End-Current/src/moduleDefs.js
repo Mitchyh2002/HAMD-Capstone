@@ -1,15 +1,11 @@
 //Module Imports, this will be appended by custom Python script on install
 //REGEX_START
-import test from "./modules/ModuleExample/main.js";
-import Test2 from "./modules/ModuleTest2/main.js";
 import upload from "./modules/UploadPlugin/main.js";
 import React from "react";
 
 //Defintion of components, correlates the module id of the database to the component
 export const Components = {
-    mst: upload,
-    df2: test,
-    df3: Test2
+    mst: upload
 }
 
 //REGEX_END
