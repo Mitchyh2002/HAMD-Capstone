@@ -32,6 +32,11 @@ def scan_file(in_file, modulename, TableScan= False):
     Returns:
         None - If file passes all checks
         Error Packet - File doesn't pass a check
+
+    Error Codes:
+        10 - TableName not declared with modulename prefix
+        11 - Restriced Module Found in Python Files
+        12 - Syntax Error Found in Python Files
     '''
 
     modules = []
@@ -43,7 +48,6 @@ def scan_file(in_file, modulename, TableScan= False):
         ast.parse(in_file.read())
     except SyntaxError:
         return on_error(12, f"Syntax Error Found in {os.path.basename(in_file.name)}")
-
     regex_dict = {"from": "(?<=from ).+(?= import)",
                   "__import__": """(?<=__import__\(['"]).+(?=['"]\))""",
                   "import": "(?<=import ).+"}
@@ -62,7 +66,12 @@ def scan_file(in_file, modulename, TableScan= False):
             return on_error(11, "Restricted Module found in application")
         elif "subproccess." in line:
             return on_error(11, "Restricted Module found in application")
-
+    if TableScan:
+        pattern = rf'(?<=__tablename__ = [\'"]).*(?=[\'"])'
+        matches = re.findall(pattern, '\n'.join(lines))
+        for match in matches:
+            if f"{modulename}_" not in match:
+                return on_error(10, "Tablename Doesnt doesn't start with modulename")
     in_file.seek(0)
     with open(r'Program\templates\whitelisted_modules.txt') as whitelist:
         lines = whitelist.read()
@@ -127,6 +136,8 @@ def front_end_installation(temp_dir, module_name, master_dir):
         content = MainJS.read()
         pattern = r'\bexport\s+default\s+function\s+(\w+)\s*\('
         functionName = re.match(pattern, content).group(1)
+        if f"{module_name}_" not in functionName:
+            return on_error(10, "Module Name not in main Front-End Function Name")
 
     os.chdir("../")
     os.chdir("./Front-End-Current/src/")
@@ -218,12 +229,12 @@ def upload_module():
 
         if API_Files != []:
             back_end_success = back_end_installation(API_Files, temp_dir, modulename, api_outdir)
-            if not back_end_success:
+            if back_end_success is not True:
                 return back_end_success
 
         if TableFiles != []:
             table_success = table_installation(TableFiles, temp_dir, modulename, Table_outdir)
-            if not table_success:
+            if table_success is not True:
                 return table_success
 
         API_outdir = rf"Program\Module\{modulename}"
@@ -238,7 +249,7 @@ def upload_module():
         if Table_outdir != []:
             shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
 
-        if not front_end_success:
+        if front_end_success is not True:
             shutil.rmtree(f"Program/Module/{modulename}")
             shutil.rmtree(f"Program/DB/Models/{modulename}")
             shutil.rmtree(temp_dir)
