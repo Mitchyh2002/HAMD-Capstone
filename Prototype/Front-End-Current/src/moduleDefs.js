@@ -1,20 +1,13 @@
 //REGEX_START
 import Upload from "./modules/mst/main.js";
 import React from "react";
-import df1_main from "./modules/df1/main.js";
 //IMPORT_END
 
 //Defintion of components, correlates the module id of the database to the component
 export const Components = {
-    mst: Upload,
-    df1: df1_main
+    mst: Upload
 }
 //REGEX_END
-
-
-
-
-
 //This takes a object passed from the content.js matches it to a module and creates that component to return to the DOM
 export default block => {
     //Check module exists within defintion
