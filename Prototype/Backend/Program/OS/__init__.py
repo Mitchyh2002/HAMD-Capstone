@@ -10,16 +10,19 @@ def dir_tree(start_path):
 
     Returns:
         dirtree (list): List containing string variables containing the filepath for all files in start_folder.
+        empty list: If Start Path Does Not Exist return empty list
     """
-    dirtree = []
-    root, dirs, files = next(os.walk(start_path))
-    for dir in dirs:
-        to_append = dir_tree(rf"{start_path}\{dir}")
-        if to_append != []:
-            dirtree = dirtree + to_append
-    for file in files:
-        dirtree.append(rf"{start_path}\{file}")
-    return dirtree
+    if os.path.exists(start_path):
+        dirtree = []
+        root, dirs, files = next(os.walk(start_path))
+        for dir in dirs:
+            to_append = dir_tree(rf"{start_path}\{dir}")
+            if to_append != []:
+                dirtree = dirtree + to_append
+        for file in files:
+            dirtree.append(rf"{start_path}\{file}")
+        return dirtree
+    return []
 
 
 def convert_to_imports(dir_tree):
@@ -45,5 +48,5 @@ def convert_to_imports(dir_tree):
 
 if __name__ == "__main__":
     ff = convert_to_imports(dir_tree(
-        r"/Database Builder (Wk 8)/Program/DB/Models"))
+        rf"{os.getcwd()}\\test"))
     pass
