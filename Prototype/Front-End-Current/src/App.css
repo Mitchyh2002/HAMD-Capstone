@@ -36,3 +36,92 @@
     transform: rotate(360deg);
   }
 }
+
+/*Fonts*/
+
+body{
+  font-family: "merriweather";
+}
+
+h1{
+  font-family: "merriweather";
+  font-size: 80px;
+}
+
+h2{
+  font-family: "merriweather";
+  font-size: 40px;
+}
+
+h3{
+  font-family: "merriweather";
+  font-size: 30px;
+}
+
+h4{
+  font-family: "merriweather";
+  font-size: 25px;
+  font-weight: bold;
+}
+
+form{
+  font-family: "lato";
+  font-size: 25px;
+}
+
+body{
+  font-family: "lato";
+  font-size: 18px;
+}
+
+/*Containers*/
+
+.header{
+  background-color: #92B4EC;
+}
+
+.subNav{
+  background-color: #FFE69A;
+  opacity: 50%;
+}
+
+.subNavHighlight{
+  background-color: #FFE69A;
+}
+
+/*Buttons*/
+.primaryButton{
+  width: 400px;
+  height: 70px;
+  font-family: "lato";
+  font-size: 30px;
+  border-radius: 20px;
+  background-color: #F28F3B;
+  cursor: pointer;
+}
+
+.secondaryButton{
+  width: 400px;
+  height: 70px;
+  font-family: "lato";
+  font-size: 30px;
+  border-radius: 20px;
+  background-color: #F28F3B;
+  opacity: 50%;
+  cursor: pointer;
+}
+
+.formButton{
+  color: #000000;
+  width: 230px;
+  height: 40px;
+  font-family: "lato";
+  font-size: 20px;
+  border-radius: 20px;
+  background-color: #92B4EC;
+  opacity: 70%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

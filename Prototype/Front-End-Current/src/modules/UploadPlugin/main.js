@@ -1,4 +1,4 @@
-import react, {useState} from "react";
+import react, {useRef, useState} from "react";
 import axios from "axios";
 
 
@@ -15,8 +15,12 @@ export default function Upload(props){
         setIsSelected(true);
     };
 
+    const handleFileClick = () => {
+        document.getElementById("pluginFile").click();
+    }
+
     const uploadPlugin = () => {
-        const form = document.getElementById("upload");
+        const form = document.getElementById("pluginFile");
         const formData = new FormData(form);
 
         fetch("http://localhost:5000/module/upload", {
@@ -45,8 +49,10 @@ export default function Upload(props){
 
     return(
         <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
-        <div style={{padding: "32px 180px 180px", maxWidth: "400px"}}>
-            <h1>Upload</h1>
+        <div style={{padding: "32px 180px 180px", maxWidth: "783px", flex: "1"}}>
+            <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", height: "93px"}}>
+                <h2>Add Plugin</h2>
+            </div>
             <form id="upload">
                 <div style={{display: "flex", flexDirection: "column"}}>
                 {(success == true)? <p>Your filles has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
@@ -55,7 +61,10 @@ export default function Upload(props){
                 <label>Plugin Display Name</label>
                 <input type="text" id="pluginDisplayName" name="displayName" />
                 <label>Module Code</label>
-                <input type="file" id="pluginFile" name="fileToUpload" onChange={changeFile}/>
+                <div className="formButton" onClick={handleFileClick}>
+                    <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
+                    <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden/>
+                </div>
                 <label>Module Password</label>
                 <input type="password" id="modulePass" name="modulePass" />
                 {isSelected ? 
@@ -68,7 +77,7 @@ export default function Upload(props){
                 )}
                 </div>
             </form>
-                <button onClick={uploadPlugin}>Submit</button>
+                <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
         </div>
         </div>
     )
