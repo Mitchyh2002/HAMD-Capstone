@@ -73,7 +73,7 @@ export default function Upload(props){
                     <p>Filetype: {selectedFile.type}</p>
                     <p>Size in bytes: {selectedFile.size}</p>
                 </div>) : (
-                    <p>Select A File</p>
+                    <p>Select A File Here</p>
                 )}
                 </div>
             </form>
