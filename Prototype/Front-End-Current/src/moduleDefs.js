@@ -1,13 +1,16 @@
 //REGEX_START
 import Upload from "./modules/mst/main.js";
 import React from "react";
+import df1_main from "./modules/df1/main.js";
 //IMPORT_END
 
 //Defintion of components, correlates the module id of the database to the component
 export const Components = {
-    mst: Upload
+    mst: Upload,
+    df1: df1_main
 }
 //REGEX_END
+
 
 
 
