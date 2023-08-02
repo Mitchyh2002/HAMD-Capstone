@@ -286,7 +286,7 @@ def upload_module():
         os.chdir(master_dir)
 
         if os.path.exists("Program/Temp_Module/logo.svg"):
-            x = 2
+            pass
         shutil.rmtree(f"Program/Temp_Module")
         # Reload Flask to initialise blueprints for backend
         reload()
