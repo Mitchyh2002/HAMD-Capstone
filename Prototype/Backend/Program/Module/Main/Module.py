@@ -134,8 +134,10 @@ def front_end_installation(temp_dir, module_name, master_dir):
 
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
-        pattern = r'\bexport\s+default\s+function\s+(\w+)\s*\('
-        functionName = re.match(pattern, content).group(1)
+        pattern = r'(?<=export default function ).*(?=\()'
+        functionName = re.findall(pattern, content)[0]
+        if functionName is None:
+            return on_error(14, "Cannot Find Default Export Function Name in main.js file")
         if f"{module_name}_" not in functionName:
             return on_error(10, "Module Name not in main Front-End Function Name")
 
@@ -246,8 +248,12 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        if Table_outdir != []:
+        if TableFiles != []:
             shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
+            tables = convert_to_imports(dir_tree(Table_outdir))
+            from Program.DB.Builder import create_db
+
+            create_db(tables)
 
         if front_end_success is not True:
             shutil.rmtree(f"Program/Module/{modulename}")
@@ -256,10 +262,7 @@ def upload_module():
             return front_end_success
 
         # Upload Tables to Database
-        tables = convert_to_imports(dir_tree(Table_outdir))
-        from Program.DB.Builder import create_db
 
-        create_db(tables)
         DisplayName = request.values['displayName']
         ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
         new_Module = create_module(str(modulename),DisplayName, ModulePass, True)
