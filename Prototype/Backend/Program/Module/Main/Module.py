@@ -288,7 +288,7 @@ def upload_module():
 
         DisplayName = request.values['displayName']
         ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
-        new_Module = create_module(str(modulename),DisplayName, ModulePass, True)
+        new_Module = create_module(str(modulename),DisplayName, ModulePass, True, f'/logos/{modulename}.svg')
         QueryInsertModule(new_Module)
         os.chdir(master_dir)
 

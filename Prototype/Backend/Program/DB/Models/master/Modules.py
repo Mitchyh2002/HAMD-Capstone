@@ -7,6 +7,7 @@ class Module(db.Model):
     displayName = db.Column(db.String)
     moduleKey = db.Column(db.CHAR(32))
     status = db.Column(db.Boolean)
+    logo = db.Column(db.String(20))
 
     def toJSON(self, is_query=False):
         '''
