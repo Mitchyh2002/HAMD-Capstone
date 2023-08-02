@@ -112,6 +112,7 @@ def get_active_plugins():
         return on_success(valid_modules)
     return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
+@blueprint.route('get_all')
 def get_all_plugins():
     '''
        Get Request that returns all modules
@@ -122,7 +123,7 @@ def get_all_plugins():
        Returns:
            A List containing all modules
        '''
-    return [Module.toJSON() for Module in Module.query.all()]
+    return [Module.toJSON(True) for Module in Module.query.all()]
 
 @blueprint.route('/')
 def Hello_World():
