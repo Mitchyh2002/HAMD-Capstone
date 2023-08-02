@@ -145,6 +145,7 @@ def front_end_installation(temp_dir, module_name, master_dir):
     os.chdir("./Front-End-Current/src/")
     front_end_dir = os.getcwd()
     frontEnd_outdir = rf"{front_end_dir}\modules\{module_name}"
+    frontEnd_logodir = rf"{front_end_dir}\logos"
 
     with open(front_end_dir + r".\\moduledefs.js", "r") as file:
         content = file.read()
@@ -166,8 +167,11 @@ def front_end_installation(temp_dir, module_name, master_dir):
         new_content = new_content
         module_definitions.append("//REGEX_END")
         module_definitions.insert(0, "//REGEX_START")
+    if os.path.exists(f"{master_dir}/Program/Temp_Module/ts1/logo.svg"):
+        os.rename(f"{master_dir}/Program/Temp_Module/ts1/logo.svg", f"{master_dir}/Program/Temp_Module/ts1/{module_name}.svg")
+        shutil.move(f"{master_dir}/Program/Temp_Module/ts1/{module_name}.svg", frontEnd_logodir)
 
-    shutil.move(rf"{master_dir}\Program\Temp_Module\{module_name}\Front End", frontEnd_outdir)
+    shutil.move(rf"{master_dir}\Program\Temp_Module\Front End", frontEnd_outdir)
 
     with open(front_end_dir + r".\\moduledefs.js", "w") as file:
         file.writelines(line + '\n' for line in (module_definitions + new_content.splitlines()))
@@ -287,8 +291,6 @@ def upload_module():
         QueryInsertModule(new_Module)
         os.chdir(master_dir)
 
-        if os.path.exists("Program/Temp_Module/logo.svg"):
-            pass
         shutil.rmtree(f"Program/Temp_Module")
         # Reload Flask to initialise blueprints for backend
         reload()
