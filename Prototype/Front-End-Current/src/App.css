@@ -58,6 +58,11 @@ body{
   border-radius: 20px;
   background-color: #F28F3B;
   cursor: pointer;
+  border: 1px;
+}
+
+.primaryButton:hover{
+  border:  3px black solid;
 }
 
 .secondaryButton{
