@@ -272,8 +272,10 @@ def upload_module():
             create_db(tables)
 
         if front_end_success is not True:
-            shutil.rmtree(f"Program/Module/{modulename}")
-            shutil.rmtree(f"Program/DB/Models/{modulename}")
+            if os.path.exists(f"Program/Module/{modulename}"):
+                shutil.rmtree(f"Program/Module/{modulename}")
+            if os.path.exists(f"Program/DB/Models/{modulename}"):
+                shutil.rmtree(f"Program/DB/Models/{modulename}")
             shutil.rmtree(temp_dir)
             return front_end_success
 
