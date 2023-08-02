@@ -178,7 +178,7 @@ def front_end_installation(temp_dir, module_name, master_dir):
 def back_end_installation(API_Files, temp_dir, modulename, backend_outdir):
     if os.path.exists(backend_outdir):
         shutil.rmtree(temp_dir)
-        return on_error(1, "Module Already Exists")
+        return on_error(3, "BluePrint Already Exists")
 
     for file in API_Files:
         with open(file) as api_file:
@@ -193,7 +193,7 @@ def back_end_installation(API_Files, temp_dir, modulename, backend_outdir):
 def table_installation(TableFiles, temp_dir, modulename, Table_outdir):
     if os.path.exists(Table_outdir):
         shutil.rmtree(temp_dir)
-        return on_error(1, "Module Already Exists")
+        return on_error(2, "Table Already Exists")
 
     for file in TableFiles:
         with open(file) as table_file:
@@ -204,6 +204,9 @@ def table_installation(TableFiles, temp_dir, modulename, Table_outdir):
                 return scan_result
     return True
 
+def get_module(prefix):
+    Modules = Module.query.filter(Module.prefix == prefix).all()
+    return Modules
 
 @blueprint.route('/upload', methods=['GET', 'POST'])
 def upload_module():
@@ -211,11 +214,24 @@ def upload_module():
     API Endpoint to process a Module in a compressed zip file.
 
     This will add the tables to the DB & New endpoints to the application.
+
+    Returns:
+        Error Code 1: Module Already Exists
+        Error Code 2: Table Already Exists
+        Error Code 3: Blueprint Already Exists
+        Error Code 10 - TableName not declared with modulename prefix
+        Error Code 11 - Restriced Module Found in Python Files
+        Error Code 12 - Syntax Error Found in Python Files
+        On Success - Return new_module Module As Json
     '''
     if request.method == 'POST':
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         modulename = dl_file.filename.strip(".zip")
+
+        if get_module(modulename) != []:
+            return on_error(1, f"Module {modulename}, Already Exists")
+
         if splitext(dl_file.filename)[1] != ".zip":
             return 'File is not a zip file'
         with zipfile.ZipFile(dl_file, 'r') as zip_ref:
@@ -269,10 +285,11 @@ def upload_module():
         QueryInsertModule(new_Module)
         os.chdir(master_dir)
 
+        if os.path.exists("Program/Temp_Module/logo.svg"):
+            pass
         shutil.rmtree(f"Program/Temp_Module")
         # Reload Flask to initialise blueprints for backend
         reload()
-
         return on_success(new_Module.toJSON(True))
     return on_error(-1, "Incorrect Request Type, request should be POST")
 

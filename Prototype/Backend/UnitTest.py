@@ -45,6 +45,7 @@ def test_getactive(client):
         if module['displayName'] in testing_modules:
             correct += 1
 
+    print(f"Testing Modules/GetActive Endpoint {correct}/{len(testing_modules)} found")
 
 
 if __name__ == "__main__":
