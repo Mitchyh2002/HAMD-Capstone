@@ -1,5 +1,6 @@
 import react, {useRef, useState} from "react";
 import axios from "axios";
+import "./admin.css";
 
 
 export default function Upload(props){
@@ -48,25 +49,27 @@ export default function Upload(props){
 
 
     return(
-        <div style={{display: "flex", justifyContent: "center", alignContent: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", alignContent: "center", width: "100%"}}>
         <div style={{padding: "32px 180px 180px", maxWidth: "783px", flex: "1"}}>
             <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", height: "93px"}}>
                 <h2>Add Plugin</h2>
             </div>
             <form id="upload">
-                <div style={{display: "flex", flexDirection: "column"}}>
+                <div style={{display: "flex", flexDirection: "column", rowGap:"8px"}}>
                 {(success == true)? <p>Your files has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
                 <label>Module Prefix</label>
-                <input type="text" id="prefixName" name="prefixName" />
+                <input className="uploadInput" type="text" id="prefixName" name="prefixName" />
                 <label>Plugin Display Name</label>
-                <input type="text" id="pluginDisplayName" name="displayName" />
-                <label>Module Code</label>
-                <div className="formButton" onClick={handleFileClick}>
-                    <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
-                    <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden/>
+                <input className="uploadInput" type="text" id="pluginDisplayName" name="displayName" />
+                <div className="flexBoxRow" style={{justifyContent: "space-between"}}>
+                    <label>Module Code</label>
+                    <div className="formButton" onClick={handleFileClick}>
+                        <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
+                        <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden/>
+                    </div>
                 </div>
                 <label>Module Password</label>
-                <input type="password" id="modulePass" name="modulePass" />
+                <input className="uploadInput" type="password" id="modulePass" name="modulePass" />
                 {isSelected ? 
                 (<div>
                     <p>Filename: {selectedFile.name}</p>
@@ -77,7 +80,9 @@ export default function Upload(props){
                 )}
                 </div>
             </form>
+            <div className="flexBoxRow" style={{justifyContent: "center"}}>
                 <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
+            </div>
         </div>
         </div>
     )
