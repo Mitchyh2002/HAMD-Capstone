@@ -1,9 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import Page1 from "./page2";
-import Page2 from "./page2";
+import page1 from "./page2";
+import page2 from "./page2";
 
-export default function ts1_Example(params) {
+export default function Example(params) {
 
     const [page, setPage] = useState(page1);
     
