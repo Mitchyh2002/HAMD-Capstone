@@ -13,6 +13,7 @@ export const Components = {
 
 
 
+
 //This takes a object passed from the content.js matches it to a module and creates that component to return to the DOM
 export default block => {
     //Check module exists within defintion
