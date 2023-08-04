@@ -42,7 +42,7 @@ def init_app() -> Flask:
 
     app.secret_key = '1738'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@localhost:5432/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     UPLOAD_FOLDER = '/static/img'
@@ -60,22 +60,17 @@ def init_app() -> Flask:
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
-    try:
-        walk = next(os.walk('Program/Module'))[1]
-        for moduleName in walk:
-            files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
-            if "__pycache__" in files:
-                files.pop(files.index("__pycache__"))
-            if len(walk) != 0:
-                import_blueprint(app, moduleName, files[1])
-    except:
-        walk = next(os.walk('Prototype/Backend/Program/Module'))[1]
-        for moduleName in walk:
-            files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
-            if "__pycache__" in files:
-                files.pop(files.index("__pycache__"))
-            if len(walk) != 0:
-                import_blueprint(app, moduleName, files[1])
+    cwd = os.getcwd() + "\\Prototype\\Backend"
+    if os.path.exists(cwd):
+        os.chdir(os.getcwd() + "\\Prototype\\Backend")
+
+    walk = next(os.walk('Program/Module'))[1]
+    for moduleName in walk:
+        files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
+        if "__pycache__" in files:
+            files.pop(files.index("__pycache__"))
+        if len(walk) != 0:
+            import_blueprint(app, moduleName, files[1])
 
     return app
 

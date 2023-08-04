@@ -285,6 +285,31 @@ def get_module(prefix):
     Modules = Module.query.filter(Module.prefix == prefix).all()
     return Modules
 
+@blueprint.route('UpdateReference')
+def update_module_ref():
+    """ API Endpoint to update display name & Logo for database
+
+        Returns Updated Module
+
+        On Error:
+            Error Code 16 - Incorrect Password Given
+    """
+    from Program import db
+    modulePrefix = request.values.get('prefixName')
+    ModulePass = request.values.get('modulePass')
+    displayName = request.values.get('displayName')
+    dl_file = request.files['logo']
+    old_module = Module.query.filter(Module.prefix == modulePrefix)
+    if old_module.moduleKey == ModulePass:
+        values = {"displayName": displayName}
+        if dl_file != []:
+            dl_file.save()
+            values["logo"] = f"./logo/{modulePrefix}.svg"
+        Module.query.filter(Module.prefix == modulePrefix).update(values)
+        db.session.commit()
+    else:
+        return on_error(16, "Incorrect Module Password entered")
+
 @blueprint.route('/upload', methods=['GET', 'POST'])
 def upload_module():
     '''
@@ -299,6 +324,7 @@ def upload_module():
         Error Code 10 - TableName not declared with modulename prefix
         Error Code 11 - Restriced Module Found in Python Files
         Error Code 12 - Syntax Error Found in Python Files
+        Error Code 16 - Module Pass does not match.
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'UPDATE']:
@@ -307,9 +333,15 @@ def upload_module():
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         modulename = dl_file.filename.strip(".zip")
+        DisplayName = request.values['displayName']
+        ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
+        module = get_module(modulename)
 
-        if get_module(modulename) != [] and not update:
+        if module != [] and not update:
             return on_error(1, f"Module {modulename}, Already Exists")
+        elif update and module != []:
+            if module.moduleKey != ModulePass:
+                return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
 
         if splitext(dl_file.filename)[1] != ".zip":
             return 'File is not a zip file'
@@ -366,8 +398,7 @@ def upload_module():
             return front_end_success
         # Upload Tables to Database
 
-        DisplayName = request.values['displayName']
-        ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
+
         new_Module = create_module(str(modulename),DisplayName, ModulePass, True, logo_path)
         new_Module = create_module(str(modulename),DisplayName, ModulePass, True, logo_path)
         QueryInsertModule(new_Module)
