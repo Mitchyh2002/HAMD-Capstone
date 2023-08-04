@@ -128,7 +128,7 @@ def get_active_plugins():
         return on_success(valid_modules)
     return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
-@blueprint.route('get_all')
+@blueprint.route('getall')
 def get_all_plugins():
     '''
        Get Request that returns all modules
@@ -285,7 +285,7 @@ def get_module(prefix):
     Modules = Module.query.filter(Module.prefix == prefix).all()
     return Modules
 
-@blueprint.route('UpdateReference')
+@blueprint.route('updatereference')
 def update_module_ref():
     """ API Endpoint to update display name & Logo for database
 
@@ -313,6 +313,25 @@ def update_module_ref():
         os.chdir(save_dir) # Reset to Base CWD
     else:
         return on_error(16, "Incorrect Module Password entered")
+
+@blueprint.route('activate')
+def activate_module():
+    from Program import db
+    modulePrefix = request.values.get('prefixName')
+
+    Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
+
+    db.session.commit()
+
+@blueprint.route('deactivate')
+def activate_module():
+    from Program import db
+    modulePrefix = request.values.get('prefixName')
+
+    Module.query.filter(Module.prefix == modulePrefix).update(dict(status=False))
+
+    db.session.commit()
+
 
 @blueprint.route('/upload', methods=['GET', 'POST'])
 def upload_module():
