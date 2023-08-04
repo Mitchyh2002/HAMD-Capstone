@@ -42,7 +42,7 @@ def init_app() -> Flask:
 
     app.secret_key = '1738'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:password@localhost:5000/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     UPLOAD_FOLDER = '/static/img'
@@ -60,6 +60,7 @@ def init_app() -> Flask:
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
+    print(os.getcwdb())
     walk = next(os.walk('Program/Module'))[1]
     for moduleName in walk:
         files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
