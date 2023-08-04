@@ -60,13 +60,22 @@ def init_app() -> Flask:
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
-    walk = next(os.walk('Program/Module'))[1]
-    for moduleName in walk:
-        files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
-        if "__pycache__" in files:
-            files.pop(files.index("__pycache__"))
-        if len(walk) != 0:
-            import_blueprint(app, moduleName, files[1])
+    try:
+        walk = next(os.walk('Program/Module'))[1]
+        for moduleName in walk:
+            files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
+            if "__pycache__" in files:
+                files.pop(files.index("__pycache__"))
+            if len(walk) != 0:
+                import_blueprint(app, moduleName, files[1])
+    except:
+        walk = next(os.walk('Prototype/Backend/Program/Module'))[1]
+        for moduleName in walk:
+            files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
+            if "__pycache__" in files:
+                files.pop(files.index("__pycache__"))
+            if len(walk) != 0:
+                import_blueprint(app, moduleName, files[1])
 
     return app
 

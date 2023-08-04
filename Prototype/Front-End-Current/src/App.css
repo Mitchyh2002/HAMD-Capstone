@@ -1,44 +1,4 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /*Fonts*/
-
 body{
   font-family: "merriweather";
 }
@@ -78,6 +38,9 @@ body{
 
 .header{
   background-color: #92B4EC;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }
 
 .subNav{
@@ -98,6 +61,11 @@ body{
   border-radius: 20px;
   background-color: #F28F3B;
   cursor: pointer;
+  border: 1px;
+}
+
+.primaryButton:hover{
+  border:  3px black solid;
 }
 
 .secondaryButton{
@@ -124,4 +92,61 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/*Inputs*/
+input{
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: "lato";
+  outline: 0px;
+  font-size: 20px;
+}
+
+input:focus{
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 3px solid;
+}
+
+/*Main Nav Css*/
+.wrapperMainNav{
+  background-color: rgba(242, 143, 59, 0.5);
+  display: flex;
+  align-content: center;
+  border-radius: 0px 20px 0px 0px;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mainNavItem{
+  background-color: rgba(242, 143, 59, 0.0);
+  border: none;
+  height: 110px;
+  font-family: "lato";
+  font-size: 20px;
+}
+
+.mainNavItem:hover{
+  background-color: #F28F3B;
+  cursor: pointer;
+}
+
+.mainNavItem:active{
+  background-color: #F28F3B;
+}
+
+/*alignment*/
+.flexBoxColumnGrow{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.flexBoxRowGrow{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }

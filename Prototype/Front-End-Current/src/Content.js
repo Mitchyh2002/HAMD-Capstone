@@ -53,12 +53,15 @@ export default function Content(props){
 
     return (
       <>
-        <div style={{display: "flex"}}>
-          <div style={{width:"25%", display: "flex", flexDirection: "column"}}>
-            {modules.map(module  => <button onClick={e => handler(module.prefix)} key={module.prefix}>{module.displayName}</button>)}
+        <div style={{display: "flex", flexDirection:"row", flexGrow: 1}}>
+          <div className="wrapperMainNav" style={{maxWidth:"172px"}}>
+            <div style={{height: "auto",  display: "flex", justifyContent: "center"}}>
+                <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
+            </div>
+            {modules.map(module  => <button className="mainNavItem" onClick={e => handler(module.prefix)} key={module.prefix}><p>{module.displayName}</p></button>)}
           </div>
         
-          <div style={{width:"75%"}}>
+          <div className="flexBoxRowGrow">
             {(loaded == false)? <p>Loading modules...</p> : <Components module={moduleMap.get(index)} /> }
             </div>
         </div>
