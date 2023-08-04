@@ -330,6 +330,7 @@ def upload_module():
         Error Code 12 - Syntax Error Found in Python Files
         Error Code 16 - Module Pass does not match.\
         Error Code 17 - No Module Uploaded
+        Error Code 18 - Missing Key Paramaters
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'UPDATE']:
@@ -337,11 +338,14 @@ def upload_module():
 
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
-        if dl_file == '':
+        if dl_file.content_length == 0:
             return on_error(17, 'No Module Uploaded, please Upload a File')
         modulename = dl_file.filename.strip(".zip")
-        DisplayName = request.values['displayName']
-        ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
+        DisplayName = request.values.get('displayName')
+        ModulePass = request.values.get('modulePass')
+        if '' in [DisplayName, ModulePass]:
+            return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
+        # TODO When User Auth Done, Encrypt module pass
         module = get_module(modulename)
 
         if module != [] and not update:
