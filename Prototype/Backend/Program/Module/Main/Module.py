@@ -295,6 +295,7 @@ def update_module_ref():
             Error Code 16 - Incorrect Password Given
     """
     from Program import db
+    save_dir = os.getcwd()
     modulePrefix = request.values.get('prefixName')
     ModulePass = request.values.get('modulePass')
     displayName = request.values.get('displayName')
@@ -302,11 +303,14 @@ def update_module_ref():
     old_module = Module.query.filter(Module.prefix == modulePrefix)
     if old_module.moduleKey == ModulePass:
         values = {"displayName": displayName}
-        if dl_file != []:
-            dl_file.save()
+        if dl_file != '':
+            os.chdir("../")
+            os.chdir("./Front-End-Current/src/")
+            dl_file.save(f'./logo/{modulePrefix}.svg')
             values["logo"] = f"./logo/{modulePrefix}.svg"
         Module.query.filter(Module.prefix == modulePrefix).update(values)
         db.session.commit()
+        os.chdir(save_dir) # Reset to Base CWD
     else:
         return on_error(16, "Incorrect Module Password entered")
 
@@ -324,7 +328,8 @@ def upload_module():
         Error Code 10 - TableName not declared with modulename prefix
         Error Code 11 - Restriced Module Found in Python Files
         Error Code 12 - Syntax Error Found in Python Files
-        Error Code 16 - Module Pass does not match.
+        Error Code 16 - Module Pass does not match.\
+        Error Code 17 - No Module Uploaded
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'UPDATE']:
@@ -332,6 +337,8 @@ def upload_module():
 
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
+        if dl_file == '':
+            return on_error(17, 'No Module Uploaded, please Upload a File')
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values['displayName']
         ModulePass = request.values['modulePass']# TODO When User Auth Done, Encrypt module pass
