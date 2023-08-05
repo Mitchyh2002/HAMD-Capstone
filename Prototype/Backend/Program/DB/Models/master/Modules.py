@@ -33,12 +33,13 @@ class Module(db.Model):
         db.session.add(self)
         db.session.commit()
 
-def create_module(prefix, displayName, moduleKey, status):
+def create_module(prefix, displayName, moduleKey, status, logo_dir):
     created_module = Module()
     created_module.prefix = prefix
     created_module.displayName = displayName
     created_module.moduleKey = moduleKey
     created_module.status = status
+    created_module.logo = logo_dir
 
     return created_module
 

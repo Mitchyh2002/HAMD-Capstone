@@ -3,14 +3,14 @@ import { useState } from "react";
 import page1 from "./page2";
 import page2 from "./page2";
 
-export default function df1_Example(params) {
+export default function Example(params) {
 
     const [page, setPage] = useState(page1);
-
+    
     const changePage = (page) =>{
         setPage(page);
     }
-
+    
     return(
         <div>
             <div>

@@ -17,6 +17,6 @@ if __name__ == "__main__":
     })
     client = app.test_client()
 
-    new_module = create_module("mst", "UploadModule", "Test234", True)
+    new_module = create_module("mst", "UploadModule", "Test234", True,"")
     with app.app_context():
         new_module.insert()
