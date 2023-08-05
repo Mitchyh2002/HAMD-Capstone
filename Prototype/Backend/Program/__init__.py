@@ -28,9 +28,11 @@ def import_blueprint(app, moduleName, ModuleFile):
 
     """
     for file in ModuleFile:
-        new_blueprint = __import__(f"Program.Module.{moduleName}.{file.strip('.py')}")
+        imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
+        new_blueprint = __import__(imp_str)
         try:
-            app.register_blueprint(eval(f"new_blueprint.Module.{moduleName}.{file.strip('.py')}.blueprint"))
+            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
+            app.register_blueprint(eval(bp_str))
         except ModuleNotFoundError:
             print("Module Doesn't have Blueprint file")
 
@@ -60,24 +62,18 @@ def init_app() -> Flask:
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
-    x = os.path.exists("Program")
-    cwd = os.getcwd() + "\Prototype\Backend\Program\Module"
-    if os.path.exists(cwd) == False:
-        walk = next(os.walk('Program/Module'))[1]
-        for moduleName in walk:
-            files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
-            if "pycache" in files:
-                files.pop(files.index("pycache"))
-            if len(walk) != 0:
-                import_blueprint(app, moduleName, files[1])
-    else:
-        walk = next(os.walk(cwd))[1]
-        for moduleName in walk:
-            files = next(os.walk(f'{cwd}/{moduleName}'))[1:]
-            if "pycache" in files:
-                files.pop(files.index("pycache"))
-            if len(walk) != 0:
-                import_blueprint(app, moduleName, files[1])
+    cwd = os.getcwd() + "\\Prototype\\Backend"
+    if os.path.exists(cwd):
+        os.chdir(os.getcwd() + "\\Prototype\\Backend")
+
+    walk = next(os.walk('Program/Module'))[1]
+    for moduleName in walk:
+        files = next(os.walk(f'Program/Module/{moduleName}'))[1:]
+        if "__pycache__" in files:
+            files.pop(files.index("__pycache__"))
+        if len(walk) != 0:
+            import_blueprint(app, moduleName, files[1])
+
     return app
 
 
