@@ -20,7 +20,7 @@ from Program.OS import dir_tree, convert_to_imports
 #from Program.DB.Models.master.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
-blueprint = Blueprint('main', __name__, url_prefix="/module")
+blueprint = Blueprint('module', __name__, url_prefix="/module")
 
 TESTING = True
 
@@ -324,7 +324,7 @@ def activate_module():
     db.session.commit()
 
 @blueprint.route('deactivate')
-def activate_module():
+def deactivate_module():
     from Program import db
     modulePrefix = request.values.get('prefixName')
 

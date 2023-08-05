@@ -28,9 +28,11 @@ def import_blueprint(app, moduleName, ModuleFile):
 
     """
     for file in ModuleFile:
-        new_blueprint = __import__(f"Program.Module.{moduleName}.{file.strip('.py')}")
+        imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
+        new_blueprint = __import__(imp_str)
         try:
-            app.register_blueprint(eval(f"new_blueprint.Module.{moduleName}.{file.strip('.py')}.blueprint"))
+            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
+            app.register_blueprint(eval(bp_str))
         except ModuleNotFoundError:
             print("Module Doesn't have Blueprint file")
 
