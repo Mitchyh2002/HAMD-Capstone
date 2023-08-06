@@ -7,7 +7,7 @@ const navItems = [{
     name: "Plugins",
     component: PluginList
 },{
-    name: "Upload Module",
+    name: "Add Plugin",
     component: Upload
 }];
 

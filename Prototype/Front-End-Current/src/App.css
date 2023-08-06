@@ -40,12 +40,12 @@ body{
   background-color: #92B4EC;
   display: flex;
   flex-direction: row;
-  flex: 1;
+  /* flex: 1; - fixes big header on pluginlist page*/
 }
 
 .subNav{
   background-color: #FFE69A;
-  opacity: 50%;
+  
 }
 
 .subNavHighlight{
@@ -143,10 +143,42 @@ input:focus{
   display: flex;
   flex-direction: column;
   flex: 1;
+  
+}
+
+.subNavBar{
+  background-color: rgba(255,230,154, .4);
+  align-items: center;
+  border-radius: 0px 20px 0px 0px;
+  margin-top: 50px;
+}
+
+.uploadmodule{
+  background-color: white;
 }
 
 .flexBoxRowGrow{
   display: flex;
   flex-direction: row;
   flex: 1;
+  justify-content: center;
+  background-color: #FFFFFF;
+}
+
+.navButton{
+  width: 160px;
+  height: 60px;
+  font-size: 15px;
+  border: none;
+  font-family: "lato";
+  display: "flex";
+  align-items: center;
+  color: black;
+  background-color: rgba(255,230,154, .1);
+  cursor: pointer;
+}
+
+.navButton:hover{
+  background-color: rgba(255,230,154, 1);
+  border-radius: 0px 20px 0px 0px;
 }

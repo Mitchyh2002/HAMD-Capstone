@@ -14,8 +14,8 @@ export default function SubMenu(props){
     //Output: Button with onClick call to input
     function createButton(item){
         return(
-            <div style={{display: "flex", alignItems: "center"}}>
-                <button onClick={e => handler(item)}>{item.name}</button>
+            <div>
+                <button className="navButton" onClick={e => handler(item)}>{item.name}</button>
             </div>
         )
     }
@@ -28,7 +28,7 @@ export default function SubMenu(props){
     console.log(index)
     return(
         <div className="flexBoxRowGrow">
-            <div className="flexBoxColumnGrow" style={{maxWidth: "178px"}}>
+            <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
               {subComponents.map(e => createButton(e))}
             </div>
             <div className="flexBoxRowGrow">
