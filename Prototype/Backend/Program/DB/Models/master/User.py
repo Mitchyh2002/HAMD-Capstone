@@ -2,6 +2,7 @@ import bcrypt
 
 from sqlalchemy import Text, TypeDecorator
 from sqlalchemy.orm import validates
+from flask_login import UserMixin
 
 from Program import db
 from Program.ResponseHandler import on_error
@@ -54,7 +55,7 @@ class Password(TypeDecorator):
         elif value is not None:
             raise TypeError('Cannot convert {} to a PasswordHash'.format(type(value)))
         
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "user"
     userID = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String, unique = True, nullable = False)
@@ -62,9 +63,6 @@ class User(db.Model):
     firstName = db.Column(db.String, nullable = False)
     passwordHash = db.Column(Password)
     dateOfBirth = db.Column(db.Date, nullable = False)
-    is_authenticated = True
-    is_active = True
-    is_anonymous = False
 
     def get_id(self):
         return str(self.userID)

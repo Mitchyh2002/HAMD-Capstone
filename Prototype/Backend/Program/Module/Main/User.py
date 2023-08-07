@@ -1,7 +1,7 @@
 import json
 
 from flask import Blueprint, render_template, request
-from flask_login import current_user, LoginManager, login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user, login_required
 
 from Program.DB.Models.master.User import User, PasswordHash, JSONtoUser
 from Program.ResponseHandler import on_error, on_success
@@ -10,15 +10,7 @@ blueprint = Blueprint('user', __name__, url_prefix="/user")
 
 TESTING = True
 
-loginManager = LoginManager()
-
-loginManager.login_view = 'user.login'
-@loginManager.user_loader
-
-def load_user(userID):
-    return User.objects(userID = userID).first()
-
-@blueprint.route('/login', methods=['POST'])
+@blueprint.route('/Login', methods=['POST'])
 def login():
     input = json.loads(request.data)
     inputHash = PasswordHash.new(json.get('password')) 
