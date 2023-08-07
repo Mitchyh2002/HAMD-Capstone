@@ -40,6 +40,7 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
         11 - Restriced Module Found in Python Files
         12 - Syntax Error Found in Python Files
         20 - Missing Datatables
+        21 - Incorrect Keys.txt format
     '''
 
     modules = []
@@ -86,11 +87,31 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
                         return on_error(20, "Table is missing content on Update, Please ensure datatables are not missing")
 
     in_file.seek(0)
+    keys = {}
+    if os.path.exists('Program\Temp_Module\keys.txt'):
+        with open(os.path.exists('Program\Temp_Module\keys.txt')) as key_pairs:
+            lines = key_pairs.readlines()
+            for line in lines:
+                line = line.split(":")
+                if len(line) == 2:
+                    keys[line[0]] = line[1]
+                else:
+                    on_error(21, "keys.txt lines be in the following format {moduleprefix}:{modulepassword}")
+
+
+
     with open(r'Program\templates\whitelisted_modules.txt') as whitelist:
-        lines = whitelist.read()
+        whitelisted_modules = whitelist.read()
         for module in modules:
-            module = module.split(".")[0]
-            res = search(f"{module}(?=\n)|{module}.+(?=\n)", lines)
+            split_module = module.split(".")
+            if "Program.DB" in module:
+                if keys == {}:
+                    on_error(11, "Restricted Module found in application")
+                else:
+                    db_module = split_module[3]
+                    module = get_module(split_module[3])
+            else:
+                res = search(f"{split_module[0]}(?=\n)|{split_module[0]}.+(?=\n)", lines)
 
             if res is None:
                 return on_error(11, "Restricted Module found in application")

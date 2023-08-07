@@ -1,4 +1,4 @@
-cd "Backend"
+cd "./Backend"
 sh run.sh
-cd "..\Front-End-Current"
+cd "../Front-End-Current"
 sh start.bat
