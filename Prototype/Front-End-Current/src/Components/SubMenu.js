@@ -6,7 +6,6 @@ import React, {useState} from "react";
 export default function SubMenu(props){
 
     const subComponents = props.subComponents;
-    console.log(props);
     let [index, setIndex] = useState(subComponents[0]);
 
     //Creates the buttons
@@ -25,7 +24,6 @@ export default function SubMenu(props){
         setIndex(component);
     }
 
-    console.log(index)
     return(
         <div className="flexBoxRowGrow">
             <div className="flexBoxColumnGrow" style={{maxWidth: "178px"}}>

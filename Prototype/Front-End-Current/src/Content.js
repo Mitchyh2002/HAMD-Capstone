@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./moduleDefs.js";
-import Components from "./moduleDefs.js";
 import axios from "axios";
+import Component from "Components/GetComponent.js";
+import GetComponent from "Components/GetComponent.js";
+import { useNavigate, Outlet } from "react-router-dom";
 
 //maps the module to a key value which will be module id sent from the server
 function mapModules(modules){
@@ -20,6 +22,7 @@ export default function Content(props){
   const [modules, setModules] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [index, setIndex] = useState("");//Define state for switching between modules, 0 will be replaced by a default ID
+  const navigate = useNavigate();
 
   //Load Data on mount
   useEffect(() => {
@@ -44,11 +47,11 @@ export default function Content(props){
   
   const moduleMap = mapModules(modules);
 
-  console.log(moduleMap)
 
   //Handler function for setting up the submenu
-  const handler = (num) => {
-    setIndex(num);
+  const handler = (prefix) => {
+    const destination = "/" + prefix;
+    navigate(destination);
   }
 
     return (
@@ -62,7 +65,7 @@ export default function Content(props){
           </div>
         
           <div className="flexBoxRowGrow">
-            {(loaded == false)? <p>Loading modules...</p> : <Components module={moduleMap.get(index)} /> }
+            {(loaded == false)? <p>Loading modules...</p> : <Outlet /> }
             </div>
         </div>
       </>)

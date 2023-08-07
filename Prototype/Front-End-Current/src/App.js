@@ -1,15 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
-import Content from "./Content"
-import { useEffect, useState } from 'react';
-import Header from 'Components/Compents';
+import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import Main from 'Pages/Main';
+import { AllRoutes } from 'Functions/Routing';
+import { useEffect,  useState} from 'react';
 
 function App() {
+  const [modules, setModules] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+
+  //Load Data on mount
+  useEffect(() => {
+    const data = fetch("http://localhost:5000/module/getactive")
+    .then( response => {
+        return response.json();
+    }).then(data => {
+      setModules(data.Values)
+    }).then(() => {
+      setLoaded(true);
+    })
+  }, []);
+
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
-      <Header />
-      <Content />
-    </div>
+    <>
+      <BrowserRouter>
+      {(loaded == true)&&
+        <AllRoutes Modules={modules}/>}
+      </BrowserRouter>
+    </>
   );
 }
 
