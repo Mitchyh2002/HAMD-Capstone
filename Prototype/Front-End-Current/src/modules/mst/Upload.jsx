@@ -51,8 +51,8 @@ export default function Upload(props){
     return(
         <div style={{display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1"}}>
         <div className="flexBoxColumnGrow" style={{padding: "32px 180px 180px", maxWidth: "783px"}}>
-            <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", height: "93px"}}>
-                <h2>Add Plugin</h2>
+            <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px"}}>
+                <h3>Add Plugin</h3>
             </div>
             <form id="upload">
                 <div style={{display: "flex", flexDirection: "column", rowGap:"8px"}}>
@@ -76,7 +76,7 @@ export default function Upload(props){
                     <p>Filetype: {selectedFile.type}</p>
                     <p>Size in bytes: {selectedFile.size}</p>
                 </div>) : (
-                    <p>Select A File Here</p>
+                    <p> </p>
                 )}
                 </div>
             </form>

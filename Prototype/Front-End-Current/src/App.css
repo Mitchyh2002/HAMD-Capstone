@@ -1,37 +1,38 @@
 /*Fonts*/
 body{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
 }
 
 h1{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 80px;
 }
 
 h2{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 40px;
 }
 
 h3{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 30px;
+  font-weight: normal;
 }
 
 h4{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 25px;
   font-weight: bold;
 }
 
 form{
-  font-family: "lato";
-  font-size: 25px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
 }
 
 body{
-  font-family: "lato";
-  font-size: 18px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
 }
 
 /*Containers*/
@@ -54,14 +55,15 @@ body{
 
 /*Buttons*/
 .primaryButton{
-  width: 400px;
-  height: 60px;
-  font-family: "lato";
-  font-size: 30px;
+  width: 250px;
+  height: 50px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
   border-radius: 20px;
   background-color: rgba(242, 143, 59, .7);
   cursor: pointer;
   border: 1px;
+  text-shadow: 0.9px 0.9px lightslategray;
 }
 
 .primaryButton:hover{
@@ -71,7 +73,7 @@ body{
 .secondaryButton{
   width: 400px;
   height: 70px;
-  font-family: "lato";
+  font-family: 'Lato', sans-serif;
   font-size: 30px;
   border-radius: 20px;
   background-color: #F28F3B;
@@ -83,8 +85,9 @@ body{
   color: #000000;
   width: 230px;
   height: 40px;
-  font-family: "lato";
-  font-size: 18px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  text-shadow: 0.7px 0.7px lightslategray;
   border-radius: 20px;
   background-color: rgba(146, 180, 236, .7);
   cursor: pointer;
@@ -102,7 +105,7 @@ body{
   height: 60px;
   font-size: 15px;
   border: none;
-  font-family: "lato";
+  font-family: 'Lato', sans-serif;
   display: "flex";
   align-items: center;
   color: black;
@@ -146,7 +149,7 @@ input:focus{
   background-color: rgba(242, 143, 59, 0.0);
   border: none;
   height: 110px;
-  font-family: "lato";
+  font-family: 'Lato', sans-serif;
   font-size: 20px;
 }
 
