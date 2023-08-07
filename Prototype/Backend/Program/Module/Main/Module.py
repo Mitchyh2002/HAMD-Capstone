@@ -105,11 +105,14 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
         for module in modules:
             split_module = module.split(".")
             if "Program.DB" in module:
-                if keys == {}:
-                    on_error(11, "Restricted Module found in application")
+                module_key = keys.get(split_module[3])
+                if module_key == None:
+                    on_error(11, "Restricted Module found in application, module not found in keys.txt")
                 else:
                     db_module = split_module[3]
                     module = get_module(split_module[3])
+                    if module.moduleKey != module_key:
+                        return on_error(11, "Restricted Module found in application, incorrect password in keys.txt")
             else:
                 res = search(f"{split_module[0]}(?=\n)|{split_module[0]}.+(?=\n)", lines)
 
