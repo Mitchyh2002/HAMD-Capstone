@@ -55,17 +55,17 @@ body{
 /*Buttons*/
 .primaryButton{
   width: 400px;
-  height: 70px;
+  height: 60px;
   font-family: "lato";
   font-size: 30px;
   border-radius: 20px;
-  background-color: #F28F3B;
+  background-color: rgba(242, 143, 59, .7);
   cursor: pointer;
   border: 1px;
 }
 
 .primaryButton:hover{
-  border:  3px black solid;
+  background-color: rgba(242, 143, 59, 1);
 }
 
 .secondaryButton{
@@ -84,14 +84,35 @@ body{
   width: 230px;
   height: 40px;
   font-family: "lato";
-  font-size: 20px;
+  font-size: 18px;
   border-radius: 20px;
-  background-color: #92B4EC;
-  opacity: 70%;
+  background-color: rgba(146, 180, 236, .7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.formButton:hover{
+  background-color: rgba(146, 180, 236, 1);
+}
+
+.navButton{
+  width: 160px;
+  height: 60px;
+  font-size: 15px;
+  border: none;
+  font-family: "lato";
+  display: "flex";
+  align-items: center;
+  color: black;
+  background-color: rgba(255,230,154, .1);
+  cursor: pointer;
+}
+
+.navButton:hover{
+  background-color: rgba(255,230,154, 1);
+  border-radius: 0px 20px 0px 0px;
 }
 
 /*Inputs*/
@@ -138,14 +159,7 @@ input:focus{
   background-color: #F28F3B;
 }
 
-/*alignment*/
-.flexBoxColumnGrow{
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  
-}
-
+/*Sub Nav Css*/
 .subNavBar{
   background-color: rgba(255,230,154, .4);
   align-items: center;
@@ -153,8 +167,11 @@ input:focus{
   margin-top: 50px;
 }
 
-.uploadmodule{
-  background-color: white;
+/*alignment*/
+.flexBoxColumnGrow{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .flexBoxRowGrow{
@@ -162,23 +179,5 @@ input:focus{
   flex-direction: row;
   flex: 1;
   justify-content: center;
-  background-color: #FFFFFF;
 }
 
-.navButton{
-  width: 160px;
-  height: 60px;
-  font-size: 15px;
-  border: none;
-  font-family: "lato";
-  display: "flex";
-  align-items: center;
-  color: black;
-  background-color: rgba(255,230,154, .1);
-  cursor: pointer;
-}
-
-.navButton:hover{
-  background-color: rgba(255,230,154, 1);
-  border-radius: 0px 20px 0px 0px;
-}
