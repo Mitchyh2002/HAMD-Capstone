@@ -10,13 +10,13 @@ from Program.ResponseHandler import on_error
 class PasswordHash(object):
     def __init__(self, hash_):
         assert len(hash_) == 60, 'bcrypt hash should be 60 chars.'
-        assert hash_.count('$'), 'bcrypt hash should have 3x "$".'
+        assert hash_.count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
         self.rounds = int(self.hash.split('$')[2])
 
     def __eq__(self, candidate):
-        if isinstance(candidate, basestring):
-            if isinstance(candidate, unicode):
+        if isinstance(candidate, str):
+            if isinstance(candidate, str):
                 candidate = candidate.encode('utf8')
             return bcrypt.hashpw(candidate, self.hash) == self.hash
         return False
@@ -25,15 +25,15 @@ class PasswordHash(object):
         return '<{}>'.format(type(self).__name__)
 
     @classmethod
-    def new(cls, password, rounds=12):
-        if isinstance(password, unicode):
+    def new(cls, password, rounds=4):
+        if isinstance(password, str):
             password = password.encode('utf8')
         return cls(bcrypt.hashpw(password, bcrypt.gensalt(rounds)))  
     
 class Password(TypeDecorator):
     impl = Text
 
-    def __init__(self, rounds=12, **kwds):
+    def __init__(self, rounds=4, **kwds):
         self.rounds = rounds
         super(Password, self).__init__(**kwds)
 
@@ -50,7 +50,7 @@ class Password(TypeDecorator):
     def _convert(self, value):
         if isinstance(value, PasswordHash):
             return value
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             return PasswordHash.new(value, self.rounds)
         elif value is not None:
             raise TypeError('Cannot convert {} to a PasswordHash'.format(type(value)))

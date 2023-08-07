@@ -10,12 +10,13 @@ blueprint = Blueprint('user', __name__, url_prefix="/user")
 
 TESTING = True
 
-@blueprint.route('/Login', methods=['POST'])
+@blueprint.route('/login', methods=['POST'])
 def login():
-    input = json.loads(request.data)
-    inputHash = PasswordHash.new(json.get('password')) 
+    input = request.values
+    inputHash = PasswordHash.new(input.get('password')) 
     inputEmail = input.get('email')
-    user = User.objects(email = inputEmail, passwordHash = inputHash).first()
+    user = User.query.filter(User.email == inputEmail, User.passwordHash == inputHash)
+    print(user)
 
     if user:
         login_user(user)
@@ -25,7 +26,7 @@ def login():
     elif inputHash == "" or inputHash is None:
         return on_error(11, "Password cannot be empty, please enter your password.")
     else:
-        user = User.objects(email = inputEmail).first()
+        user = User.query.filter(User.email == inputEmail)
         if user:
             return on_error(20, "Password is incorrect, please try again.")
         else:
@@ -40,15 +41,14 @@ def logout():
 
 @blueprint.route('/register', methods=['POST'])
 def register():
-    input = json.loads(request.data)
+    input = request.values
     email = input.get('email')
     firstName = input.get('firstName')
     dateOfBirth = input.get('dateOfBirth')
     phoneNumber = input.get('phoneNumber')
 
-    uniqueEmail = User.objects(email = email).first()
-    uniquePhone = User.objects(phoneNumber = phoneNumber).first()
-    
+    uniqueEmail = User.query.filter(User.email == email)
+    uniquePhone = User.query.filter(User.phoneNumber == phoneNumber)    
     if not emailCheck(email):
         return on_error(11, "Email entered is invalid, please enter a valid email address.")
     elif uniqueEmail:
