@@ -31,7 +31,7 @@ export default function PluginList() {
 
     return(
     <div className="pluginPage">
-        <h1>Plugins</h1>
+        <h2>Plugins</h2>
             <div className="pluginTable">
                 <table {...getTableProps()}>
                     <thead>

@@ -50,7 +50,7 @@ export default function Upload(props){
 
     return(
         <div style={{display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1"}}>
-        <div className="flexBoxColumnGrow" style={{padding: "32px 180px 180px", maxWidth: "783px"}}>
+        <div className="flexBoxColumnGrow" style={{padding: "32px", maxWidth: "500px"}}>
             <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px"}}>
                 <h3>Add Plugin</h3>
             </div>
