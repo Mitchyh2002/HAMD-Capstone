@@ -27,8 +27,11 @@ export default function SubMenu(props){
     }
 
     return(
-        <div className="flexBoxColumnGrow" style={{maxWidth: "178px"}}>
-              {subComponents.map(component => createNavLinks(component))}
-        </div>
+        <>
+            {subComponents&&
+            <div className="flexBoxColumnGrow" style={{maxWidth: "178px"}}>
+                {subComponents.map(component => createNavLinks(component))}
+            </div>}
+        </>
     )
 }

@@ -1,16 +1,20 @@
 import "./moduleDefs.js";
-import {Outlet, useHref } from "react-router-dom";
+import {Outlet, useHref, useOutlet } from "react-router-dom";
 import NavMenu from "Components/NavMenu.jsx";
 import React from "react";
 import SubMenu from "Components/SubMenu.js";
 
 //Main Frame of applications after the user has logged in
 export default function Content(props){
+  const child =useOutlet();
+  console.log(child);
   
   //Extract the current module from the url
   const homeRegEx = RegExp("\/(.{3})");
-  const location = homeRegEx.exec(useHref())[1];
-  console.log(location);
+  const regExResults = homeRegEx.exec(useHref());
+  let location;
+  //If empty set to null
+  regExResults? location = regExResults[1] : location = "null";
  
     return (
       <>

@@ -1,23 +1,23 @@
-import { element } from "prop-types";
 import {Directory, Modules } from "../moduleDefs"
-import App from "App";
-import { useRoutes } from "react-router-dom";
+import { Outlet, useOutlet, useRoutes } from "react-router-dom";
 import Main from "Pages/Main";
 import React from "react";
 
-/*{
-    prefix:
-    display:
-    home: 
-    pages: 
-}*/
 
-//Routes Element
+/*All Routes
+    Create A set of <Routes> from a give list of modules
+    Input: Modules
+    Output: List of Routes
+*/
 export function AllRoutes(props){
     return(useRoutes(CreateAllPaths(props.Modules)));
 }
 
-//Create Router Paths
+/*Create All Paths
+    Create a paths element object that can be passed to useRoutes()
+    Input: Components
+    Output: An Array of all paths for the application with a all children Routes
+*/
 export function CreateAllPaths(Components) {
     console.log("Building routes....")
     console.log(Components);
@@ -32,12 +32,18 @@ export function CreateAllPaths(Components) {
     return Routes;
 }
 
+/*createComponent Routes
+    Create all child paths for a module and a home route using the arrays defined in moduleDefs.js
+    Input: Module
+    Output: An Arrayt of paths for the module with all child elemnts defined in Directory
+
+*/
 export function createComponentRoutes(module) {
     const Root = {
         //Create Index as Display Name
         path: "/" + module.prefix,
         //Element function from main.js of the module
-        element: React.createElement(Modules[module.prefix]),
+        element: <CreateParentOutlet module = {module} />,
 
         //Create child path for each directory
         children: Directory[module.prefix].map(e => {
@@ -49,4 +55,20 @@ export function createComponentRoutes(module) {
     }
 
     return Root;
+}
+
+/*CreateParentOutlet
+    Checks if on a child element and returns it or the parent element
+    Props:
+        module: Module that will be used to find the element in the moduleDefs.js
+*/
+export function CreateParentOutlet (props) {
+    const child = useOutlet();
+    console.log(child);
+    return(
+        <>
+            {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
+        </>
+    )
+
 }

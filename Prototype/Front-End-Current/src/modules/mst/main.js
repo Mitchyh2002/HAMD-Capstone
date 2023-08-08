@@ -23,7 +23,7 @@ export const pages = [{
 export default function mst_master(){
     return(
         <div className="flexBoxRowGrow">
-            <Outlet />
+            <Upload />
         </div>
     )
 }
