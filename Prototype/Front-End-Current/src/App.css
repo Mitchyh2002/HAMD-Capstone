@@ -51,7 +51,7 @@ header {
   min-height: 50px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 header * {
@@ -75,6 +75,7 @@ header li a:hover {
   width: 45px;
   object-fit: contain;
   cursor: pointer;
+  margin-right: auto;
 }
 
 /* Main Nav Css */

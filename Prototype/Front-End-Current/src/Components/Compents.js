@@ -8,15 +8,13 @@ export default function Header() {
         <div className="header">
             <header>
                 <img className="bee-logo" src="/bee2.png" alt="logo"/>
-                    {/*<a href="#!">Home</a>*/}
-                        <nav>
-                            <ul>
-                                <li><a href="#!">Account</a></li>
-                                <li><a className="a3" href="#!">Logout</a></li>
-                             </ul>
-                        </nav>
+                    <nav>
+                        <ul>
+                            <li><a href="#!">Account</a></li>
+                            <li><a className="a3" href="#!">Logout</a></li>
+                        </ul>
+                    </nav>
             </header>
         </div>
-
     )
 };
