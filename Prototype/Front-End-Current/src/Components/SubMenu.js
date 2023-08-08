@@ -28,7 +28,7 @@ export default function SubMenu(props){
     console.log(index)
     return(
         <div className="flexBoxRowGrow">
-            <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
+            <div className="flexBoxColumnGrow" style={{maxWidth: "160px"}}>
                 {subComponents.map(e => createButton(e))}
             </div>
             <div className="flexBoxRowGrow">
