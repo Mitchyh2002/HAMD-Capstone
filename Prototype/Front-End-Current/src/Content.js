@@ -1,71 +1,17 @@
-import React, { useState, useEffect } from "react";
 import "./moduleDefs.js";
-import axios from "axios";
-import Component from "Components/GetComponent.js";
-import GetComponent from "Components/GetComponent.js";
-import { useNavigate, Outlet } from "react-router-dom";
+import {Outlet } from "react-router-dom";
+import NavMenu from "Components/NavMenu.jsx";
+import React from "react";
 
-//maps the module to a key value which will be module id sent from the server
-function mapModules(modules){
-  let moduleMap = new Map();
-
-  for (let i = 0; i < modules.length; i++) {
-    //Map key = moduleID item moduleObject
-    moduleMap.set(modules[i].prefix, modules[i]);
-  }
-
-  return moduleMap
-}
-
-//Main Body of the application
+//Main Frame of applications after the user has logged in
 export default function Content(props){
-  const [modules, setModules] = useState([]);
-  const [loaded, setLoaded] = useState(false);
-  const [index, setIndex] = useState("");//Define state for switching between modules, 0 will be replaced by a default ID
-  const navigate = useNavigate();
-
-  //Load Data on mount
-  useEffect(() => {
-    const data = fetch("http://localhost:5000/module/getactive")
-    .then( response => {
-        return response.json();
-    }).then(data => {
-      setModules(data.Values)
-    }).then(() => {
-      setLoaded(true);
-    })
-  }, []);
-
-  //Loaded initial objects
-  useEffect(() => {
-    if (loaded == true){
-    setIndex(modules[0].prefix);}
-  }, [loaded]);
-
-  //console.log(modules[0].prefix);
-
-  
-  const moduleMap = mapModules(modules);
-
-
-  //Handler function for setting up the submenu
-  const handler = (prefix) => {
-    const destination = "/" + prefix;
-    navigate(destination);
-  }
-
+ 
     return (
       <>
         <div style={{display: "flex", flexDirection:"row", flexGrow: 1}}>
-          <div className="wrapperMainNav" style={{maxWidth:"172px"}}>
-            <div style={{height: "auto",  display: "flex", justifyContent: "center"}}>
-                <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
-            </div>
-            {modules.map(module  => <button className="mainNavItem" onClick={e => handler(module.prefix)} key={module.prefix}><p>{module.displayName}</p></button>)}
-          </div>
-        
-          <div className="flexBoxRowGrow">
-            {(loaded == false)? <p>Loading modules...</p> : <Outlet /> }
+          <NavMenu modules={props.modules} />
+        <div className="flexBoxRowGrow">
+            {(props.modules)? <Outlet /> : <p>Loading Modules...</p>}
             </div>
         </div>
       </>)

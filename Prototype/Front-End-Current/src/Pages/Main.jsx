@@ -2,11 +2,11 @@ import Header from "Components/Compents"
 import Content from "Content"
 import { Outlet } from "react-router-dom"
 
-export default function Main() {
+export default function Main(props) {
     return(
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
             <Header />
-            <Content />
+            <Content modules={props.modules}/>
         </div>
     )
 }
