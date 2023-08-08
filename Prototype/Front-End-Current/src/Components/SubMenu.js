@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-
+import "../App.css"
 //Submenu for storing components
 //Input: Array of components {name: "string", component: function}
 //Outputs: Array of buttons
@@ -29,7 +29,7 @@ export default function SubMenu(props){
     return(
         <div className="flexBoxRowGrow">
             <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
-              {subComponents.map(e => createButton(e))}
+                {subComponents.map(e => createButton(e))}
             </div>
             <div className="flexBoxRowGrow">
                 {React.createElement(index.component)}
