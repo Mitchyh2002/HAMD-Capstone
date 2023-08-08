@@ -134,7 +134,7 @@ input:focus{
   cursor: pointer;
 }
 
-.mainNavItem:active{
+.mainNavItemActive{
   background-color: #F28F3B;
 }
 

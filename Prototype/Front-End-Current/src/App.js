@@ -1,6 +1,5 @@
 import './App.css';
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
-import Main from 'Pages/Main';
+import { BrowserRouter} from 'react-router-dom';
 import { AllRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
 
@@ -8,9 +7,9 @@ function App() {
   const [modules, setModules] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  //Load Data on mount
+  //Get all active modules from the server and store in state
   useEffect(() => {
-    const data = fetch("http://localhost:5000/module/getactive")
+    fetch("http://localhost:5000/module/getactive")
     .then( response => {
         return response.json();
     }).then(data => {

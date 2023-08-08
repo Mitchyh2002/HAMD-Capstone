@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, NavLink } from "react-router-dom";
 
 /*Main Nav Menu
     Props:
@@ -27,7 +27,10 @@ export default function NavMenu(props) {
             <div style={{height: "auto",  display: "flex", justifyContent: "center"}}>
                 <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
             </div>
-            {props.modules.map(module  => <button className="mainNavItem" onClick={e => handler(module.prefix)} key={module.prefix}><p>{module.displayName}</p></button>)}
+            {props.modules.map(module  => 
+                <NavLink className={({isActive}) => (isActive)? "mainNavItemActive" : "mainNavItem"} to={"/"+module.prefix} key={module.prefix}>
+                <p>{module.displayName}</p>
+                </NavLink>)}
         </div>
     )
 }
