@@ -28,9 +28,11 @@ def import_blueprint(app, moduleName, ModuleFile):
 
     """
     for file in ModuleFile:
-        new_blueprint = __import__(f"Program.Module.{moduleName}.{file.strip('.py')}")
+        imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
+        new_blueprint = __import__(imp_str)
         try:
-            app.register_blueprint(eval(f"new_blueprint.Module.{moduleName}.{file.strip('.py')}.blueprint"))
+            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
+            app.register_blueprint(eval(bp_str))
         except ModuleNotFoundError:
             print("Module Doesn't have Blueprint file")
 
@@ -42,7 +44,7 @@ def init_app() -> Flask:
 
     app.secret_key = '1738'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@localhost:5432/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     UPLOAD_FOLDER = '/static/img'
@@ -60,6 +62,10 @@ def init_app() -> Flask:
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
+    cwd = os.getcwd() + "\\Prototype\\Backend"
+    if os.path.exists(cwd):
+        os.chdir(os.getcwd() + "\\Prototype\\Backend")
+
     walk = next(os.walk('Program/Module'))[1]
     for moduleName in walk:
         files = next(os.walk(f'Program/Module/{moduleName}'))[1:]

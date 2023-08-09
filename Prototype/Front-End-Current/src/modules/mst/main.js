@@ -1,21 +1,13 @@
 import Upload from "./Upload";
-import test from "./test";
-import { Outlet } from "react-router-dom";
+import PluginList from "./PluginList";
 
-//Define Pages
+//Define Pages to pass to Sub Navigations
 export const pages = [{
-    name: "Upload",
+    name: "Plugins",
+    component: PluginList
+},{
+    name: "Add Plugin",
     component: Upload
-},{
-    name: "Test",
-    component: test
-},{
-    name: "Test2",
-    component: () => {
-        return(
-            <h1>LOL</h1>
-        )
-    }
 }];
 
 
