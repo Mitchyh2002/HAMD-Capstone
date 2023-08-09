@@ -2,8 +2,9 @@ from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_login import LoginManager
+from flask_login import LoginManager, UserMixin
 import os
+
 
 # DO NOT EVER CHANGE THIS Variable
 # THIS VARIABLE INITALISES A GLOBAL reload variable
@@ -44,14 +45,19 @@ def init_app() -> Flask:
 
     app.secret_key = '1738'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@localhost:5432/CapstoneTestDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://root:root@localhost:5432/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     UPLOAD_FOLDER = '/static/img'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-    login_manager.login_view = 'authentication.login'
+    login_manager.login_view = 'user.login'
     login_manager.init_app(app)
+    
+    @login_manager.user_loader
+    def load_user(userID):
+       return UserMixin.objects(userID = userID).first()
+
 
     # Allow Bootstrap in HTML Online Server.
     bootstrap = Bootstrap(app)
@@ -116,4 +122,3 @@ def reload():
     return "reloaded"
 
 application = AppReloader(init_app)
-
