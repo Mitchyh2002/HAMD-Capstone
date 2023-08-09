@@ -5,7 +5,7 @@ class Module(db.Model):
     __tablename__ = "modules"
     prefix = db.Column(db.String(3), primary_key=True)
     displayName = db.Column(db.String)
-    moduleKey = db.Column(db.CHAR(32))
+    moduleKey = db.Column(db.CHAR(60))
     status = db.Column(db.Boolean)
     logo = db.Column(db.String(20))
 
@@ -56,10 +56,11 @@ def JSONtoModule(JSON):
 
     try:
         created_module = Module()
-        created_module.prefix = JSON["prefix"]
+        created_module.prefix = JSON.get["prefix"]
         created_module.displayName = JSON["displayName"]
         created_module.moduleKey = JSON["moduleKey"]
         created_module.status = JSON["status"]
+        created_module.logo = JSON.get("logo")
     except KeyError:
         return on_error(1, "JSON Missing Import Keys, Please confirm that all values are correct")
 

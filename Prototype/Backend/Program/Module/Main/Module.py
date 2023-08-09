@@ -186,11 +186,14 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     """
     if os.path.exists(f"{temp_dir}\Main.js") == False:
         return on_error(15, "Front-End Missing Main.js file")
-
+    imports = []
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
         pattern = r'(?<=export default function ).*(?=\()'
         functionName = re.findall(pattern, content)[0]
+        pattern_2 = fr'(?<=const ){module_name}_pages(?= )'
+        page_name = re.findall(pattern, content)
+        imports = ", ".join([functionName, page_name])
         if functionName is None:
             return on_error(14, "Cannot Find Default Export Function Name in main.js file")
         if f"{module_name}_" not in functionName:
@@ -225,7 +228,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 last_pos = i
             i = i + 1
         if not update:
-            module_definitions.insert(import_pos, f'import {functionName} from "./modules/{module_name}/main.js";')
+            module_definitions.insert(import_pos, 'import {'+imports+'}from "./modules/'+module_name+'/main.js";')
             module_definitions[last_pos] = module_definitions[last_pos] + ","
             module_definitions.insert(last_pos + 1, f"    {module_name}: {functionName}") # LEAVE 4 SPACES FOR SYNTAX :3
             new_content = re.sub(pattern, '', content)
@@ -381,7 +384,7 @@ def upload_module():
 
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
-        if dl_file.content_length == 0:
+        if dl_file.filename == '':
             return on_error(17, 'No Module Uploaded, please Upload a File')
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values.get('displayName')
