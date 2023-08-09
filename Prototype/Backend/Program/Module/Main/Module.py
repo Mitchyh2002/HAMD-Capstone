@@ -2,6 +2,7 @@ import os.path
 import subprocess
 
 from flask import Blueprint, render_template, request, session, redirect, url_for
+from flask_login import login_required
 import time
 import zipfile
 import shutil
@@ -134,6 +135,7 @@ def QueryInsertModule(new_module: Module, test=False):
     db.session.commit()
 
 @blueprint.route('/getactive')
+@login_required
 def get_active_plugins():
     '''
     Get Request that returns all active modules.
@@ -166,6 +168,7 @@ def get_all_plugins():
     return [Module.toJSON(True) for Module in Module.query.all()]
 
 @blueprint.route('/')
+@login_required
 def Hello_World():
     return "<h1> Hello World </h1>"
 
@@ -313,6 +316,7 @@ def get_module(prefix):
     return Modules
 
 @blueprint.route('updatereference')
+@login_required
 def update_module_ref():
     """ API Endpoint to update display name & Logo for database
 
@@ -351,6 +355,7 @@ def activate_module():
     db.session.commit()
 
 @blueprint.route('deactivate')
+@login_required
 def deactivate_module():
     from Program import db
     modulePrefix = request.values.get('prefixName')
@@ -361,6 +366,7 @@ def deactivate_module():
 
 
 @blueprint.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
