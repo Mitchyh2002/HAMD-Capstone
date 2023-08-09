@@ -23,9 +23,10 @@ export default function Upload(props){
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
+        const method = (document.getElementById("update").checked? "UPDATE" : "POST")
 
         fetch("http://localhost:5000/module/upload", {
-            method: "POST",
+            method: method,
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {
@@ -51,7 +52,7 @@ export default function Upload(props){
     return(
         <div style={{display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1"}}>
         <div className="flexBoxColumnGrow" style={{padding: "32px", maxWidth: "500px"}}>
-            <div className="subNavHighlight" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px"}}>
+            <div className="subNav" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px"}}>
                 <h3>Add Plugin</h3>
             </div>
             <form id="upload">
@@ -79,6 +80,8 @@ export default function Upload(props){
                     <p> </p>
                 )}
                 </div>
+                <label>Update?</label>
+                <input type="checkbox" id="update" />
             </form>
             <div className="flexBoxRowGrow" style={{justifyContent: "center"}}>
                 <button className="primaryButton" onClick={uploadPlugin}>Submit</button>

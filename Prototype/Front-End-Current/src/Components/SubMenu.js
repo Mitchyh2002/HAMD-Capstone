@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { Directory } from "moduleDefs";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
 import "../App.css"
 
 /*Sub Menu
@@ -14,6 +14,8 @@ export default function SubMenu(props){
     //Extract sub components from directory
     const subComponents = Directory[props.prefix];
     console.log(props.prefix);
+    console.log("Matchiong Path")
+    console.log(useMatch({path: "mst", exact: false}))
 
     //Creates the navlinks objects
     //Input: function
@@ -21,9 +23,7 @@ export default function SubMenu(props){
     function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <NavLink className={({isActive}) => isActive? "subNavHighlight" : "navButton"} to={props.prefix + "/" + component.name}>
-                    {component.name}
-                </NavLink>
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={props.prefix + "/" + component.name} name={component.name} />
             </div>
         )
     }
@@ -31,11 +31,36 @@ export default function SubMenu(props){
     return(
         <>
             {subComponents&&
-                <div className="flexBoxRowGrow">
                     <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
                         {subComponents.map(component => createNavLinks(component))}
-                    </div>
-                </div>}
+                    </div>}
         </>
     )
+}
+
+/*
+    Sub Nav Button
+    Links to a given location, know when it is active and changes classes accrodingly
+    Props:
+        to: Link destination
+        name: Text to display
+        activeClass: Name of the active class name to display
+        passiveClass: Name of the passive(inactive) class to display
+*/
+
+function SubNavButton(props) {
+    const navigate = useNavigate();
+    const href = useHref();
+    let sanatizedTo = encodeURI(props.to);
+    const regEx = "\/" + sanatizedTo.replaceAll("\/", "\\\/");
+    const active = (RegExp(regEx).exec(href) != null);
+
+    const handleClick = () => {
+        navigate(props.to);
+    }
+
+    return(
+        <button onClick={handleClick} className={(active)? props.activeClass: props.passiveClass}>{props.name}</button>
+    )
+
 }
