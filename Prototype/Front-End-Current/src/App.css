@@ -1,77 +1,166 @@
 /*Fonts*/
 body{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
 }
 
 h1{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 80px;
 }
 
 h2{
-  font-family: "merriweather";
-  font-size: 40px;
+  font-family: 'Merriweather', serif;
+  font-size: 60px;
 }
 
 h3{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 30px;
+  font-weight: normal;
 }
 
 h4{
-  font-family: "merriweather";
+  font-family: 'Merriweather', serif;
   font-size: 25px;
   font-weight: bold;
 }
 
 form{
-  font-family: "lato";
-  font-size: 25px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  padding: 20px 0px;
 }
 
 body{
-  font-family: "lato";
-  font-size: 18px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
 }
 
 /*Containers*/
-
+/*Header CSS*/
 .header{
+  box-sizing: border-box;
   background-color: #92B4EC;
+  width: 100%;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  box-shadow: 0 0 10px 0 grey;
+}
+
+header {
+  min-height: 50px;
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+header * {
+  display: inline;
+}
+
+header li a {
+  color: #000000;
+  text-decoration: none;
+  transition: all 0.3s ease 0s;
+  padding-right: 20px;
+}
+
+header li a:hover {
+  color: white;
+}
+
+/* Header Logo */
+.bee-logo{
+  padding-left: 10px;
+  width: 45px;
+  object-fit: contain;
+  cursor: pointer;
+  margin-right: auto;
+}
+
+/* Main Nav Css */
+.wrapperMainNav{
+  background-color: rgba(242, 143, 59, 0.5);
+  display: flex;
+  align-content: center;
+  border-radius: 0px 20px 0px 0px;
+  flex-direction: column;
+  padding-top: 5px;
   flex: 1;
 }
 
-.subNav{
-  background-color: #FFE69A;
-  opacity: 50%;
+.mainNavItem{
+  background-color: rgba(242, 143, 59, 0.0);
+  border: none;
+  height: 110px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
 }
 
-.subNavHighlight{
-  background-color: #FFE69A;
-}
-
-/*Buttons*/
-.primaryButton{
-  width: 400px;
-  height: 70px;
-  font-family: "lato";
-  font-size: 30px;
-  border-radius: 20px;
+.mainNavItem:hover{
   background-color: #F28F3B;
   cursor: pointer;
+}
+
+.mainNavItem:active{
+  background-color: #F28F3B;
+}
+
+/* SubNav CSS */
+.subNavBar{
+  background-color: rgba(255,230,154, .4);
+  align-items: center;
+  border-radius: 0px 20px 0px 0px;
+  margin-top: 50px;
+}
+
+.subNav {
+  background-color: #FFE69A;
+}
+
+.subNavHighlight {
+  background-color: #FFE69A;
+}
+
+.navButton{
+  width: 160px;
+  height: 60px;
+  font-size: 15px;
+  border: none;
+  font-family: 'Lato', sans-serif;
+  display: "flex";
+  align-items: center;
+  color: black;
+  background-color: rgba(255,230,154, .1);
+  cursor: pointer;
+}
+
+.navButton:hover{
+  background-color: rgba(255,230,154, 1);
+  border-radius: 0px 20px 0px 0px;
+}
+
+/* Buttons */
+.primaryButton{
+  width: 250px;
+  height: 50px;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  border-radius: 20px;
+  background-color: rgba(242, 143, 59, .7);
+  cursor: pointer;
   border: 1px;
+  text-shadow: 1.3px 1.3px #C0A080;
 }
 
 .primaryButton:hover{
-  border:  3px black solid;
+  background-color: rgba(242, 143, 59, 1);
 }
 
 .secondaryButton{
   width: 400px;
   height: 70px;
-  font-family: "lato";
+  font-family: 'Lato', sans-serif;
   font-size: 30px;
   border-radius: 20px;
   background-color: #F28F3B;
@@ -83,18 +172,21 @@ body{
   color: #000000;
   width: 230px;
   height: 40px;
-  font-family: "lato";
-  font-size: 20px;
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
   border-radius: 20px;
-  background-color: #92B4EC;
-  opacity: 70%;
+  background-color: rgba(146, 180, 236, .7);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/*Inputs*/
+.formButton:hover{
+  background-color: rgba(146, 180, 236, 1);
+}
+
+/* Inputs */
 input{
   border-top: none;
   border-left: none;
@@ -108,7 +200,7 @@ input:focus{
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 3px solid;
+  border-bottom: 2px solid;
 }
 
 /*Main Nav Css*/
@@ -134,7 +226,7 @@ input:focus{
   cursor: pointer;
 }
 
-.mainNavItem:active{
+.mainNavItemActive{
   background-color: #F28F3B;
 }
 

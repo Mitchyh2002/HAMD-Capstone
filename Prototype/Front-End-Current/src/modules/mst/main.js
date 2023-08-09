@@ -1,21 +1,21 @@
 import Upload from "./Upload";
-import SubMenu from "Components/SubMenu";
-import test from "./test";
+import PluginList from "./PluginList";
 
 //Define Pages to pass to Sub Navigations
-const navItems = [{
-    name: "Upload Module",
-    component: Upload
+export const pages = [{
+    name: "Plugins",
+    component: PluginList
 },{
-    name: "Test",
-    component: test
+    name: "Add Plugin",
+    component: Upload
 }];
+
 
 
 export default function mst_master(){
     return(
         <div className="flexBoxRowGrow">
-            <SubMenu subComponents = {navItems}/>
+            <Upload />
         </div>
     )
 }
