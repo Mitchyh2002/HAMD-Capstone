@@ -14,6 +14,7 @@ from os import mkdir
 from re import search
 
 from Program.DB.Models.master.Modules import Module, create_module
+from Program.DB.Models.master.User import PasswordHash
 
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
@@ -95,7 +96,7 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
             for line in lines:
                 line = line.split(":")
                 if len(line) == 2:
-                    keys[line[0]] = line[1]
+                    keys[line[0]] = PasswordHash.new(line[1])
                 else:
                     on_error(21, "keys.txt lines be in the following format {moduleprefix}:{modulepassword}")
 
@@ -397,7 +398,6 @@ def upload_module():
         ModulePass = request.values.get('modulePass')
         if '' in [DisplayName, ModulePass]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
-        # TODO When User Auth Done, Encrypt module pass
         module = get_module(modulename)
 
         if module != [] and not update:
