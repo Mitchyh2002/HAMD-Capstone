@@ -18,7 +18,7 @@ def create_db(modules=None):
         None
     '''
 
-    url = f"postgresql+psycopg2://root:root@127.0.0.1:5432/CapstoneTestDB"
+    url = f"postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB"
 
     if modules is not None:
         engine = create_engine(url)

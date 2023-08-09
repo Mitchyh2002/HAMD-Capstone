@@ -123,7 +123,7 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
         return 0
 
 
-def QueryInsertModule(new_module: Module, test=False):
+def QueryInsertModule(new_module: Module):
 
     """ Function to Improt Module into DB
         if Module exists delete itself if gotten this far into system
@@ -136,7 +136,6 @@ def QueryInsertModule(new_module: Module, test=False):
     db.session.commit()
 
 @blueprint.route('/getactive')
-@login_required
 def get_active_plugins():
     '''
     Get Request that returns all active modules.
@@ -169,7 +168,6 @@ def get_all_plugins():
     return [Module.toJSON(True) for Module in Module.query.all()]
 
 @blueprint.route('/')
-@login_required
 def Hello_World():
     return "<h1> Hello World </h1>"
 
@@ -194,13 +192,14 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
         pattern = r'(?<=export default function ).*(?=\()'
-        functionName = re.findall(pattern, content)[0]
-        pattern_2 = fr'(?<=const ){module_name}_pages(?= )'
-        page_name = re.findall(pattern, content)
-        imports = ", ".join([functionName, page_name])
+        functionName = re.findall(pattern, content)
         if functionName is None:
             return on_error(14, "Cannot Find Default Export Function Name in main.js file")
-        if f"{module_name}_" not in functionName:
+        pattern_2 = fr'(?<=const ){module_name}_pages(?= )'
+        page_name = re.findall(pattern_2, content)
+        imports = ", ".join(functionName + page_name)
+
+        if f"{module_name}_" not in functionName[0]:
             return on_error(10, "Module Name not in main Front-End Function Name")
 
     os.chdir("../")
@@ -213,11 +212,12 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     # Write new Module Def Files
     with open(front_end_dir + r".\\moduledefs.js", "r") as file:
         content = file.read()
-        imports = ""
         pattern = r"\/\/REGEX_START\n([\s\S]*?)\/\/REGEX_END"
         module_definitions = re.search(pattern, content).group(1)
         module_definitions = module_definitions.splitlines()
         i = 0
+        module_flag = False
+        Directory_flag = False
         for line in module_definitions:
             if update and module_name in line:
                 pattern = "(?<=import ).*(?= from)"
@@ -228,13 +228,29 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                     break
             if line == '//IMPORT_END':
                 import_pos = i
+
+            if line == "export const Modules = {":
+                module_flag = True
+            if line == "export const Directory = {":
+                Directory_flag = True
             if line == '}':
-                last_pos = i
+                if module_flag == True:
+                    module_last_pos = i
+                    module_flag = False
+                if Directory_flag == True:
+                    directory_last_pos = i + 1
+
+
             i = i + 1
         if not update:
-            module_definitions.insert(import_pos, 'import {'+imports+'}from "./modules/'+module_name+'/main.js";')
-            module_definitions[last_pos] = module_definitions[last_pos] + ","
-            module_definitions.insert(last_pos + 1, f"    {module_name}: {functionName}") # LEAVE 4 SPACES FOR SYNTAX :3
+            if page_name != []:
+                page_name = page_name[0]
+            module_definitions.insert(import_pos, 'import { '+imports+' } from "./modules/'+module_name+'/main.js";')
+            module_definitions[module_last_pos] = module_definitions[module_last_pos] + ","
+            module_definitions.insert(module_last_pos + 1, f"    {module_name}: {functionName[0]}")
+            module_definitions[directory_last_pos] = module_definitions[directory_last_pos] + ","
+            module_definitions.insert(directory_last_pos + 1, f"    {module_name}: {page_name}")
+            # LEAVE 4 SPACES FOR SYNTAX :3
             new_content = re.sub(pattern, '', content)
             new_content = new_content
             module_definitions.append("//REGEX_END")
@@ -317,7 +333,6 @@ def get_module(prefix):
     return Modules
 
 @blueprint.route('updatereference')
-@login_required
 def update_module_ref():
     """ API Endpoint to update display name & Logo for database
 
@@ -356,7 +371,6 @@ def activate_module():
     db.session.commit()
 
 @blueprint.route('deactivate')
-@login_required
 def deactivate_module():
     from Program import db
     modulePrefix = request.values.get('prefixName')
@@ -367,7 +381,6 @@ def deactivate_module():
 
 
 @blueprint.route('/upload', methods=['GET', 'POST'])
-@login_required
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
