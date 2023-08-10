@@ -16,25 +16,18 @@ TESTING = True
 def login():
     input = request.values
     inputPass = input.get('password')
-    inputHash = PasswordHash.new(inputPass)
-    print(inputHash.hash)
+    inputBytes = inputPass.encode('utf-8')
     inputEmail = input.get('email')
     user = QuerySelectUser(inputEmail)
-    if inputHash.__eq__(inputHash):
-        print("test1")
-    password2 = inputPass.encode('utf-8')
-    if inputHash.__eq__(password2):
-        print("test3")
-    print(user.passwordHash.hash)
-    testPassword = Password()
-    inputTest = testPassword._convert(inputHash)
-    storedTest = testPassword._convert(user.passwordHash.hash)
-    if storedTest.__eq__(inputTest):
-        print("input test 4")
-    if user.passwordHash.hash == inputHash.hash:
+    storedHash = user.passwordHash.hash[2:-1]
+    storedHash = storedHash.encode('utf-8')
+    print(storedHash)
+    print(inputBytes)
+    if bcrypt.checkpw(inputBytes, storedHash):
+        print("test 7")
         print("great success")
         login_user(user)
-        return on_success(User.toJSON(True))
+        return on_success(user.toJSON(True))
     elif inputEmail == "" or inputEmail is None:
         return on_error(10,"Email is empty, please enter your email.")
     #elif inputHash == "" or inputHash is None:
