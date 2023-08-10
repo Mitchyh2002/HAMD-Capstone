@@ -1,11 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import MOCK_DATA from "./MOCK_DATA.json";
 import "./PluginList.css";
 
 export default function PluginList() {
 
-    console.log(MOCK_DATA);
+    /* Setting the state for the modal */
+    const [modal, setModal] = useState(false);
+    const toggleModal = () => {
+        setModal(!modal);
+    }
+
+    /* Getting the data from the MOCK_DATA file */
     const data = useMemo(() => MOCK_DATA, []);
     const columns = useMemo(() => [  
     {
@@ -20,9 +26,6 @@ export default function PluginList() {
     },{
         Header: "Date Added",
         accessor: "date_added",
-    },{
-        Header: "Action",
-        accessor: "action",
     }
     ], []);
 
@@ -30,37 +33,74 @@ export default function PluginList() {
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
     return(
-    <div className="pluginPage">
-        <h2>Plugins</h2>
-            <div className="pluginTable">
-                <table {...getTableProps()}>
-                    <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <th{...column.getHeaderProps()}>
-                                    {column.render("Header")}
-                                </th>
+        <>
+            <div className="pluginPage">
+                <h2>Plugins</h2>
+                    <div className="pluginTable">
+                        <table {...getTableProps()}>
+                            <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map((column) => (
+                                        <th{...column.getHeaderProps()}>
+                                            {column.render("Header")}
+                                        </th>
+                                    ))}
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
                             ))}
-                        </tr>
-                    ))}
-                    </thead>
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row)
-                                return (
-                                    <tr{...row.getRowProps()}>
-                                        {row.cells.map((cell) => (
-                                            <td className="pluginTableCell"{...cell.getCellProps()}>
-                                                {cell.render("Cell")}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                </table>
+                            </thead>
+                                <tbody {...getTableBodyProps()}>
+                                    {rows.map((row) => {
+                                        prepareRow(row)
+                                        return (
+                                            <tr{...row.getRowProps()}>
+                                                {row.cells.map((cell) => (
+                                                    <td className="pluginTableCell"{...cell.getCellProps()}>
+                                                        {cell.render("Cell")}
+                                                    </td>
+                                                ))}
+                                                <td>
+                                                    <button onClick={toggleModal} className="btn-modal">
+                                                            Edit
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                        </table>
+                    </div>
             </div>
-    </div>
-    )
-};
+            {modal && (
+                <div className="modal">
+                    <div onClick={toggleModal} className='overlay'></div>
+                    <div className='modal-content'>
+                        <button className='close-modal' onClick={toggleModal}>
+                            x
+                        </button>
+                        <h4 className='modal-heading'>Edit</h4>
+                        <form>
+                            <label className='modal-label'>Edit plugin name:
+                                <input className='modal-input' type="text" />
+                            </label>
+                            <input className='confirm-button' type="submit" />
+                        </form>
+                        <br></br>
+                        <br></br>
+                        <button className='confirm-button' onClick={toggleModal}>
+                            Confirm Changes
+                        </button>
+                        <button className='cancel-button' onClick={toggleModal}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+        </>
+        )
+    };
+    
+    

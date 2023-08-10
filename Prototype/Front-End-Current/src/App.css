@@ -78,7 +78,7 @@ header li a:hover {
   margin-right: auto;
 }
 
-/* Main Nav Css */
+/*Main Nav Css*/
 .wrapperMainNav{
   background-color: rgba(242, 143, 59, 0.5);
   display: flex;
@@ -93,7 +93,7 @@ header li a:hover {
   background-color: rgba(242, 143, 59, 0.0);
   border: none;
   height: 110px;
-  font-family: 'Lato', sans-serif;
+  font-family: "lato";
   font-size: 20px;
 }
 
@@ -102,7 +102,7 @@ header li a:hover {
   cursor: pointer;
 }
 
-.mainNavItem:active{
+.mainNavItemActive{
   background-color: #F28F3B;
 }
 
@@ -118,7 +118,8 @@ header li a:hover {
   background-color: #FFE69A;
 }
 
-.subNavHighlight {  width: 160px;
+.subNavHighlight {  
+  width: 160px;
   height: 60px;
   font-size: 15px;
   border: none;
@@ -218,33 +219,6 @@ input:focus{
   border-left: none;
   border-right: none;
   border-bottom: 2px solid;
-}
-
-/*Main Nav Css*/
-.wrapperMainNav{
-  background-color: rgba(242, 143, 59, 0.5);
-  display: flex;
-  align-content: center;
-  border-radius: 0px 20px 0px 0px;
-  flex-direction: column;
-  flex: 1;
-}
-
-.mainNavItem{
-  background-color: rgba(242, 143, 59, 0.0);
-  border: none;
-  height: 110px;
-  font-family: "lato";
-  font-size: 20px;
-}
-
-.mainNavItem:hover{
-  background-color: #F28F3B;
-  cursor: pointer;
-}
-
-.mainNavItemActive{
-  background-color: #F28F3B;
 }
 
 /*alignment*/
