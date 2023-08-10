@@ -83,7 +83,7 @@ export default function PluginList() {
                         </button>
                         <h4 className='modal-heading'>Edit</h4>
                         <form>
-                            <label className='modal-label'>Edit plugin name:
+                            <label className='modal-label'>Change display name:
                                 <input className='modal-input' type="text" />
                             </label>
                             <input className='confirm-button' type="submit" />

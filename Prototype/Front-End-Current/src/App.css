@@ -111,7 +111,7 @@ header li a:hover {
   background-color: rgba(255,230,154, .4);
   align-items: center;
   border-radius: 0px 20px 0px 0px;
-  margin-top: 50px;
+  margin-top: 52.5px;
 }
 
 .subNav {
@@ -169,6 +169,7 @@ header li a:hover {
   cursor: pointer;
   border: 1px;
   text-shadow: 1.3px 1.3px #C0A080;
+  transition: all 0.3s ease 0s;
 }
 
 .primaryButton:hover{
@@ -184,12 +185,13 @@ header li a:hover {
   background-color: #F28F3B;
   opacity: 50%;
   cursor: pointer;
+  transition: all 0.3s ease 0s;
 }
 
 .formButton{
   color: #000000;
-  width: 230px;
-  height: 40px;
+  width: 150px;
+  height: 35px;
   font-family: 'Lato', sans-serif;
   font-size: 16px;
   border-radius: 20px;
@@ -198,6 +200,7 @@ header li a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease 0s;
 }
 
 .formButton:hover{

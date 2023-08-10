@@ -56,13 +56,13 @@ export default function Upload(props){
                 <h3>Add Plugin</h3>
             </div>
             <form id="upload">
-                <div style={{display: "flex", flexDirection: "column", rowGap:"8px"}}>
+                <div style={{display: "flex", flexDirection: "column", rowGap:"8px" }}>
                 {(success == true)? <p>Your files has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
                 <label>Module Prefix</label>
                 <input className="uploadInput" type="text" id="prefixName" name="prefixName" />
                 <label>Plugin Display Name</label>
                 <input className="uploadInput" type="text" id="pluginDisplayName" name="displayName" />
-                <div className="flexBoxRow" style={{justifyContent: "space-between"}}>
+                <div style={{justifyContent:"space-between"}} className="flexBoxRowGrow">
                     <label>Module Code</label>
                     <div className="formButton" onClick={handleFileClick}>
                         <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
