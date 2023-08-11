@@ -10,7 +10,7 @@ from Program.ResponseHandler import on_error
 class PasswordHash(object):
     def __init__(self, hash_):
         #assert len(self.hash) == 60, 'bcrypt hash should be 60 chars.'
-        #ssert self.hash.count(b'$'), 'bcrypt hash should have 3x "$".'
+        assert self.hash.count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
         self.rounds = int(self.hash.split('$')[2])
 
@@ -84,10 +84,19 @@ class User(UserMixin, db.Model):
             return {"userID": self.userID,
                     "email": self.email.strip(),
                     "firstName": self.firstName.strip()}
+        if self.phoneNumber is None:
+            return {
+            "userID": self.userID,
+            "email": self.email.strip(),
+            "firstName": self.firstName.strip(),
+            "passwordHash": self.passwordHash,
+            "dateOfBirth": self.dateOfBirth.strip()
+        }
+
         return {
             "userID": self.userID,
             "email": self.email.strip(),
-            #"phoneNumber": self.phoneNumber.strip(),
+            "phoneNumber": self.phoneNumber.strip(),
             "firstName": self.firstName.strip(),
             "passwordHash": self.passwordHash,
             "dateOfBirth": self.dateOfBirth.strip()
@@ -136,7 +145,11 @@ def JSONtoUser(JSON):
         passwordHash = PasswordHash.new(JSON.get('password'))
         dateOfBirth = JSON.get('dateOfBirth')
         phoneNumber = JSON.get('phoneNumber')
-        created_user = create_user(email, firstName, passwordHash, dateOfBirth)
+
+        if phoneNumber is None or phoneNumber == "":
+            created_user = create_user(email, firstName, passwordHash, dateOfBirth)
+        else:
+            created_user = create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber)
     except KeyError:
         return on_error(1, "JSON Missing Import Keys, Please confirm that all values are correct")
 
