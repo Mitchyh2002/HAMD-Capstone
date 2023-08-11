@@ -107,11 +107,16 @@ header li a:hover {
 }
 
 /* SubNav CSS */
+.subNavContainer{
+  display: flex;
+  flex-direction: column;
+}
+
 .subNavBar{
   background-color: rgba(255,230,154, .4);
   align-items: center;
   border-radius: 0px 20px 0px 0px;
-  margin-top: 52.5px;
+  margin-top: 12.8px;
 }
 
 .subNav {
@@ -222,6 +227,32 @@ input:focus{
   border-left: none;
   border-right: none;
   border-bottom: 2px solid;
+}
+
+/* Breadcrumb Nav CSS */ 
+.breadcrumbs{
+  max-width: 1200px;
+}
+
+.breadcrumbs > *{
+  display: inline-block;
+  margin-left: 10px;
+  margin-top: 20px;
+}
+
+.breadcrumbs .crumb:after{
+  content: '>';
+  margin-left: 10px;
+}
+
+.breadcrumbs .crumb:last-child:after{
+  display: none;
+}
+
+.breadcrumbs .crumb a{
+  color: black;
+  text-decoration: none;
+  font-family: 'Lato', sans-serif;
 }
 
 /*alignment*/

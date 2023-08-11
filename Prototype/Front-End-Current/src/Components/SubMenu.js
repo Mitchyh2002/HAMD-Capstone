@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Directory } from "moduleDefs";
 import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
 import "../App.css"
+import Breadcrumbs from "Components/Breadcrumbs.js";
 
 /*Sub Menu
     Description: SubMenu for all sub components of and corresponding links based on the values defined in modulesDefs.js
@@ -30,10 +31,15 @@ export default function SubMenu(props){
 
     return(
         <>
-            {subComponents&&
-                    <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
-                        {subComponents.map(component => createNavLinks(component))}
-                    </div>}
+            <div className="subNavContainer">
+            <div>
+                <Breadcrumbs />
+            </div>
+                {subComponents&&
+                        <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
+                                {subComponents.map(component => createNavLinks(component))}
+                        </div>}
+            </div>
         </>
     )
 }
