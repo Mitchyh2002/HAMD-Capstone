@@ -5,8 +5,8 @@ class UserAddress(db.Model):
     __tablename__ = "userAddress"
     addressID = db.Column(db.Integer, primary_key = True)
     userID = db.Column(db.Integer, db.ForeignKey("user.userID"))
-    addressLine1 = db.Column(db.String)
-    addressLine2 = db.Column(db.String)
+    #addressLine1 = db.Column(db.String)
+    #addressLine2 = db.Column(db.String)
     suburb = db.Column(db.String, nullable = False)
     postCode = db.Column(db.String, nullable = False)
 
@@ -27,8 +27,8 @@ class UserAddress(db.Model):
         return {
             "locationID": self.locationID,
             "userID": self.userID,
-            "addressLine1": self.addressLine1,
-            "addressLine2": self.addressLine2,
+            #"addressLine1": self.addressLine1,
+            #"addressLine2": self.addressLine2,
             "suburb": self.suburb,
             "postcode": self.postCode
         }
@@ -42,8 +42,8 @@ def create_userAddress(userID, suburb, postCode, addressLine1=None, addressLine2
     created_userAddress.userID = userID
     created_userAddress.suburb = suburb
     created_userAddress.postCode = postCode
-    created_userAddress.addressLine1 = addressLine1
-    created_userAddress.addressLine2 = addressLine2
+    #created_userAddress.addressLine1 = addressLine1
+    #created_userAddress.addressLine2 = addressLine2
 
     return created_userAddress
 
@@ -62,8 +62,8 @@ def JSONtoUserAddress(JSON):
         created_userAddress = UserAddress()
         created_userAddress.locationID = JSON["locationID"]
         created_userAddress.userID = JSON["userID"]
-        created_userAddress.addressLine1 = JSON["addressLine1"]
-        created_userAddress.addressLine2 = JSON["addressLine2"]
+        #created_userAddress.addressLine1 = JSON["addressLine1"]
+        #created_userAddress.addressLine2 = JSON["addressLine2"]
         created_userAddress.suburb = JSON["suburb"]
         created_userAddress.postCode = JSON["postCode"]
     except KeyError:

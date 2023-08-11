@@ -45,7 +45,7 @@ export default function Login(props) {
         <div>
             <form id="inputs">
                 <label>Username</label>
-                <input name="user"></input>
+                <input name="email"></input>
                 <label>Password</label>
                 <input name="password"></input>
             </form>
