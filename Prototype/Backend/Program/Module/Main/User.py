@@ -1,4 +1,5 @@
 import bcrypt
+import jwt
 
 from datetime import datetime
 from flask import Blueprint, request
@@ -38,8 +39,9 @@ def login():
             storedHash = user.passwordHash.hash[2:-1]
             storedHash = storedHash.encode('utf-8')
             if bcrypt.checkpw(inputBytes, storedHash):
+                user.set_id()
                 login_user(user)
-                return on_success(user.toJSON(True))
+                return on_success(user.get_id())
             else:
                 return on_error(21, "Password is incorrect, please try again.")
             
@@ -48,6 +50,7 @@ def login():
 @blueprint.route('/logout', methods=['POST'])
 @login_required
 def logout():
+    current_user.del_id()
     logout_user()
     return on_success("User has successfully been logged out")
 
@@ -60,7 +63,6 @@ def register():
     inputFirstName = input.get('firstName')
     inputDateOfBirth = input.get('dateOfBirth')
     inputPhoneNumber = input.get('phoneNumber')
-
     # Validating Required Inputs
     if inputEmail == "" or inputEmail is None:
         return on_error(10,"Email is empty, please enter your email.")
@@ -92,7 +94,8 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
-    return on_success(user.toJSON())
+    return on_success('200')
+
 
 def emailIsValid(email):
     if ((email.count('@') != 1) | (email.count('.') == 0)):
