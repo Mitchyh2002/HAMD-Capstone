@@ -19,22 +19,22 @@ def get_all_groups():
     return on_success([group.toJSON() for group in Group.query.all()])
 
 
-@blueprint.route('/', methods=['GET', 'POST'])
+@blueprint.route('/', methods=['GET', 'POST', 'DELETE'])
 def base_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Group Information (see get_group function)
         IF Request is a POST Request - Create a New Group  (see create_group function)
         Any other requests will return a -1 errore.
     '''
-    if request.method not in ['GET', 'POST']:
-        return on_error(-1, "Incorrect Request Type, request should be POST")
-    elif request.method == 'GET':
+    if request.method == 'GET':
         groupID = request.values.get("groupID")
         if groupID == None:
             return on_error(3, "group ID value no Specified")
         return get_group(groupID)
     elif request.method == 'POST':
         return new_group(request.values)
+    elif request.method == 'DELETE':
+        return remove_group(request.values)
 
 def get_group(groupID):
     ''' Return Group Details for a given group.
@@ -73,17 +73,22 @@ def new_group(inputs):
     return on_success({"group":group_generated.toJSON(),
                        "users": users,
                        "modules": modules})
+def remove_group(inputs):
+    groupID = inputs.get("groupID")
+    if groupID is None:
+        on_error(3, "Group ID is Not Specified")
 
+    Group.query.filter_by(groupID=groupID).delete()
+    db.session.commit()
+    return on_success([])
 
-@blueprint.route('/modules', methods=['GET', 'POST'])
+@blueprint.route('/modules', methods=['GET', 'POST', 'DELETE'])
 def modules_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Modules assigned to a given group (see get_group_modules function)
         IF Request is a POST Request - Add Module/Modules to a group  (Assign a Module to A group add_group_modules function)
         Any other requests will return a -1 error.
     '''
-    if request.method not in ['GET', 'POST']:
-        return on_error(-1, "Incorrect Request Type, request should be POST")
     inputs = request.values
     groupID = inputs.get("groupID")
     if groupID == None:
@@ -97,6 +102,13 @@ def modules_route_handler():
         elif len(module_prefix) != 3:
             return on_error(3, "module_prefix must be 3 charachters long")
         return add_group_modules(groupID, module_prefix)
+    elif request.method == 'DELETE':
+        module_prefix = inputs.get("modulePrefix")
+        if module_prefix == None:
+            return on_error(3, "module_prefix Cannot Be Blank")
+        elif len(module_prefix) != 3:
+            return on_error(3, "module_prefix must be 3 charachters long")
+        return remove_group_modules(groupID, module_prefix)
 
 def get_group_modules(groupID):
     ''' Returns all Modules Assigned to a given group
@@ -125,17 +137,28 @@ def add_group_modules(groupID, module_prefix):
     new_moduleGroup = create_moduleGroup(groupID, module_prefix)
     new_moduleGroup.insert()
 
+    db.session.commit()
     return on_success(new_moduleGroup.toJSON())
 
-@blueprint.route('users', methods=['GET', 'POST'])
+def remove_group_modules(groupID, module_prefix):
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+    selected_module = Module.query.filter_by(prefix=module_prefix).first()
+    if selected_module is None:
+        return on_error(2, "Specified Module Does Not Exist")
+    # If Conn Exists Remove it
+    mouduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
+    db.session.commit()
+    return on_success([])
+
+@blueprint.route('users', methods=['GET', 'POST', 'DELETE'])
 def user_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Users assigned to a given group (see get_group_users function)
         IF Request is a POST Request - Add Users to a group  (see add_group_users function)
         Any other requests will return a -1 errore.
     '''
-    if request.method not in ['GET', 'POST']:
-        return on_error(-1, "Incorrect Request Type, request should be POST")
     inputs = request.values
     groupID = inputs.get("groupID")
     if groupID == None:
@@ -145,6 +168,9 @@ def user_route_handler():
     elif request.method == 'POST':
         userID = inputs.get("userID")
         return add_group_users(groupID, userID)
+    elif request.method == 'DELETE':
+        userID = inputs.get("userID")
+        return remove_group_users(groupID, userID)
 
 def get_group_users(groupID):
     selected_group = Group.query.filter_by(groupID=groupID).first()
@@ -165,5 +191,18 @@ def add_group_users(groupID, userID):
     userGroup.query.filter_by(groupID=groupID, userID=userID).delete()
     new_userGroup = create_userGroup(groupID, userID)
     new_userGroup.insert()
-
     return on_success(new_userGroup.toJSON())
+
+def remove_group_users(groupID, userID):
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+
+    selected_user = User.query.filter_by(userID=userID).first()
+    if selected_user is None:
+        return on_error(2, "Specified User Does Not Exist")
+    #If Conn Exists Remove it
+    userGroup.query.filter_by(groupID=groupID, userID=userID).delete()
+    db.session.commit()
+
+    return on_success([])

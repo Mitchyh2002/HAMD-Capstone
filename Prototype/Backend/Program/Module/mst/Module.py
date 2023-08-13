@@ -14,8 +14,8 @@ from os import mkdir
 from re import search
 
 from Program.DB.Models.mst.Modules import Module, create_module
-from Program.DB.Models.mst.User import PasswordHash
-
+from Program.DB.Models.mst.User import PasswordHash, User
+from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
 
@@ -166,10 +166,6 @@ def get_all_plugins():
            A List containing all modules
        '''
     return [Module.toJSON(True) for Module in Module.query.all()]
-
-@blueprint.route('/')
-def Hello_World():
-    return "<h1> Hello World </h1>"
 
 def front_end_installation(temp_dir, module_name, master_dir, update=False):
     """ mst Function to Facilitate the installation of Front End Components
@@ -332,7 +328,52 @@ def get_module(prefix):
     Modules = Module.query.filter(Module.prefix == prefix).all()
     return Modules
 
-@blueprint.route('updatereference')
+@blueprint.route('giveAccess', methods=['POST'])
+def give_user_access():
+    userID = request.values.get("userID")
+    modulePrefix = request.values.get("modulePrefix")
+    if userID is None:
+        return on_error(3, "UserID is not specified")
+    if modulePrefix is None:
+        return on_error(3, "modulePrefix is not specified")
+
+    selected_user = User.query.filter_by(prefix=userID).first()
+    selected_module = Module.query.filter_by(prefix=modulePrefix).first()
+    if selected_module == None:
+        return on_error(2, "Specified Module does Not Exist")
+    if selected_user == None:
+        return on_error(2, "Specified User does Not Exist")
+
+    #If Conn Exists Delete it
+    moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
+    created_moduleAccess = create_moduleAccess(modulePrefix, userID)
+    created_moduleAccess.insert()
+
+    return on_success(created_moduleAccess.toJSON())
+
+@blueprint.route('removeAccess', methods=['POST'])
+def remove_user_access():
+    userID = request.values.get("userID")
+    modulePrefix = request.values.get("modulePrefix")
+    if userID is None:
+        return on_error(3, "UserID is not specified")
+    if modulePrefix is None:
+        return on_error(3, "modulePrefix is not specified")
+
+    selected_user = User.query.filter_by(prefix=userID).first()
+    selected_module = Module.query.filter_by(prefix=modulePrefix).first()
+    if selected_module == None:
+        return on_error(2, "Specified Module does Not Exist")
+    if selected_user == None:
+        return on_error(2, "Specified User does Not Exist")
+
+    #If Conn Exists Delete it
+    moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
+
+    return on_success([])
+
+
+@blueprint.route('updatereference', methods=['POST'])
 def update_module_ref():
     """ API Endpoint to update display name & Logo for database
 
@@ -343,12 +384,16 @@ def update_module_ref():
     """
     from Program import db
     save_dir = os.getcwd()
-    modulePrefix = request.values.get('prefixName')
+    modulePrefix = request.values.get('modulePrefix')
     ModulePass = request.values.get('modulePass')
     displayName = request.values.get('displayName')
-    dl_file = request.files['logo']
-    old_module = Module.query.filter(Module.prefix == modulePrefix)
-    if old_module.moduleKey == ModulePass:
+    if displayName == None or ModulePass == None or modulePrefix == None:
+        return on_error(3, "Missing Key Inputs, please check request is sending correct parameters")
+    dl_file = ''
+    if len(request.files) != 0:
+        dl_file = request.files['logo']
+    old_module = Module.query.filter(Module.prefix == modulePrefix).first()
+    if old_module.moduleKey.strip() == ModulePass:
         values = {"displayName": displayName}
         if dl_file != '':
             os.chdir("../")
@@ -358,26 +403,31 @@ def update_module_ref():
         Module.query.filter(Module.prefix == modulePrefix).update(values)
         db.session.commit()
         os.chdir(save_dir) # Reset to Base CWD
+        return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
     else:
         return on_error(16, "Incorrect Module Password entered")
 
-@blueprint.route('activate')
+@blueprint.route('activate', methods=["POST"])
 def activate_module():
     from Program import db
-    modulePrefix = request.values.get('prefixName')
+    modulePrefix = request.values.get('modulePrefix')
+    if Module.query.filter(Module.prefix == modulePrefix).first() is None:
+        return on_error(3, "Specified Module Does Not Exist")
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
-
     db.session.commit()
+    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
 
-@blueprint.route('deactivate')
+@blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
-    from Program import db
-    modulePrefix = request.values.get('prefixName')
+    modulePrefix = request.values.get('modulePrefix')
+    if Module.query.filter(Module.prefix == modulePrefix).first() is None:
+        return on_error(3, "Specified Module Does Not Exist")
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=False))
 
     db.session.commit()
+    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
 
 
 @blueprint.route('/upload', methods=['GET', 'POST', 'OPTIONS'])

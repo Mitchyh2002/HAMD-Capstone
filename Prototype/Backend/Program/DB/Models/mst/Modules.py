@@ -24,7 +24,7 @@ class Module(db.Model):
                     "displayName": self.displayName.strip()}
         return {
             "prefix": self.prefix,
-            "displayName": self.prefix.strip(),
+            "displayName": self.displayName.strip(),
             "moduleKey": self.moduleKey.strip(),
             "status": self.status
         }
