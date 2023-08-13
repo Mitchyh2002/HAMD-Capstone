@@ -1,15 +1,15 @@
 import React from "react";
 import '../App.css';
 
-export default function Header() {
+export default function Header ({ accountButton, logoutButton }) {
     return(
         <div className="header">
             <header>
                 <img className="bee-logo" src="/bee2.png" alt="logo"/>
                     <nav>
                         <ul>
-                            <li><a href="#!">Account</a></li>
-                            <li><a className="a3" href="#!">Logout</a></li>
+                            <li><a href="#!">{accountButton}</a></li>
+                            <li><a href="#!">{logoutButton}</a></li>
                         </ul>
                     </nav>
             </header>

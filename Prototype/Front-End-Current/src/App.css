@@ -217,16 +217,18 @@ input{
   border-top: none;
   border-left: none;
   border-right: none;
+  border-bottom: 1px solid black;
   font-family: "lato";
   outline: 0px;
   font-size: 20px;
+  width: 100%;
 }
 
 input:focus{
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 2px solid;
+  border-bottom: 1.5px solid;
 }
 
 /* Breadcrumb Nav CSS */ 
@@ -236,13 +238,13 @@ input:focus{
 
 .breadcrumbs > *{
   display: inline-block;
-  margin-left: 10px;
+  margin-left: 20px;
   margin-top: 20px;
 }
 
 .breadcrumbs .crumb:after{
   content: '>';
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .breadcrumbs .crumb:last-child:after{
