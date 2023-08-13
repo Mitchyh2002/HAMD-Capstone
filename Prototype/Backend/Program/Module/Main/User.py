@@ -1,5 +1,4 @@
 import bcrypt
-import jwt
 
 from datetime import datetime
 from flask import Blueprint, request
@@ -8,6 +7,7 @@ from sqlalchemy import Select
 
 from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
+from Program.Module.Main.Confirmation import generate_confirmation_token
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
@@ -85,7 +85,7 @@ def register():
         return on_error(14, "Email is already registered, would you like to sign in?")
     
     # Validating optional inputs
-    if inputPhoneNumber != "" or inputPhoneNumber is not None:
+    if inputPhoneNumber != "" and inputPhoneNumber is not None:
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user":
             return on_error(53, "Phone Number is already registered, would you like to sign in?")
@@ -94,7 +94,10 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
-    return on_success('200')
+
+    
+    token = generate_confirmation_token(user.email)
+    return on_success(token)
 
 
 def emailIsValid(email):
@@ -141,6 +144,7 @@ def QueryInsertUser(new_user: User):
         
         db.session.add(new_user)
         db.session.commit()
+
     except:
         return on_error(19, "User already in system, code failure")
     
