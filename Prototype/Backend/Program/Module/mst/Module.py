@@ -328,21 +328,6 @@ def get_module(prefix):
     Modules = Module.query.filter(Module.prefix == prefix).all()
     return Modules
 
-@blueprint.route('giveAccess', methods=['POST'])
-def give_user_access():
-    userID = request.values.get("userID")
-    modulePrefix = request.values.get("modulePrefix")
-    if userID is None:
-        return on_error(3, "UserID is not specified")
-    if modulePrefix is None:
-        return on_error(3, "modulePrefix is not specified")
-
-    selected_user = User.query.filter_by(prefix=userID).first()
-    selected_module = Module.query.filter_by(prefix=modulePrefix).first()
-    if selected_module == None:
-        return on_error(2, "Specified Module does Not Exist")
-    if selected_user == None:
-        return on_error(2, "Specified User does Not Exist")
 
     #If Conn Exists Delete it
     moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
@@ -351,8 +336,8 @@ def give_user_access():
 
     return on_success(created_moduleAccess.toJSON())
 
-@blueprint.route('removeAccess', methods=['POST'])
-def remove_user_access():
+@blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
+def Module_Access_Control():
     userID = request.values.get("userID")
     modulePrefix = request.values.get("modulePrefix")
     if userID is None:
@@ -360,14 +345,26 @@ def remove_user_access():
     if modulePrefix is None:
         return on_error(3, "modulePrefix is not specified")
 
-    selected_user = User.query.filter_by(prefix=userID).first()
+    selected_user = User.query.filter_by(userID=userID).first()
     selected_module = Module.query.filter_by(prefix=modulePrefix).first()
     if selected_module == None:
         return on_error(2, "Specified Module does Not Exist")
     if selected_user == None:
         return on_error(2, "Specified User does Not Exist")
 
-    #If Conn Exists Delete it
+    if request.method == 'POST':
+        moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
+        give_user_access(userID, modulePrefix)
+    else:
+        remove_user_access(userID, modulePrefix)
+
+def give_user_access(userID, modulePrefix):
+    created_module_access = create_moduleAccess(userID, modulePrefix)
+    created_module_access.insert()
+
+    return on_success(created_module_access.toJSON())
+
+def remove_user_access(userID, modulePrefix):
     moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
 
     return on_success([])
