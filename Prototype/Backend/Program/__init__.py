@@ -3,6 +3,7 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_login import LoginManager, UserMixin
+from flask_mail import Mail
 import os
 
 
@@ -40,7 +41,7 @@ def import_blueprint(app, moduleName, ModuleFile):
 
 def init_app() -> Flask:
 
-    login_manager = LoginManager()
+    # APP CONFIG
     app = Flask(__name__)
 
     app.secret_key = '1738'
@@ -51,18 +52,35 @@ def init_app() -> Flask:
     UPLOAD_FOLDER = '/static/img'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+    # LOGIN CONFIG
+    
+    login_manager = LoginManager()
     login_manager.login_view = 'user.login'
     login_manager.init_app(app)
-    
+
     @login_manager.user_loader
     def load_user(userID):
        return UserMixin.query.filter_by(token = userID).first()
+
+    # MAIL CONFIG
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USE_TLS'] = False
+    app.config['MAIL_USE_SSL'] = True
+
+    # MAIL LOGIN
+    app.config['MAIL_USERNAME'] = 'hamdcapstonetest@gmail.com'
+    app.config['MAIL_PASSWORD'] = 'HamdTestingAccount11!'
+    app.config['MAIL_DEFAULT_SENDER'] = 'hamdcapstonetest@gmail.com'
+    
+    mail = Mail(app)
     
     # Allow Bootstrap in HTML Online Server.
     bootstrap = Bootstrap(app)
 
     db.init_app(app)
     CORS(app)
+
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
@@ -118,5 +136,16 @@ def reload():
     global to_reload
     to_reload = True
     return "reloaded"
+
+
+def export_key():
+    return application.app.config["SECRET_KEY"]
+
+def export_mail_sender():
+    return application.app.config["MAIL_DEFAULT_SENDER"]
+
+def export_mail():
+    mail= Mail(application.app)
+    return mail
 
 application = AppReloader(init_app)
