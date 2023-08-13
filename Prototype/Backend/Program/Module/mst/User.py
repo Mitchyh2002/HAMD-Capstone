@@ -3,15 +3,15 @@ import bcrypt
 from datetime import datetime
 from flask import Blueprint, request
 from flask_login import current_user, login_user, logout_user, login_required
-from sqlalchemy import Select
+from sqlalchemy import select
 
 from Program import db
-from Program.DB.Models.master.User import User, JSONtoUser
+from Program.DB.Models.mst.User import User, JSONtoUser
+from Program.DB.Models.grp.userGroups import userGroup, create_userGroup
+from Program.DB.Models.grp.Groups import Group
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
-
-TESTING = True
 
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -54,7 +54,12 @@ def logout():
 @blueprint.route('/register', methods=['POST'])
 def register():
     # Fetching Inputs
-    input = request.values
+    if len(request.values) == 0:
+        if len(request.json) == 0:
+            return on_error(1, "No Values Sent to via request")
+        input = request.json
+    else:
+        input = request.values
     inputEmail = input.get('email')
     inputPass = input.get('password')
     inputFirstName = input.get('firstName')
@@ -83,7 +88,8 @@ def register():
         return on_error(14, "Email is already registered, would you like to sign in?")
     
     # Validating optional inputs
-    if uniquePhone != "" or uniquePhone is not None:
+    uniquePhone = QuerySelectUser(inputEmail, False)
+    if (uniquePhone != "" and uniquePhone is not None) or uniquePhone is not None:
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user":
             return on_error(53, "Phone Number is already registered, would you like to sign in?")
@@ -92,7 +98,10 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
+    QueryInsertGroup(1, user.email)
     return on_success(user.toJSON())
+
+
 
 def emailIsValid(email):
     if ((email.count('@') != 1) | (email.count('.') == 0)):
@@ -138,14 +147,23 @@ def QueryInsertUser(new_user: User):
         
         db.session.add(new_user)
         db.session.commit()
+
     except:
         return on_error(19, "User already in system, code failure")
-    
+
+def QueryInsertGroup(group_id, user_email):
+    user = User.query.filter_by(email=user_email).first()
+    new_userGroup = create_userGroup(group_id, user.userID)
+    #If group Conn Exists Delete it
+    existingGroup = userGroup.query.filter_by(groupID=group_id, userID=user.userID).delete()
+    db.session.add(new_userGroup)
+    db.session.commit()
+
 def QuerySelectUser(userKey: str, indicator=True):
     if indicator:
-        stmt = Select(User).where(User.email == userKey)
+        stmt = select(User).where(User.email == userKey)
     else:
-        stmt = Select(User).where(User.phoneNumber == userKey)
+        stmt = select(User).where(User.phoneNumber == userKey)
 
     user = db.session.scalar(stmt)
     return user

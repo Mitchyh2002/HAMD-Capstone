@@ -13,13 +13,13 @@ from os.path import splitext
 from os import mkdir
 from re import search
 
-from Program.DB.Models.master.Modules import Module, create_module
-from Program.DB.Models.master.User import PasswordHash
+from Program.DB.Models.mst.Modules import Module, create_module
+from Program.DB.Models.mst.User import PasswordHash
 
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
 
-#from Program.DB.Models.master.Modules import Module, create_module
+#from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
 blueprint = Blueprint('module', __name__, url_prefix="/module")
@@ -61,17 +61,18 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
         line = str(line)
         line = line.strip("b'")
         line = line.strip(r"\r\n")
-        if 'from' in line:
+        if "os." in line:
+            return on_error(11, "Restricted Module found in application")
+        elif "subproccess." in line:
+            return on_error(11, "Restricted Module found in application")
+        elif 'from' in line:
             modules.append(search(regex_dict["from"], line)[0])
         elif "__import__" in line:
             modules.append(search(regex_dict["__import__"], line)[0])
             pass
         elif "import" in line:
             modules.append(search(regex_dict["import"], line)[0])
-        elif "os." in line:
-            return on_error(11, "Restricted Module found in application")
-        elif "subproccess." in line:
-            return on_error(11, "Restricted Module found in application")
+
     if TableScan:
         pattern = rf'(?<=__tablename__ = [\'"]).*(?=[\'"])'
         matches = re.findall(pattern, '\n'.join(lines))
@@ -96,7 +97,7 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
             for line in lines:
                 line = line.split(":")
                 if len(line) == 2:
-                    keys[line[0]] = PasswordHash.new(line[1])
+                    keys[line[0]] = PasswordHash.new(line[1]).hash
                 else:
                     on_error(21, "keys.txt lines be in the following format {moduleprefix}:{modulepassword}")
 
@@ -104,6 +105,7 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
 
     with open(r'Program\templates\whitelisted_modules.txt') as whitelist:
         whitelisted_modules = whitelist.read()
+        whitelisted_modules = whitelisted_modules.splitlines()
         for module in modules:
             split_module = module.split(".")
             if "Program.DB" in module:
@@ -115,10 +117,8 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
                     module = get_module(split_module[3])
                     if module.moduleKey != module_key:
                         return on_error(11, "Restricted Module found in application, incorrect password in keys.txt")
-            else:
-                res = search(f"{split_module[0]}(?=\n)|{split_module[0]}.+(?=\n)", lines)
 
-            if res is None:
+            elif split_module[0] not in whitelisted_modules:
                 return on_error(11, "Restricted Module found in application")
         return 0
 
@@ -172,8 +172,8 @@ def Hello_World():
     return "<h1> Hello World </h1>"
 
 def front_end_installation(temp_dir, module_name, master_dir, update=False):
-    """ Main Function to Facilitate the installation of Front End Components
-        1. Confirm Main.JS exists and pull export function name
+    """ mst Function to Facilitate the installation of Front End Components
+        1. Confirm mst.JS exists and pull export function name
         2. Write the amended Moduledefs.JS file with new imports
         3. If Logo File exists rename and push to main app
         4. Push front-end files to front-end & write the module-defs file
@@ -181,13 +181,13 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     Returns None
 
     On Error:
-            Error 16 - When Updating Module, the Main.JS export function has changed, this must stay the same to protect other modules.
-            Error 15 - Main.JS Does Not Exist
-            Error 14 - Export Function Not Found in Main.JS
+            Error 16 - When Updating Module, the mst.JS export function has changed, this must stay the same to protect other modules.
+            Error 15 - mst.JS Does Not Exist
+            Error 14 - Export Function Not Found in mst.JS
             Error 10 - Module Name is not appended to the front of export function
     """
     if os.path.exists(f"{temp_dir}\Main.js") == False:
-        return on_error(15, "Front-End Missing Main.js file")
+        return on_error(15, "Front-End Missing mst.js file")
     imports = []
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
@@ -223,7 +223,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 pattern = "(?<=import ).*(?= from)"
                 old_functionName = re.findall(pattern, line)[0]
                 if functionName != old_functionName:
-                    return on_error(16, f"Main.js Export default function name changed, please change back to {old_functionName}")
+                    return on_error(16, f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
                     break
             if line == '//IMPORT_END':
@@ -380,7 +380,7 @@ def deactivate_module():
     db.session.commit()
 
 
-@blueprint.route('/upload', methods=['GET', 'POST'])
+@blueprint.route('/upload', methods=['GET', 'POST', 'OPTIONS'])
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
@@ -399,9 +399,8 @@ def upload_module():
         Error Code 18 - Missing Key Paramaters
         On Success - Return new_module Module As Json
     '''
-    if request.method in ['POST', 'UPDATE']:
-        update = request.method == 'UPDATE'
-
+    if request.method in ['POST', 'OPTIONS']:
+        update = request.values.get('update') == True
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':

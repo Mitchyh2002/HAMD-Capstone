@@ -10,8 +10,8 @@ from Program.ResponseHandler import on_error
 class PasswordHash(object):
     def __init__(self, hash_):
         #assert len(self.hash) == 60, 'bcrypt hash should be 60 chars.'
-        assert self.hash.count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
+        assert self.hash.count('$'), 'bcrypt hash should have 3x "$".'
         self.rounds = int(self.hash.split('$')[2])
 
     def __eq__(self, candidate):
@@ -27,7 +27,7 @@ class PasswordHash(object):
     def new(cls, password, rounds=12):
         if isinstance(password, str):
             password = password.encode('utf-8')
-        return cls(bcrypt.hashpw(password, bcrypt.gensalt(rounds)))  
+        return cls(bcrypt.hashpw(password, bcrypt.gensalt(rounds)))
     
 class Password(TypeDecorator):
     impl = Text
@@ -89,7 +89,7 @@ class User(UserMixin, db.Model):
             "userID": self.userID,
             "email": self.email.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
+            "passwordHash": self.passwordHash.hash,
             "dateOfBirth": self.dateOfBirth.strip()
         }
 
@@ -98,7 +98,7 @@ class User(UserMixin, db.Model):
             "email": self.email.strip(),
             "phoneNumber": self.phoneNumber.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
+            "passwordHash": self.passwordHash.hash,
             "dateOfBirth": self.dateOfBirth.strip()
         }
 
