@@ -12,7 +12,7 @@ from Program.ResponseHandler import on_error
 class PasswordHash(object):
     def __init__(self, hash_):
         #assert len(self.hash) == 60, 'bcrypt hash should be 60 chars.'
-        assert self.hash.count(b'$'), 'bcrypt hash should have 3x "$".'
+        assert str(hash_).count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
         self.rounds = int(self.hash.split('$')[2])
 

@@ -85,7 +85,7 @@ def register():
         return on_error(14, "Email is already registered, would you like to sign in?")
     
     # Validating optional inputs
-    if uniquePhone != "" or uniquePhone is not None:
+    if inputPhoneNumber != "" or inputPhoneNumber is not None:
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user":
             return on_error(53, "Phone Number is already registered, would you like to sign in?")
