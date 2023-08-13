@@ -21,5 +21,6 @@ if __name__ == "__main__":
     new_module = create_module("mst", "UploadModule", "Test234", True, '')
     with app.app_context():
         new_module.insert()
+        initRefTable()
 
-    initRefTable()
+    

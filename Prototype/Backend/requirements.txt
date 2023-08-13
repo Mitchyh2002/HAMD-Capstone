@@ -7,3 +7,4 @@ flask_login
 psycopg2
 bcrypt
 jwt
+itsdangerous

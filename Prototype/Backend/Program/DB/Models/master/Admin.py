@@ -1,10 +1,7 @@
-from flask_login import RoleMixin, AsaList
-from sqlalchemy.ext.mutable import MutableList
-
 from Program import db
 from Program.ResponseHandler import on_error
 
-class refAdminRoles(db.Model, RoleMixin):
+class refAdminRoles(db.Model):
     __tablename__ = "ref.AdminRoles"
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -20,9 +17,9 @@ class refAdminRoles(db.Model, RoleMixin):
 def initRefTable():
 
     db.session.add_all([
-        refAdminRoles(id=0, name='User', description='Base user level permissions', userRead=True, userWrite=True, adminRead=False,adminWrite=False,adminUpload=False,adminAdmin=False),
-        refAdminRoles(id=1, name='Admin', description='Admin level that allows user management', userRead=True, userWrite=True, adminRead=True,adminWrite=True,adminUpload=False,adminAdmin=False),
-        refAdminRoles(id=2, name='SuperAdmin', description='Admin level that allows module management and admin management', userRead=True, userWrite=True, adminRead=True,adminWrite=True,adminUpload=True,adminAdmin=True)]
+        refAdminRoles(name='User', description='Base user level permissions', userRead=True, userWrite=True, adminRead=False,adminWrite=False,adminUpload=False,adminAdmin=False),
+        refAdminRoles(name='Admin', description='Admin level that allows user management', userRead=True, userWrite=True, adminRead=True,adminWrite=True,adminUpload=False,adminAdmin=False),
+        refAdminRoles(name='SuperAdmin', description='Admin level that allows module management and admin management', userRead=True, userWrite=True, adminRead=True,adminWrite=True,adminUpload=True,adminAdmin=True)]
         )
         
     db.session.commit()
