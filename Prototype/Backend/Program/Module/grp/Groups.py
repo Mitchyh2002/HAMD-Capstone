@@ -15,7 +15,8 @@ blueprint = Blueprint('grp_Group', __name__, url_prefix="/grp/group")
 
 @blueprint.route('/getall', methods=['GET'])
 def get_all_groups():
-    return [group.toJSON() for group in Group.query.all()]
+    ''' Get All Groups in System'''
+    return on_success([group.toJSON() for group in Group.query.all()])
 
 
 @blueprint.route('/', methods=['GET', 'POST'])
@@ -29,6 +30,8 @@ def base_route_handler():
         return on_error(-1, "Incorrect Request Type, request should be POST")
     elif request.method == 'GET':
         groupID = request.values.get("groupID")
+        if groupID == None:
+            return on_error(3, "group ID value no Specified")
         return get_group(groupID)
     elif request.method == 'POST':
         return new_group(request.values)
@@ -47,7 +50,7 @@ def get_group(groupID):
     selected_group = Group.query.filter_by(groupID=groupID).first()
     if selected_group is None:
         return on_error(2, "Specified Group Does Not Exist")
-    return (Group.query.filter_by(groupID=groupID).first()).toJSON()
+    return on_success((Group.query.filter_by(groupID=groupID).first()).toJSON())
 
 def new_group(inputs):
     groupName = inputs.get("groupName")
@@ -62,12 +65,12 @@ def new_group(inputs):
     group_generated = create_group(groupName)
     group_generated.insert()
     GroupID = group_generated.groupID
-    if users != "":
+    if users != "" and users is not None:
         add_group_users(GroupID, users)
-    if modules != "":
+    if modules != "" and modules is not None:
         add_group_modules(GroupID, modules)
 
-    return on_success({"group":group_generated,
+    return on_success({"group":group_generated.toJSON(),
                        "users": users,
                        "modules": modules})
 
@@ -77,18 +80,23 @@ def modules_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Modules assigned to a given group (see get_group_modules function)
         IF Request is a POST Request - Add Module/Modules to a group  (Assign a Module to A group add_group_modules function)
-        Any other requests will return a -1 errore.
+        Any other requests will return a -1 error.
     '''
     if request.method not in ['GET', 'POST']:
         return on_error(-1, "Incorrect Request Type, request should be POST")
     inputs = request.values
-    if len(request.values) == 0:
-        inputs = request.json
+    groupID = inputs.get("groupID")
+    if groupID == None:
+        return on_error(3, "GroupID Cannot Be Blank")
     if request.method == 'GET':
-        groupID = inputs.get("groupID")
         return get_group_modules(groupID)
     elif request.method == 'POST':
-        return add_group_modules(request)
+        module_prefix = inputs.get("modulePrefix")
+        if module_prefix == None:
+            return on_error(3, "module_prefix Cannot Be Blank")
+        elif len(module_prefix) != 3:
+            return on_error(3, "module_prefix must be 3 charachters long")
+        return add_group_modules(groupID, module_prefix)
 
 def get_group_modules(groupID):
     ''' Returns all Modules Assigned to a given group
@@ -100,13 +108,26 @@ def get_group_modules(groupID):
     selected_group = Group.query.filter_by(groupID=groupID).first()
     if selected_group is None:
         return on_error(2, "Specified Group Does Not Exist")
+
     modules = [module.module_prefix for module in mouduleGroups.query.filter_by(groupID=groupID).all()]
     return on_success([module.toJSON(True) for module in Module.query.filter(Module.prefix.in_(modules)).all()])
 
-def add_group_modules(request):
-    pass
+def add_group_modules(groupID, module_prefix):
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+    selected_module = Module.query.filter_by(prefix=module_prefix).first()
+    # If Conn Exists Remove it
+    mouduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
+    if selected_module is None:
+        return on_error(2, "Specified Module Does Not Exist")
 
-@blueprint.route('users')
+    new_moduleGroup = create_moduleGroup(groupID, module_prefix)
+    new_moduleGroup.insert()
+
+    return on_success(new_moduleGroup.toJSON())
+
+@blueprint.route('users', methods=['GET', 'POST'])
 def user_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Users assigned to a given group (see get_group_users function)
@@ -115,14 +136,34 @@ def user_route_handler():
     '''
     if request.method not in ['GET', 'POST']:
         return on_error(-1, "Incorrect Request Type, request should be POST")
-    elif request.method == 'GET':
-        groupID = request.values.get("groupID")
+    inputs = request.values
+    groupID = inputs.get("groupID")
+    if groupID == None:
+        return on_error(3, "GroupID Cannot Be Blank")
+    if request.method == 'GET':
         return get_group_users(groupID)
     elif request.method == 'POST':
-        return add_group_users(request)
+        userID = inputs.get("userID")
+        return add_group_users(groupID, userID)
 
 def get_group_users(groupID):
-    pass
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+    users = userGroup.query.filter_by(groupID=groupID).all()
+    return on_success([user.toJSON() for user in users])
 
-def add_group_users(request):
-    pass
+def add_group_users(groupID, userID):
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+
+    selected_user = User.query.filter_by(userID=userID).first()
+    if selected_user is None:
+        return on_error(2, "Specified User Does Not Exist")
+    #If Conn Exists Remove it
+    userGroup.query.filter_by(groupID=groupID, userID=userID).delete()
+    new_userGroup = create_userGroup(groupID, userID)
+    new_userGroup.insert()
+
+    return on_success(new_userGroup.toJSON())

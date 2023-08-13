@@ -23,7 +23,7 @@ class mouduleGroups(db.Model):
         db.session.commit()
 
 
-def create_moduleGroup(module_prefix, groupID):
+def create_moduleGroup(groupID, module_prefix):
     created_moduleGroup = mouduleGroups()
     created_moduleGroup.module_prefix = module_prefix
     created_moduleGroup.groupID = groupID
