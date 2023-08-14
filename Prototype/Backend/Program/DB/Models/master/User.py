@@ -100,7 +100,7 @@ class User(UserMixin, db.Model):
         if is_query:
             return {
                     "email": self.email.strip(),
-                    "adminLvl": self.roles,
+                    "adminLvl": self.adminLevel,
                     #"membership": self.membership,
                     "name": self.firstName.strip()}
         if self.phoneNumber is None:
