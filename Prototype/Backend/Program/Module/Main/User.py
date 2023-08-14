@@ -93,7 +93,7 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
-    return on_success("200")
+    return on_success(user.token)
 
 
 def emailIsValid(email):
@@ -139,9 +139,7 @@ def QueryInsertUser(new_user: User):
             raise Exception
         
         db.session.add(new_user)
-        print("made it here")
         db.session.commit()
-        print("Made it here")
 
     except:
         return on_error(19, "User already in system, code failure")
