@@ -5,3 +5,6 @@ flask_sqlalchemy
 flask_cors
 flask_login
 psycopg2
+bcrypt
+jwt
+itsdangerous

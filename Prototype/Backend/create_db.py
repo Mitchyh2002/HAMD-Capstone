@@ -3,6 +3,7 @@ from Program.DB.Models.master.Modules import *
 from Program.Module.Main.Module import scan_file
 from Program import init_app
 from Program.DB.Models.master.Modules import Module, create_module
+from Program.DB.Models.master.Admin import initRefTable
 from Program.Module.Main.Module import QueryInsertModule
 
 
@@ -20,3 +21,6 @@ if __name__ == "__main__":
     new_module = create_module("mst", "UploadModule", "Test234", True, '')
     with app.app_context():
         new_module.insert()
+        initRefTable()
+
+    
