@@ -14,9 +14,6 @@ import Breadcrumbs from "Components/Breadcrumbs.js";
 export default function SubMenu(props){
     //Extract sub components from directory
     const subComponents = Directory[props.prefix];
-    console.log(props.prefix);
-    console.log("Matchiong Path")
-    console.log(useMatch({path: "mst", exact: false}))
 
     //Creates the navlinks objects
     //Input: function
@@ -24,7 +21,7 @@ export default function SubMenu(props){
     function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={props.prefix + "/" + component.name} name={component.name} />
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.name} name={component.name} />
             </div>
         )
     }

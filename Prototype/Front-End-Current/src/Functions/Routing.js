@@ -2,6 +2,7 @@ import {Directory, Modules } from "../moduleDefs"
 import { Outlet, useOutlet, useRoutes } from "react-router-dom";
 import Main from "Pages/Main";
 import React from "react";
+import SubMenu from "Components/SubMenu";
 
 
 /*All Routes
@@ -23,7 +24,7 @@ export function CreateAllPaths(Components) {
     console.log(Components);
     //Create Route Directory
     const Routes = [{
-        path: "/",
+        path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
         children: Components.map(e => createComponentRoutes(e))
@@ -41,7 +42,7 @@ export function CreateAllPaths(Components) {
 export function createComponentRoutes(module) {
     const Root = {
         //Create Index as Display Name
-        path: "/" + module.prefix,
+        path: module.prefix,
         //Element function from main.js of the module
         element: <CreateParentOutlet module = {module} />,
 
@@ -67,6 +68,7 @@ export function CreateParentOutlet (props) {
     console.log(child);
     return(
         <>
+            <SubMenu prefix={props.module.prefix} />
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )

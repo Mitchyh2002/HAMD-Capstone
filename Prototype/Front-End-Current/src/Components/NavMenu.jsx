@@ -17,7 +17,7 @@ export default function NavMenu(props) {
     const navigate = useNavigate();
 
     const handler = (prefix) => {
-        const destination = "/" + prefix;
+        const destination = prefix;
         navigate(destination);
       }
 
@@ -28,7 +28,7 @@ export default function NavMenu(props) {
                 <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
             </div>
             {props.modules.map(module  => 
-                <NavLink className={({isActive}) => (isActive)? "mainNavItemActive" : "mainNavItem"} to={"/"+module.prefix} key={module.prefix}>
+                <NavLink className={({isActive}) => (isActive)? "mainNavItemActive" : "mainNavItem"} to={module.prefix} key={module.prefix}>
                 <p>{module.displayName}</p>
                 </NavLink>)}
         </div>
