@@ -3,15 +3,15 @@ import bcrypt
 from datetime import datetime
 from flask import Blueprint, request
 from flask_login import current_user, login_user, logout_user, login_required
-from sqlalchemy import Select
+from sqlalchemy import select
 
 from Program import db
-from Program.DB.Models.master.User import User, JSONtoUser
+from Program.DB.Models.mst.User import User, JSONtoUser
+from Program.DB.Models.grp.userGroups import userGroup, create_userGroup
+from Program.DB.Models.grp.Groups import Group
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
-
-TESTING = True
 
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -30,7 +30,7 @@ def login():
         return on_error(20, "Password is required, please enter a password")
     else:
         # Finding User in database
-        user = QuerySelectUser(inputEmail)        
+        user = QuerySelectUser(inputEmail)
         if user is None:
             return on_error(13, "Email is not yet registered, would you like to register?")
         else:
@@ -42,8 +42,8 @@ def login():
                 return on_success(user.toJSON(True))
             else:
                 return on_error(21, "Password is incorrect, please try again.")
-            
-    
+
+
 
 @blueprint.route('/logout', methods=['POST'])
 @login_required
@@ -54,7 +54,12 @@ def logout():
 @blueprint.route('/register', methods=['POST'])
 def register():
     # Fetching Inputs
-    input = request.values
+    if len(request.values) == 0:
+        if len(request.json) == 0:
+            return on_error(1, "No Values Sent to via request")
+        input = request.json
+    else:
+        input = request.values
     inputEmail = input.get('email')
     inputPass = input.get('password')
     inputFirstName = input.get('firstName')
@@ -76,12 +81,12 @@ def register():
         return on_error(40, "Date of Birth is required, please enter your date of birth")
     elif not dateOfBirthIsValid(inputDateOfBirth):
         return on_error(41, "Date of Birth entered is invalid, please enter a valid date of birth.")
-    
+
     # Checking email is Unique
     uniqueEmail = QuerySelectUser(inputEmail)
     if type(uniqueEmail).__name__ == "user":
         return on_error(14, "Email is already registered, would you like to sign in?")
-    
+
     # Validating optional inputs
     uniquePhone = QuerySelectUser(inputEmail, False)
     if (uniquePhone != "" and uniquePhone is not None) or uniquePhone is not None:
@@ -90,7 +95,7 @@ def register():
             return on_error(53, "Phone Number is already registered, would you like to sign in?")
         if not phoneNumberIsValid(inputPhoneNumber):
             return on_error(51, "Phone number entered is invalid, please enter a valid phone number.")
-    
+
     user = JSONtoUser(input)
     QueryInsertUser(user)
     QueryInsertGroup(1, user.email)
@@ -107,11 +112,11 @@ def firstNameIsValid(firstName: str):
         return True
     else:
         return False
-    
+
 def dateOfBirthIsValid(dateOfBirth:str):
-    if (len(dateOfBirth) == 4 
+    if (len(dateOfBirth) == 4
         and (dateOfBirth.startswith("19") or dateOfBirth.startswith("20"))
-        and dateOfBirth.isnumeric() 
+        and dateOfBirth.isnumeric()
         and (int(dateOfBirth) + 13 <= datetime.now().year)):
         return True
     else:
@@ -124,7 +129,7 @@ def phoneNumberIsValid(phoneNumber):
         return False
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
-    
+
 
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB
@@ -137,17 +142,26 @@ def QueryInsertUser(new_user: User):
 
         if type(existing_user).__name__ == "user":
             raise Exception
-        
+
         db.session.add(new_user)
         db.session.commit()
+
     except:
         return on_error(19, "User already in system, code failure")
-    
+
+def QueryInsertGroup(group_id, user_email):
+    user = User.query.filter_by(email=user_email).first()
+    new_userGroup = create_userGroup(group_id, user.userID)
+    #If group Conn Exists Delete it
+    existingGroup = userGroup.query.filter_by(groupID=group_id, userID=user.userID).delete()
+    db.session.add(new_userGroup)
+    db.session.commit()
+
 def QuerySelectUser(userKey: str, indicator=True):
     if indicator:
-        stmt = Select(User).where(User.email == userKey)
+        stmt = select(User).where(User.email == userKey)
     else:
-        stmt = Select(User).where(User.phoneNumber == userKey)
+        stmt = select(User).where(User.phoneNumber == userKey)
 
     user = db.session.scalar(stmt)
     return user
