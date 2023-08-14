@@ -70,10 +70,10 @@ def init_app() -> Flask:
 
     # MAIL LOGIN
     app.config['MAIL_USERNAME'] = 'hamdcapstonetest@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'HamdTestingAccount11!'
+    app.config['MAIL_PASSWORD'] = 'eubbbgwfisedcrlt'
     app.config['MAIL_DEFAULT_SENDER'] = 'hamdcapstonetest@gmail.com'
     
-    mail = Mail(app)
+    app.mail = Mail(app)
     
     # Allow Bootstrap in HTML Online Server.
     bootstrap = Bootstrap(app)
@@ -145,7 +145,6 @@ def export_mail_sender():
     return application.app.config["MAIL_DEFAULT_SENDER"]
 
 def export_mail():
-    mail= Mail(application.app)
-    return mail
+    return application.app.mail
 
 application = AppReloader(init_app)

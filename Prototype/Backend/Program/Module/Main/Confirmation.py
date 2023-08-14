@@ -29,7 +29,7 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
-@blueprint.route('/confirm/<token>')
+@blueprint.route('/<token>')
 @login_required
 def confirm_email(token):
     try:
@@ -54,7 +54,7 @@ def send_email(to, subject, template):
         html=template,
         sender=export_mail_sender()
     )
-    mail = export_mail
+    mail = export_mail()
     mail.send(msg)
 
 def QuerySelectUser(userKey: str, indicator=True):

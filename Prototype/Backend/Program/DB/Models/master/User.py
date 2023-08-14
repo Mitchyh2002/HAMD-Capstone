@@ -64,7 +64,7 @@ class User(UserMixin, db.Model):
     firstName = db.Column(db.String(255), nullable = False)
     passwordHash = db.Column(Password)
     dateOfBirth = db.Column(db.String(4), nullable = False)
-    token = db.Column(db.String, unique=True, nullable=False)
+    token = db.Column(db.String, unique=True, nullable=True)
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
     registeredDate = db.Column(db.DateTime,nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
