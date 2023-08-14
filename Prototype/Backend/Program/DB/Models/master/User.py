@@ -8,6 +8,7 @@ from flask_login import UserMixin
 
 from Program import db
 from Program.ResponseHandler import on_error
+from Program.DB.Models.master.Admin import refAdminRoles
 
 class PasswordHash(object):
     def __init__(self, hash_):
@@ -64,7 +65,7 @@ class User(UserMixin, db.Model):
     firstName = db.Column(db.String(255), nullable = False)
     passwordHash = db.Column(Password)
     dateOfBirth = db.Column(db.String(4), nullable = False)
-    token = db.Column(db.String, unique=True)
+    token = db.Column(db.String)
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
                            
 

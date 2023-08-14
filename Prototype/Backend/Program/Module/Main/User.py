@@ -93,6 +93,7 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
+    db.session.commit()
     return on_success(user.token)
 
 
