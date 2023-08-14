@@ -56,15 +56,13 @@ def init_app() -> Flask:
     
     @login_manager.user_loader
     def load_user(userID):
-       return UserMixin.objects(userID = userID).first()
-
-
+       return UserMixin.query.filter_by(token = userID).first()
+    
     # Allow Bootstrap in HTML Online Server.
     bootstrap = Bootstrap(app)
 
     db.init_app(app)
     CORS(app)
-
     # Register all blueprints here
 
     # TO-DO SQL QUERY ALL ACTIVE MODULES
