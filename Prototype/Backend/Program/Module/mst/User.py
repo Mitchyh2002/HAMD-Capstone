@@ -101,8 +101,6 @@ def register():
     QueryInsertGroup(1, user.email)
     return on_success(user.toJSON())
 
-
-
 def emailIsValid(email):
     if ((email.count('@') != 1) | (email.count('.') == 0)):
         return False
