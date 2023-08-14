@@ -1,8 +1,11 @@
 import {Directory, Modules } from "../moduleDefs"
-import { Outlet, useOutlet, useRoutes } from "react-router-dom";
+import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
 import Main from "Pages/Main";
 import React from "react";
 import SubMenu from "Components/SubMenu";
+import Login from "Pages/Login";
+import NoMatchingPage from "Pages/404";
+import { getToken } from "./User";
 
 
 /*All Routes
@@ -10,8 +13,8 @@ import SubMenu from "Components/SubMenu";
     Input: Modules
     Output: List of Routes
 */
-export function AllRoutes(props){
-    return(useRoutes(CreateAllPaths(props.Modules)));
+export function allRoutes(Modules){
+    return(CreateAllPaths(Modules));
 }
 
 /*Create All Paths
@@ -27,7 +30,21 @@ export function CreateAllPaths(Components) {
         path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
-        children: Components.map(e => createComponentRoutes(e))
+        children: Components.map(e => createComponentRoutes(e)),
+        loader: async ()  => {
+            const token = getToken();
+            if(!token){
+                return redirect("/login");
+            }else{
+                return token;
+            }
+        }
+    },{
+        path:"/Login",
+        element: <Login />
+    },{
+        path:'*',
+        element:<NoMatchingPage />
     }];
     console.log(Routes);
     return Routes;

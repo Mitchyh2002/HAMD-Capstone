@@ -1,6 +1,6 @@
 import './App.css';
-import { BrowserRouter} from 'react-router-dom';
-import { AllRoutes } from 'Functions/Routing';
+import { BrowserRouter, RouterProvider, createBrowserRouter} from 'react-router-dom';
+import { AllRoutes, allRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
 
 function App() {
@@ -21,10 +21,8 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
       {(loaded == true)&&
-        <AllRoutes Modules={modules}/>}
-      </BrowserRouter>
+        <RouterProvider router={createBrowserRouter(allRoutes(modules))} />}
     </>
   );
 }
