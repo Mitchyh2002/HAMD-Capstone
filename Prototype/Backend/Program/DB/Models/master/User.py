@@ -65,7 +65,7 @@ class User(UserMixin, db.Model):
     passwordHash = db.Column(Password)
     dateOfBirth = db.Column(db.String(4), nullable = False)
     token = db.Column(db.String, unique=True)
-    adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'))
+    adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
                            
 
     def get_id(self):
@@ -140,7 +140,7 @@ def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
     created_user.passwordHash = passwordHash
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
-    created_user.adminLevel = 0
+    created_user.adminLevel = 1
     created_user.setIsAuthenticated(True)
     created_user.setIsActive(True)
     created_user.setIsAnonymous(False)
