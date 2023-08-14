@@ -7,7 +7,6 @@ from sqlalchemy import Select
 
 from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
-from Program.Module.Main.Confirmation import generate_confirmation_token
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
@@ -94,10 +93,7 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
-
-    
-    token = generate_confirmation_token(user.email)
-    return on_success(token)
+    return on_success("200")
 
 
 def emailIsValid(email):
@@ -143,7 +139,9 @@ def QueryInsertUser(new_user: User):
             raise Exception
         
         db.session.add(new_user)
+        print("made it here")
         db.session.commit()
+        print("Made it here")
 
     except:
         return on_error(19, "User already in system, code failure")
