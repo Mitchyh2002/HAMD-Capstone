@@ -1,17 +1,28 @@
-import logo from './logo.svg';
 import './App.css';
-import Content from "./Content"
-import { useEffect, useState } from 'react';
-import Header from 'Components/Compents';
-import Login from 'Components/Login';
+import { BrowserRouter, RouterProvider, createBrowserRouter} from 'react-router-dom';
+import { AllRoutes, allRoutes } from 'Functions/Routing';
+import { useEffect,  useState} from 'react';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [modules, setModules] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+
+  //Get all active modules from the server and store in state
+  useEffect(() => {
+    fetch("http://localhost:5000/module/getactive")
+    .then( response => {
+        return response.json();
+    }).then(data => {
+      setModules(data.Values)
+    }).then(() => {
+      setLoaded(true);
+    })
+  }, []);
+
   return (
-    <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
-      <Header />
-      {(loggedIn == true)? <Content /> : <Login setLoggedIn={setLoggedIn} />}
-    </div>
+    <>
+      <RouterProvider router={createBrowserRouter(allRoutes(modules))} />
+    </>
   );
 }
 

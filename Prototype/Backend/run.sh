@@ -1,2 +1,2 @@
-pip3 install -r requirements.txt
-python3 Main.py
+pip3 install -r ./Prototype/Backend/requirements.txt
+python3 ./Prototype/Backend/Main.py

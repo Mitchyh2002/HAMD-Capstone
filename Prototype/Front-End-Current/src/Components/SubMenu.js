@@ -1,39 +1,71 @@
 import React, {useState} from "react";
+import { Directory } from "moduleDefs";
+import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
+import "../App.css"
+import Breadcrumbs from "Components/Breadcrumbs.js";
 
-//Submenu for storing components
-//Input: Array of components {name: "string", component: function}
-//Outputs: Array of buttons
+/*Sub Menu
+    Description: SubMenu for all sub components of and corresponding links based on the values defined in modulesDefs.js
+    Props: 
+        prefix: Prefix of the module, Used to determine sub components from modules def
+    SubMenu with working links
+*/
+
 export default function SubMenu(props){
+    //Extract sub components from directory
+    const subComponents = Directory[props.prefix];
 
-    const subComponents = props.subComponents;
-    console.log(props);
-    let [index, setIndex] = useState(subComponents[0]);
-
-    //Creates the buttons
+    //Creates the navlinks objects
     //Input: function
     //Output: Button with onClick call to input
-    function createButton(item){
+    function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <button onClick={e => handler(item)}>{item.name}</button>
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.name} name={component.name} />
             </div>
         )
     }
 
-    //For changing which sub component is being shown
-    function handler(component){
-        setIndex(component);
+    return(
+        <>
+            <div className="subNavContainer">
+            <div>
+                <Breadcrumbs />
+            </div>
+                {subComponents&&
+                        <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
+                                {subComponents.map(component => createNavLinks(component))}
+                        </div>}
+            </div>
+        </>
+    )
+}
+
+/*
+    {subComponents.map(component, index => createNavLinks(component))}
+
+    Sub Nav Button
+    Links to a given location, know when it is active and changes classes accrodingly
+    Props:
+        to: Link destination
+        name: Text to display
+        activeClass: Name of the active class name to display
+        passiveClass: Name of the passive(inactive) class to display
+*/
+
+function SubNavButton(props) {
+    const navigate = useNavigate();
+    const href = useHref();
+    let sanatizedTo = encodeURI(props.to);
+    const regEx = "\/" + sanatizedTo.replaceAll("\/", "\\\/");
+    const active = (RegExp(regEx).exec(href) != null);
+
+    const handleClick = () => {
+        navigate(props.to);
     }
 
-    console.log(index)
     return(
-        <div className="flexBoxRowGrow">
-            <div className="flexBoxColumnGrow" style={{maxWidth: "178px"}}>
-              {subComponents.map(e => createButton(e))}
-            </div>
-            <div className="flexBoxRowGrow">
-                {React.createElement(index.component)}
-            </div>
-        </div>
+        <button onClick={handleClick} className={(active)? props.activeClass: props.passiveClass}>{props.name}</button>
     )
+
 }
