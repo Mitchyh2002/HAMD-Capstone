@@ -42,7 +42,10 @@ export function CreateAllPaths(Components) {
         }
     },{
         path:"/Login",
-        element: <Login />
+        element: <Login register={false}/>
+    },{
+        path:"/Register",
+        element: <Login register={true}/>
     },{
         path:'*',
         element:<NoMatchingPage />
