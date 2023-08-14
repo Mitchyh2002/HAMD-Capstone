@@ -104,6 +104,13 @@ header li a:hover {
 
 .mainNavItemActive{
   background-color: #F28F3B;
+  border: none;
+  height: 110px;
+  font-family: "lato";
+  font-size: 20px;
+}
+.mainNavItemActive:hover{
+  cursor: pointer;
 }
 
 /* SubNav CSS */
