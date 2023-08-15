@@ -6,6 +6,7 @@ import SubMenu from "Components/SubMenu";
 import Login from "Pages/Login";
 import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
+import Breadcrumbs from "Components/Breadcrumbs";
 
 
 /*All Routes
@@ -69,8 +70,11 @@ export function createComponentRoutes(module) {
 
         //Create child path for each directory
         children: Directory[module.prefix].map(e => {
-            console.log(e)
-            return({path: e.name,
+            console.log(e.children)
+            return({
+            path: e.name,
+            ...e.loader&& {loader: e.loader},
+            ...e.children&& {children: e.children},
             element: React.createElement(e.component)})
         }),
         //Create sub directories from pages
