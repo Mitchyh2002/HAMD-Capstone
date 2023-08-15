@@ -17,6 +17,8 @@ function App() {
     .then( response => {
         return response.json();
     }).then(data => {
+      console.log(data)
+      console.log("Modules")
       setModules(data.Values)
     }).then(() => {
       setLoaded(true);
