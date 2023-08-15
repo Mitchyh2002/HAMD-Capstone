@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
-import MOCK_DATA from "./MOCK_DATA.json";
 import "./PluginList.css";
+import { useLoaderData } from 'react-router-dom';
 
 export default function PluginList() {
+    const plugins = useLoaderData();
 
     /* Setting the state for the modal */
     const [modal, setModal] = useState(false);
@@ -12,7 +13,7 @@ export default function PluginList() {
     }
 
     /* Getting the data from the MOCK_DATA file */
-    const data = useMemo(() => MOCK_DATA, []);
+    const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
     {
         Header: "ID",
@@ -22,10 +23,7 @@ export default function PluginList() {
         accessor: "prefix",
     },{
         Header: "Display Name",
-        accessor: "display_name",
-    },{
-        Header: "Date Added",
-        accessor: "date_added",
+        accessor: "displayName",
     }
     ], []);
 
