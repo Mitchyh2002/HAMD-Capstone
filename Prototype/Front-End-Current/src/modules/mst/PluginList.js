@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import "./PluginList.css";
 import { useLoaderData } from 'react-router-dom';
+import Modal from './Components.js'
 
 export default function PluginList() {
     const plugins = useLoaderData();
@@ -73,29 +74,7 @@ export default function PluginList() {
                     </div>
             </div>
             {modal && (
-                <div className="modal">
-                    <div onClick={toggleModal} className='overlay'></div>
-                    <div className='modal-content'>
-                        <button className='close-modal' onClick={toggleModal}>
-                            x
-                        </button>
-                        <h4 className='modal-heading'>Edit</h4>
-                        <form>
-                            <label className='modal-label'>Change display name:
-                                <input className='modal-input' type="text" />
-                            </label>
-                            <input className='confirm-button' type="submit" />
-                        </form>
-                        <br></br>
-                        <br></br>
-                        <button className='confirm-button' onClick={toggleModal}>
-                            Confirm Changes
-                        </button>
-                        <button className='cancel-button' onClick={toggleModal}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
+                <Modal show={modal} change={setModal}/>
             )}
         </>
         )

@@ -7,3 +7,11 @@ export async function getPlugins(){
         return error;
     })
 }
+
+export function updateName(form){
+    return fetch("localhost:5000/module/updatereference", 
+        {method: "POST",
+        body: form
+        }
+    ).then(res => res.json()).then( res => {return res})
+}
