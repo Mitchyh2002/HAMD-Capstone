@@ -22,31 +22,31 @@ export default function Modal(props) {
 
     return (
         <>
-        { show&& (
-            <div className="modal">
-                <div onClick={toggleModal} className='overlay'></div>
-                <div className='modal-content'>
-                    <button className='close-modal' onClick={toggleModal}>
-                        x
-                    </button>
-                    <h4 className='modal-heading'>Edit</h4>
-                    <form id="modalForm">
-                        <label className='modal-label'>Change display name:
-                            <input className='modal-input' type="text" />
-                        </label>
-                        <input className='confirm-button' type="submit" />
-                    </form>
-                    <br></br>
-                    <br></br>
-                    <button className='confirm-button' onClick={updatePlugin}>
-                        Confirm Changes
-                    </button>
-                    <button className='cancel-button' onClick={toggleModal}>
-                        Cancel
-                    </button>
+            {show && (
+                <div className="modal">
+                    <div onClick={toggleModal} className='overlay'></div>
+                    <div className='modal-content'>
+                        <button className='close-modal' onClick={toggleModal}>
+                            x
+                        </button>
+                        <h4 className='modal-heading'>Edit</h4>
+                        <form id="modalForm">
+                            <label className='modal-label'>Change display name:
+                                <input className='modal-input' type="text" />
+                            </label>
+                            <input className='confirm-button' type="submit" />
+                        </form>
+                        <br></br>
+                        <br></br>
+                        <button className='confirm-button' onClick={updatePlugin}>
+                            Confirm Changes
+                        </button>
+                        <button className='cancel-button' onClick={toggleModal}>
+                            Cancel
+                        </button>
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
         </>
     )
 }

@@ -5,6 +5,7 @@ import { useLoaderData } from 'react-router-dom';
 import Modal from './Components.js'
 
 export default function PluginList() {
+    
     const plugins = useLoaderData();
 
     /* Setting the state for the modal */
@@ -13,7 +14,7 @@ export default function PluginList() {
         setModal(!modal);
     }
 
-    /* Getting the data from the MOCK_DATA file */
+    /* Getting the data from the database  */
     const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
     {

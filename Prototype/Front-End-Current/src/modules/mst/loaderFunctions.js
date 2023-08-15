@@ -9,7 +9,7 @@ export async function getPlugins(){
 }
 
 export function updateName(form){
-    return fetch("localhost:5000/module/updatereference", 
+    return fetch("http://localhost:5000/module/updatereference", 
         {method: "POST",
         body: form
         }

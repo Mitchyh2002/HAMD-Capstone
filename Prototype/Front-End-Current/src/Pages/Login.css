@@ -31,6 +31,11 @@
         min-width: 80vw;
     }
 }
+@media (max-width: 760px){
+    .bee-image{
+    transform: rotate(10deg);
+    }
+}
 
 .seconddiv{
     display: flex;
@@ -56,6 +61,14 @@
   height: 70px;
 }
 
+.bee-image{
+    width: 80px;
+    transform: rotate(20deg);
+    position: absolute;
+    right: 28px;
+    bottom: 540px;
+}
+
 .login-form-content{
     display: flex;
     flex-direction: column;
@@ -67,7 +80,6 @@ input::placeholder{
     opacity: 0.6;
     font-size: 16px;
     font-family: "Lato", sans-serif;
-    
 }
 
 .forgot-password{
