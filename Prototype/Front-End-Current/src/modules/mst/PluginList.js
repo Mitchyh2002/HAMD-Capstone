@@ -17,10 +17,10 @@ export default function PluginList() {
     /* Getting the data from the database  */
     const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
-    {
+    /*{
         Header: "ID",
         accessor: "id",
-    },{
+    },*/{
         Header: "Prefix",
         accessor: "prefix",
     },{

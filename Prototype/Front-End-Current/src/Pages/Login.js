@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 export default function Login(props) {
     const register = props.register;
+
     return (
         <>
             <Header />
@@ -38,30 +39,59 @@ function WelcomeMessage(props) {
 
 //Login Form
 function LoginForm() {
+
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
         const response = login(formData)
         console.log(response)
-        window.alert(await response);
+        //window.alert(await response);
+
+        /* Catch email errors */
+        const message = document.getElementById("email-error");
+        message.innerHTML = "";
+        let x = document.getElementById("emailInput").value;
+        try { 
+          if(x.trim() == "") throw "Email address";
+        }
+        catch(err) {
+          message.innerHTML = err + " cannot be empty";
+        }
+
+        /* Catch password errors */
+        const message2 = document.getElementById("password-error");
+        message2.innerHTML = "";
+        let y = document.getElementById("passwordInput").value;
+        try { 
+          if(y.trim() == "") throw "Password";
+        }
+        catch(err) {
+          message2.innerHTML = err + " cannot be empty";
+        }
+
     }
+
     return (
         <>
             <form className="login-form" id="Login">
                 <div className="login-form-content">
                     <div className="form-group">
                         <input
+                            id="emailInput"
                             type="email"
                             name="email"
                             placeholder="Email Address"
                         />
+                        <p id="email-error"></p>
                     </div>
                     <div className="form-group">
                         <input
+                            id="passwordInput"
                             type="password"
                             name="password"
                             placeholder="Password"
                         />
+                        <p id="password-error"></p>
                     </div>
                     <p>
                         <Link
@@ -74,7 +104,10 @@ function LoginForm() {
             </form>
 
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <button className="primaryButton sign-in-button" onClick={handleLogin}>Sign In</button>
+                <Link
+                    to="/Home">
+                    <button className="primaryButton sign-in-button" onClick={handleLogin}>Sign In</button>
+                </Link>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
                 <p style={{fontSize: "14px"}}>Don't have an account?</p>

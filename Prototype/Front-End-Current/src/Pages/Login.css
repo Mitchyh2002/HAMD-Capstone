@@ -62,10 +62,10 @@
 }
 
 .bee-image{
-    width: 80px;
+    width: 100px;
     transform: rotate(20deg);
     position: absolute;
-    right: 28px;
+    right: 15px;
     bottom: 540px;
 }
 
@@ -101,4 +101,13 @@ input::placeholder{
 .create-account-button{
     background-color: rgba(242, 143, 59, 0.4);
     margin-top: 10px;
+}
+
+/* Error CSS */
+#email-error{
+    color: red;
+}
+
+#password-error{
+    color: red;
 }
