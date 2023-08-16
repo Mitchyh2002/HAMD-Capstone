@@ -23,7 +23,7 @@ class moduleAccess(db.Model):
         db.session.commit()
 
 
-def create_moduleAccess(modulePrefix, userID):
+def create_moduleAccess(userID, modulePrefix):
     created_moduleAccess = moduleAccess()
     created_moduleAccess.modulePrefix = modulePrefix
     created_moduleAccess.userID = userID

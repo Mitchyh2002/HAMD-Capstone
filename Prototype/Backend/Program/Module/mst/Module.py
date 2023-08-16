@@ -80,14 +80,14 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
             if f"{modulename}_" not in match:
                 return on_error(10, "Tablename Doesnt doesn't start with modulename")
         if update:
+            new_rows = {}
             if os.path.exists(f"Program/DB/Models/{modulename}/{os.path.basename(in_file.name)}"):
                 with open(f"Program/DB/Models/{modulename}/{os.path.basename(in_file.name)}") as ref_file:
                     alt_lines = ref_file.readlines()
-                    for line in alt_lines:
-                        if line in lines:
-                            lines.remove(line)
-                    if lines != []:
-                        return on_error(20, "Table is missing content on Update, Please ensure datatables are not missing")
+                    file_difference = set(alt_lines).difference(set(lines))
+                    if len(file_difference) != 0:
+                            return on_error(20, "Table is missing content on Update, Please ensure datatables are not missing")
+                    new_rows[match] = set(lines).difference(set(alt_lines))
 
     in_file.seek(0)
     keys = {}
@@ -120,6 +120,8 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
 
             elif split_module[0] not in whitelisted_modules:
                 return on_error(11, "Restricted Module found in application")
+        if update:
+            return 0, new_rows
         return 0
 
 
@@ -187,7 +189,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     imports = []
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
-        pattern = r'(?<=export default function ).*(?=\()'
+        pattern = r'(?<=export default function).*(?=\()|(?<=export function ).*(?=\()'
         functionName = re.findall(pattern, content)
         if functionName is None:
             return on_error(14, "Cannot Find Default Export Function Name in main.js file")
@@ -199,9 +201,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
             return on_error(10, "Module Name not in main Front-End Function Name")
 
     os.chdir("../")
-
-    os.chdir("./Front-End-Current/src/")
-    front_end_dir = os.getcwd()
+    front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
     frontEnd_outdir = rf"{front_end_dir}\modules\{module_name}"
     frontEnd_logodir = rf"{front_end_dir}\logos"
 
@@ -216,9 +216,10 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         Directory_flag = False
         for line in module_definitions:
             if update and module_name in line:
-                pattern = "(?<=import ).*(?= from)"
+                pattern = "(?<=import { ).*(?= } from)"
                 old_functionName = re.findall(pattern, line)[0]
-                if functionName != old_functionName:
+                if functionName[0] != old_functionName:
+                    os.chdir(master_dir)
                     return on_error(16, f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
                     break
@@ -309,15 +310,21 @@ def table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=Fa
     if os.path.exists(Table_outdir) and not update:
         shutil.rmtree(temp_dir)
         return on_error(2, "Table Already Exists")
-
+    new_rows = []
     for file in TableFiles:
         with open(file) as table_file:
-            scan_result = scan_file(table_file, modulename, True, update)
+            if not update:
+                scan_result = scan_file(table_file, modulename, True, update)
+            else:
+                scan_result, file_additions = scan_file(table_file, modulename, True, update)
+                new_rows.append(file_additions)
             if scan_result:  # If Scan returns an Error
                 table_file.close()
                 shutil.rmtree(temp_dir)
                 return scan_result
-    return True
+    if not update:
+        return True
+    return True, new_rows
 
 def get_module(prefix):
     """
@@ -325,7 +332,7 @@ def get_module(prefix):
 
     returns Module obj on success else None
     """
-    Modules = Module.query.filter(Module.prefix == prefix).all()
+    Modules = Module.query.filter(Module.prefix == prefix).first()
     return Modules
 
 
@@ -344,7 +351,8 @@ def Module_Access_Control():
         return on_error(3, "UserID is not specified")
     if modulePrefix is None:
         return on_error(3, "modulePrefix is not specified")
-
+    elif len(modulePrefix) > 3:
+        return on_error(3, "ModulePrefix Cannot be more than 3 charachters")
     selected_user = User.query.filter_by(userID=userID).first()
     selected_module = Module.query.filter_by(prefix=modulePrefix).first()
     if selected_module == None:
@@ -354,11 +362,21 @@ def Module_Access_Control():
 
     if request.method == 'POST':
         moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
-        give_user_access(userID, modulePrefix)
+        return give_user_access(userID, modulePrefix)
     else:
-        remove_user_access(userID, modulePrefix)
+        return remove_user_access(userID, modulePrefix)
 
 def give_user_access(userID, modulePrefix):
+    '''
+    Give A User access to view a specific module in the Database
+
+    Inputs:
+        userID (int) - Integer representation of the userID
+        modulePrefix (str) - 3 Char string for a given module
+
+    returns:
+        ModuleAccess Object containing userID & Module info
+    '''
     created_module_access = create_moduleAccess(userID, modulePrefix)
     created_module_access.insert()
 
@@ -447,7 +465,8 @@ def upload_module():
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'OPTIONS']:
-        update = request.values.get('update') == True
+        #update = request.values.get('update') == True
+        update = True
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
@@ -462,7 +481,7 @@ def upload_module():
         if module != [] and not update:
             return on_error(1, f"Module {modulename}, Already Exists")
         elif update and module != []:
-            if module.moduleKey != ModulePass:
+            if module.moduleKey.strip() != ModulePass:
                 return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
 
         if splitext(dl_file.filename)[1] != ".zip":
@@ -487,7 +506,10 @@ def upload_module():
                 return back_end_success
 
         if TableFiles != []:
-            table_success = table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=update)
+            if not update:
+                table_success = table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=update)
+            else:
+                table_success, new_rows = table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=update)
             if table_success is not True:
                 return table_success
 
@@ -504,12 +526,17 @@ def upload_module():
 
         if TableFiles != []:
             if update:
-                shutil.rmtree(Table_outdir)
+                if os.path.exists(Table_outdir):
+                    shutil.rmtree(Table_outdir)
             shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
-            tables = convert_to_imports(dir_tree(Table_outdir))
-            from Program.DB.Builder import create_db
+            Table_outdir = dir_tree(Table_outdir)
+            tables = convert_to_imports(Table_outdir)
 
-            create_db(tables)
+            from Program.DB.Builder import create_db, add_column
+            if not update:
+                create_db(tables)
+            elif new_rows != []:
+                add_column(new_rows)
 
         if front_end_success is not True:
             if os.path.exists(f"Program/Module/{modulename}"):

@@ -1,4 +1,4 @@
-from flask_login import RoleMixin, AsaList
+from flask_security import RoleMixin
 from sqlalchemy.ext.mutable import MutableList
 
 from Program import db

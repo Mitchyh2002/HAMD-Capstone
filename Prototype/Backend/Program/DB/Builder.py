@@ -2,8 +2,10 @@ from Program.OS import dir_tree, convert_to_imports
 from sqlalchemy.exc import IntegrityError
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, delete
-
+import re
 from Program import db
+
+url = f"postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB"
 
 def create_db(modules=None):
 
@@ -18,7 +20,6 @@ def create_db(modules=None):
         None
     '''
 
-    url = f"postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB"
 
     if modules is not None:
         engine = create_engine(url)
@@ -37,3 +38,33 @@ def create_db(modules=None):
 
         db.metadata.drop_all(engine)
         db.metadata.create_all(engine)
+
+def add_column(table_rows):
+        engine = create_engine(url)
+        engine.connect()
+        i = 0
+        for tbl in table_rows:
+            table_name = list(tbl.keys())[0]
+            if len(tbl[table_name]) == 0:
+                continue # No New Rows in File
+            for row in [x.strip() for x in tbl[table_name]]:
+                varPattern = '[A-Za-z]+.(?= =)'
+                evalPattern = '(?<= = ).+'
+                column_name = re.findall(varPattern, row)[0]
+                ColumnInfo = re.findall(evalPattern, row)[0]
+                new_row = eval(ColumnInfo)
+                column_type = new_row.type
+                default = new_row.default
+                foreign_keys = list(new_row.foreign_keys)
+                if default is None:
+                    default == ''
+                else:
+                    default = f"DEFAULT '{new_row.default.arg}'"
+                engine.execute('ALTER TABLE %s ADD COLUMN %s %s %s' % (table_name, column_name, column_type, default))
+                if len(foreign_keys) == 0:
+                    foreign_keys = ''
+                else:
+                    for key in foreign_keys:
+                        engine.execute('''ALTER TABLE %s 
+                        ADD CONSTRAINT FK_%s 
+                        FOREIGN KEY (%s) REFERENCES '''(table_name, column_name

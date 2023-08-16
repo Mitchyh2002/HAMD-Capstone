@@ -9,13 +9,11 @@ except ImportError:
 
 from itsdangerous import URLSafeTimedSerializer
 
-from Program import db, export_key, export_mail, export_mail_sender
-from Program.DB.Models.master.User import export_salt, User
+from Program import db
+from Program.DB.Models.mst.User import export_salt, User
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('confirmation', __name__, url_prefix="/confirm")
-
-TESTING = True
 
 def generate_confirmation_token(email):
    serializer = URLSafeTimedSerializer(export_key())
