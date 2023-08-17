@@ -57,6 +57,8 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
     regex_dict = {"from": "(?<=from ).+(?= import)",
                   "__import__": """(?<=__import__\(['"]).+(?=['"]\))""",
                   "import": "(?<=import ).+"}
+    routes = []
+    is_blueprint = False
     for line in lines:
         line = str(line)
         line = line.strip("b'")
@@ -72,6 +74,21 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
             pass
         elif "import" in line:
             modules.append(search(regex_dict["import"], line)[0])
+        if 'lueprint =' in line:
+            is_blueprint = True
+            urlPattern = f'(?<=url_prefix="\/){modulename}(?=/)'
+            blueprintPattern = f'(?<=Blueprint\(\\\'){modulename}(?=)'
+            url_check = re.findall(urlPattern, line)
+            blueprint_check = re.findall(blueprintPattern, line)
+            if len(blueprint_check) == 0:
+                return on_error(4, f"First Variable in Blueprint must contain {modulename}_")
+            if len(url_check) == 0:
+                return on_error(4, f"url_prefix must start with module prefix")
+        if update:
+            if "@blueprint.route" in line:
+                line = line.strip()
+                line = line.split("@blueprint.route('")[1]
+                routes.append(line)
 
     if TableScan:
         pattern = rf'(?<=__tablename__ = [\'"]).*(?=[\'"])'
@@ -88,7 +105,6 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
                     if len(file_difference) != 0:
                             return on_error(20, "Table is missing content on Update, Please ensure datatables are not missing")
                     new_rows[match] = set(lines).difference(set(alt_lines))
-
     in_file.seek(0)
     keys = {}
     if os.path.exists('Program\Temp_Module\keys.txt'):
@@ -120,9 +136,38 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
 
             elif split_module[0] not in whitelisted_modules:
                 return on_error(11, "Restricted Module found in application")
-        if update:
-            return 0, new_rows
-        return 0
+    if update and not TableScan:
+        existing_routes = []
+        fileName = in_file.name.split("\\")[-1]
+        if os.path.exists(f'Program/Module/{modulename}/{fileName}'):
+            with open(f'Program/Module/{modulename}/{fileName}') as curr_file:
+                curr_lines = curr_file.readlines()
+                for line in curr_lines:
+                    if '@blueprint.route' in line:
+                        line = line.strip()
+                        line = line.split("@blueprint.route('")[1]
+                        existing_routes.append(line)
+                    if 'blueprint =' in line:
+                        urlPattern2 = f'(?<=url_prefix="\/){modulename}(?=/)'
+                        blueprintPattern2 = f'(?<=Blueprint\(\\\'){modulename}(?=)'
+                        url_check2 = re.findall(urlPattern2, line)
+                        blueprint_check2 = re.findall(blueprintPattern2, line)
+                        if len(blueprint_check) == 0:
+                            return on_error(4, f"Blueprints First Variable in Blueprint must contain {modulename}_")
+                        if len(url_check) == 0:
+                            return on_error(4, f"url_prefix must start with module prefix")
+                        if url_check != url_check2:
+                            return on_error(4, f"endpoint url has been changed in file {fileName}")
+                        if blueprint_check2 != blueprint_check:
+                            return on_error(4, f"Blueprints First Variable has been changed in file {fileName}")
+            for route in existing_routes:
+                if route not in routes:
+                    missing_routes = list(set(existing_routes).difference(set(routes)))
+                    missing_routes = [route.strip().split("'")[0] for route in missing_routes]
+                    return on_error(5, f"Routes {missing_routes} are missing from {fileName}.")
+    if update and TableScan:
+        return 0, new_rows
+    return 0
 
 
 def QueryInsertModule(new_module: Module):
@@ -520,7 +565,8 @@ def upload_module():
         # All Modules are Valid, now move to the correct directories, If they exist
         if API_Files != []:
             if update:
-                shutil.rmtree("{API_outdir.strip(modulename)}/{modulename}")
+                if os.path.exists(f"{API_outdir.strip(modulename)}/{modulename}"):
+                    shutil.rmtree(f"{API_outdir.strip(modulename)}/{modulename}")
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 

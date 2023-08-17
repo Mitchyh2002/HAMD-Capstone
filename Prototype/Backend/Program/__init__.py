@@ -1,3 +1,5 @@
+import re
+
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
@@ -30,12 +32,12 @@ def import_blueprint(app, moduleName, ModuleFile):
     """
     for file in ModuleFile:
         imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
-        new_blueprint = __import__(imp_str)
         try:
+            new_blueprint = __import__(imp_str)
             bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
             app.register_blueprint(eval(bp_str))
-        except ModuleNotFoundError:
-            print("Module Doesn't have Blueprint file")
+        except AttributeError:
+            print("Module Doesn't have Blueprint Variable")
 
 
 def init_app() -> Flask:
