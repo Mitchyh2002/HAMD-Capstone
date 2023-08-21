@@ -30,7 +30,6 @@ def confirm_token(token, expiration=3600):
     return email
 
 @blueprint.route('/<token>')
-@login_required
 def confirm_email(token):
     try:
         email = confirm_token(token)
@@ -45,7 +44,7 @@ def confirm_email(token):
         user.confirmedDate = datetime.now()
         db.session.add(user)
         db.session.commit()
-        return on_success("You have successfully confirmed your account")
+        return on_success("You have successfully confirmed your account") 
     
 def send_email(to, subject, template):
     msg = Message(

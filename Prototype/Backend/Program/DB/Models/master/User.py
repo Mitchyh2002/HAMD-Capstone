@@ -76,7 +76,7 @@ class User(UserMixin, db.Model):
     
     def set_id(self):
         toBeEncoded = self.toJSON(True)
-        toBeEncoded['exp'] = datetime.now()+timedelta(hours=12)
+        toBeEncoded["exp"] = datetime.now()+timedelta(hours=12)
 
         self.token = jwt.encode(toBeEncoded, export_key(), algorithm="HS256")
         db.session.commit()
