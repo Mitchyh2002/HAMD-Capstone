@@ -72,10 +72,10 @@ export function createComponentRoutes(module) {
         children: Directory[module.prefix].map(e => {
             console.log(e.children)
             return({
-            path: e.name,
+            path: e.path,
             ...e.loader&& {loader: e.loader},
             ...e.children&& {children: e.children},
-            element: React.createElement(e.component)})
+            element: React.createElement(e.element)})
         }),
         //Create sub directories from pages
     }

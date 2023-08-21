@@ -59,14 +59,15 @@
   justify-content: center;
   align-items: center;
   height: 70px;
+  position: relative;
 }
 
 .bee-image{
     width: 100px;
     transform: rotate(20deg);
     position: absolute;
-    right: 15px;
-    bottom: 540px;
+    right: -50px;
+    top: -50px;
 }
 
 .login-form-content{
@@ -90,8 +91,12 @@ input::placeholder{
 }
 
 .form-group{
+    display: flex;
+    flex-direction: column;
     row-gap: 8px;
     width: 100%;
+    height: 105px;
+    justify-content: space-between;
 }
 
 .sign-in-button{
