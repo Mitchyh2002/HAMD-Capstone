@@ -4,6 +4,7 @@ flask_bootstrap
 flask_sqlalchemy
 flask_cors
 flask_login
+flask_mail
 psycopg2
 bcrypt
 jwt
