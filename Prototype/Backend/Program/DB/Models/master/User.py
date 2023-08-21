@@ -1,13 +1,14 @@
 import bcrypt
 import jwt
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import Text, TypeDecorator
 from sqlalchemy.orm import validates
 from flask_login import UserMixin
 
 from Program import db, export_key
 from Program.ResponseHandler import on_error
+from Program.DB.Models.master.Admin import refAdminRoles
 
 class PasswordHash(object):
     def __init__(self, hash_):
@@ -66,9 +67,9 @@ class User(UserMixin, db.Model):
     dateOfBirth = db.Column(db.String(4), nullable = False)
     token = db.Column(db.String, unique=True, nullable=True)
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
-    registeredDate = db.Column(db.DateTime,nullable=False)
+    registeredDate = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirmedDate = db.Column(db.Boolean, nullable=True)
+    confirmedDate = db.Column(db.Date, nullable=True, default=None)
                            
 
     def get_id(self):
@@ -102,7 +103,7 @@ class User(UserMixin, db.Model):
         if is_query:
             return {
                     "email": self.email.strip(),
-                    "adminLvl": self.roles,
+                    "adminLvl": self.adminLevel,
                     #"membership": self.membership,
                     "name": self.firstName.strip()}
         if self.phoneNumber is None:
@@ -144,7 +145,7 @@ def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
     created_user.adminLevel = 1
-    created_user.registeredDate = datetime.now()
+    created_user.registeredDate = date.today()
     created_user.confirmed = False
     created_user.setIsAuthenticated(True)
     created_user.setIsActive(True)

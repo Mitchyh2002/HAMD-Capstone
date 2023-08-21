@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask import Blueprint, request, Flask
 from flask_mail import Message
 from flask_login import current_user, login_required
@@ -31,17 +31,20 @@ def confirm_token(token, expiration=3600):
 
 @blueprint.route('/<token>')
 def confirm_email(token):
+    email = confirm_token(token)
     try:
-        email = confirm_token(token)
+        if not email:
+            return on_error(60, "The confirmation link is invalid or has expired.")
+        
     except:
-        return on_error(60, "The confirmation link is invalid or has expired.")
-    
+        pass
+
     user = QuerySelectUser(email)
     if user.confirmed:
         return on_error(61, "Account has already been confirmed. Please Login.")
     else:
         user.confirmed = True
-        user.confirmedDate = datetime.now()
+        user.confirmedDate = date.today()
         db.session.add(user)
         db.session.commit()
         return on_success("You have successfully confirmed your account") 
