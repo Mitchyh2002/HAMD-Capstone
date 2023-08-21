@@ -19,14 +19,15 @@ from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
 
-#from Program.DB.Models.mst.Modules import Module, create_module
+# from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
 blueprint = Blueprint('module', __name__, url_prefix="/module")
 
 TESTING = True
 
-def scan_file(in_file, modulename, TableScan= False, update=True):
+
+def scan_file(in_file, modulename, TableScan=False, update=True):
     '''
     Function To Scan a python file for correct syntax & imports.
 
@@ -103,7 +104,8 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
                     alt_lines = ref_file.readlines()
                     file_difference = set(alt_lines).difference(set(lines))
                     if len(file_difference) != 0:
-                            return on_error(20, "Table is missing content on Update, Please ensure datatables are not missing")
+                        return on_error(20,
+                                        "Table is missing content on Update, Please ensure datatables are not missing")
                     new_rows[match] = set(lines).difference(set(alt_lines))
     in_file.seek(0)
     keys = {}
@@ -116,8 +118,6 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
                     keys[line[0]] = PasswordHash.new(line[1]).hash
                 else:
                     on_error(21, "keys.txt lines be in the following format {moduleprefix}:{modulepassword}")
-
-
 
     with open(r'Program\templates\whitelisted_modules.txt') as whitelist:
         whitelisted_modules = whitelist.read()
@@ -171,16 +171,16 @@ def scan_file(in_file, modulename, TableScan= False, update=True):
 
 
 def QueryInsertModule(new_module: Module):
-
     """ Function to Improt Module into DB
         if Module exists delete itself if gotten this far into system
     """
-    #If Module Exists Drop it
+    # If Module Exists Drop it
     existing_modules = Module.query.filter_by(prefix=new_module.prefix).delete()
     from Program import db
 
     db.session.add(new_module)
     db.session.commit()
+
 
 @blueprint.route('/getactive')
 def get_active_plugins():
@@ -201,6 +201,7 @@ def get_active_plugins():
         return on_success(valid_modules)
     return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
+
 @blueprint.route('getall')
 def get_all_plugins():
     '''
@@ -214,6 +215,7 @@ def get_all_plugins():
        '''
     return [Module.toJSON(True) for Module in Module.query.all()]
 
+
 def check_files(temp_dir, module_prefix):
     '''
     Check Old and New content for correct files, 
@@ -224,17 +226,19 @@ def check_files(temp_dir, module_prefix):
         table_dir = temp_dir + f'{module_prefix}/Tables'
         if not os.path.exists(table_dir):
             return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
-        existing_content = [x.split(f'Program/DB/Models/{module_prefix}')[1] for x in dir_tree(f'Program/DB/Models/{module_prefix}', True)]
+        existing_content = [x.split(f'Program/DB/Models/{module_prefix}')[1] for x in
+                            dir_tree(f'Program/DB/Models/{module_prefix}', True)]
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
 
         if list(set(existing_content).difference(set(new_content))) != []:
             return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
 
     if os.path.exists(f'Program/Module/{module_prefix}'):
-        if not os.path.exists(temp_dir + f'{module_prefix}/Backend'):
+        back_end_dir = temp_dir + f'{module_prefix}/Backend'
+        if not os.path.exists(back_end_dir):
             return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
         existing_content = dir_tree(f'Program/Module/{module_prefix}')
-        new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Backend')[1] for x in dir_tree(table_dir, True)]
+        new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Backend')[1] for x in dir_tree(back_end_dir, True)]
 
         blueprints = []
         for file in existing_content:
@@ -245,10 +249,10 @@ def check_files(temp_dir, module_prefix):
                 if matches != []:
                     blueprints.append(file.split(f'Program/Module/{module_prefix}')[1])
 
-        if list(set(existing_content).difference(set(new_content))) != []:
-            return on_error(4, "Blueprints Are Missing From Module, Please ensure existing plugin content is in .zip file")
+        if list(set(blueprints).difference(set(new_content))) != []:
+            return on_error(4,
+                            "Blueprints Are Missing From Module, Please ensure existing plugin content is in .zip file")
     return None
-
 
 
 def front_end_installation(temp_dir, module_name, master_dir, update=False):
@@ -302,7 +306,8 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 old_functionName = re.findall(pattern, line)[0]
                 if functionName[0] != old_functionName:
                     os.chdir(master_dir)
-                    return on_error(16, f"mst.js Export default function name changed, please change back to {old_functionName}")
+                    return on_error(16,
+                                    f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
                     break
             if line == '//IMPORT_END':
@@ -319,12 +324,12 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 if Directory_flag == True:
                     directory_last_pos = i + 1
 
-
             i = i + 1
         if not update:
             if page_name != []:
                 page_name = page_name[0]
-            module_definitions.insert(import_pos, 'import { '+imports+' } from "./modules/'+module_name+'/main.js";')
+            module_definitions.insert(import_pos,
+                                      'import { ' + imports + ' } from "./modules/' + module_name + '/main.js";')
             module_definitions[module_last_pos] = module_definitions[module_last_pos] + ","
             module_definitions.insert(module_last_pos + 1, f"    {module_name}: {functionName[0]}")
             module_definitions[directory_last_pos] = module_definitions[directory_last_pos] + ","
@@ -338,15 +343,12 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         if os.path.exists(f"{master_dir}/Program/Temp_Module/{module_name}/{module_name}.svg"):
             os.remove(f"{master_dir}/Program/Temp_Module/{module_name}/{module_name}.svg")
 
-        os.rename(f"{master_dir}/Program/Temp_Module/ts1/logo.svg", f"{master_dir}/Program/Temp_Module/ts1/{module_name}.svg")
+        os.rename(f"{master_dir}/Program/Temp_Module/ts1/logo.svg",
+                  f"{master_dir}/Program/Temp_Module/ts1/{module_name}.svg")
 
         if os.path.exists(f"frontEnd_logodir/{module_name}.svg"):
             os.remove(front_end_installation)
         shutil.move(f"{master_dir}/Program/Temp_Module/{module_name}/{module_name}.svg", frontEnd_logodir)
-
-    if update:
-        shutil.rmtree(frontEnd_outdir)
-    shutil.move(rf"{master_dir}\Program\Temp_Module\{module_name}\Front End", frontEnd_outdir)
 
     if not update:
         with open(front_end_dir + r".\\moduledefs.js", "w") as file:
@@ -354,6 +356,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
 
     os.chdir(master_dir)
     return True
+
 
 def back_end_installation(API_Files, temp_dir, modulename, backend_outdir, update=False):
     """
@@ -408,6 +411,7 @@ def table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=Fa
         return True
     return True, new_rows
 
+
 def get_module(prefix):
     """
     Get module relevant based on the given module prefix
@@ -417,13 +421,13 @@ def get_module(prefix):
     Modules = Module.query.filter(Module.prefix == prefix).first()
     return Modules
 
-
-    #If Conn Exists Delete it
+    # If Conn Exists Delete it
     moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
     created_moduleAccess = create_moduleAccess(modulePrefix, userID)
     created_moduleAccess.insert()
 
     return on_success(created_moduleAccess.toJSON())
+
 
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
@@ -448,6 +452,7 @@ def Module_Access_Control():
     else:
         return remove_user_access(userID, modulePrefix)
 
+
 def give_user_access(userID, modulePrefix):
     '''
     Give A User access to view a specific module in the Database
@@ -463,6 +468,7 @@ def give_user_access(userID, modulePrefix):
     created_module_access.insert()
 
     return on_success(created_module_access.toJSON())
+
 
 def remove_user_access(userID, modulePrefix):
     moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
@@ -499,10 +505,11 @@ def update_module_ref():
             values["logo"] = f"./logo/{modulePrefix}.svg"
         Module.query.filter(Module.prefix == modulePrefix).update(values)
         db.session.commit()
-        os.chdir(save_dir) # Reset to Base CWD
+        os.chdir(save_dir)  # Reset to Base CWD
         return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
     else:
         return on_error(16, "Incorrect Module Password entered")
+
 
 @blueprint.route('activate', methods=["POST"])
 def activate_module():
@@ -514,6 +521,7 @@ def activate_module():
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
     db.session.commit()
     return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
+
 
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
@@ -547,7 +555,7 @@ def upload_module():
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'OPTIONS']:
-        #update = request.values.get('update') == True
+        # update = request.values.get('update') == True
         update = True
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
@@ -596,13 +604,47 @@ def upload_module():
             if not update:
                 table_success = table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=update)
             else:
-                table_success, new_rows = table_installation(TableFiles, temp_dir, modulename, Table_outdir, update=update)
+                table_success, new_rows = table_installation(TableFiles, temp_dir, modulename, Table_outdir,
+                                                             update=update)
             if table_success is not True:
                 return table_success
 
         API_outdir = rf"Program\Module\{modulename}"
 
         front_end_success = front_end_installation(FrontEndDir, modulename, master_dir, update=update)
+
+        if front_end_success is not True:
+            if os.path.exists(f"Program/Module/{modulename}") and not update:
+                shutil.rmtree(f"Program/Module/{modulename}")
+            if os.path.exists(f"Program/DB/Models/{modulename}") and not update:
+                shutil.rmtree(f"Program/DB/Models/{modulename}")
+            shutil.rmtree(temp_dir)
+            return front_end_success
+        # Upload Tables to Database
+
+
+        if TableFiles != []:
+            from Program.DB.Builder import create_db, add_column
+            if update:
+                if new_rows != []:
+                    success = add_column(new_rows)
+                    if success != None:
+                        return on_error(1, success)
+                if os.path.exists(Table_outdir):
+                    shutil.rmtree(Table_outdir)
+
+            shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
+            Table_outdir = dir_tree(Table_outdir)
+            tables = convert_to_imports(Table_outdir)
+            if not update:
+                create_db(tables)
+        if update:
+            os.chdir("../")
+            front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
+            frontEnd_outdir = rf"{front_end_dir}\modules\{modulename}"
+            shutil.rmtree(frontEnd_outdir)
+            shutil.move(rf"{master_dir}\Program\Temp_Module\{modulename}\Front End", frontEnd_outdir)
+        os.chdir(master_dir)
 
         # All Modules are Valid, now move to the correct directories, If they exist
         if API_Files != []:
@@ -612,32 +654,8 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        if TableFiles != []:
-            if update:
-                if os.path.exists(Table_outdir):
-                    shutil.rmtree(Table_outdir)
-            shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
-            Table_outdir = dir_tree(Table_outdir)
-            tables = convert_to_imports(Table_outdir)
-
-            from Program.DB.Builder import create_db, add_column
-            if not update:
-                create_db(tables)
-            elif new_rows != []:
-                add_column(new_rows)
-
-        if front_end_success is not True:
-            if os.path.exists(f"Program/Module/{modulename}"):
-                shutil.rmtree(f"Program/Module/{modulename}")
-            if os.path.exists(f"Program/DB/Models/{modulename}"):
-                shutil.rmtree(f"Program/DB/Models/{modulename}")
-            shutil.rmtree(temp_dir)
-            return front_end_success
-        # Upload Tables to Database
-
-
-        new_Module = create_module(str(modulename),DisplayName, ModulePass, True, logo_path)
-        new_Module = create_module(str(modulename),DisplayName, ModulePass, True, logo_path)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass, True, logo_path)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass, True, logo_path)
         QueryInsertModule(new_Module)
         os.chdir(master_dir)
 
@@ -646,4 +664,3 @@ def upload_module():
         reload()
         return on_success(new_Module.toJSON(True))
     return on_error(-1, "Incorrect Request Type, request should be POST")
-
