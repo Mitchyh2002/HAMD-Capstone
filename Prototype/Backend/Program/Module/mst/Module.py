@@ -214,6 +214,43 @@ def get_all_plugins():
        '''
     return [Module.toJSON(True) for Module in Module.query.all()]
 
+def check_files(temp_dir, module_prefix):
+    '''
+    Check Old and New content for correct files, 
+    
+    If any Key files are missing return error code 4 else None
+    '''
+    if os.path.exists(f'Program/DB/Models/{module_prefix}'):
+        table_dir = temp_dir + f'{module_prefix}/Tables'
+        if not os.path.exists(table_dir):
+            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+        existing_content = [x.split(f'Program/DB/Models/{module_prefix}')[1] for x in dir_tree(f'Program/DB/Models/{module_prefix}', True)]
+        new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
+
+        if list(set(existing_content).difference(set(new_content))) != []:
+            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+
+    if os.path.exists(f'Program/Module/{module_prefix}'):
+        if not os.path.exists(temp_dir + f'{module_prefix}/Backend'):
+            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+        existing_content = dir_tree(f'Program/Module/{module_prefix}')
+        new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Backend')[1] for x in dir_tree(table_dir, True)]
+
+        blueprints = []
+        for file in existing_content:
+            with open(file) as check_file:
+                content = check_file.read()
+                blueprintPattern = f'blueprint = Blueprint'
+                matches = re.findall(blueprintPattern, content)
+                if matches != []:
+                    blueprints.append(file.split(f'Program/Module/{module_prefix}')[1])
+
+        if list(set(existing_content).difference(set(new_content))) != []:
+            return on_error(4, "Blueprints Are Missing From Module, Please ensure existing plugin content is in .zip file")
+    return None
+
+
+
 def front_end_installation(temp_dir, module_name, master_dir, update=False):
     """ mst Function to Facilitate the installation of Front End Components
         1. Confirm mst.JS exists and pull export function name
@@ -542,6 +579,11 @@ def upload_module():
         Table_outdir = rf"Program\DB\Models\{modulename}"
         FrontEndDir = rf"{temp_dir}{modulename}\Front End"
         logo_path = ""
+
+        if update:
+            file_check = check_files(temp_dir, modulename)
+            if file_check is not None:
+                return file_check
         if os.path.exists(f"Program/Temp_Module/{modulename}.svg"):
             logo_path = f'/logos/{modulename}.svg'
 

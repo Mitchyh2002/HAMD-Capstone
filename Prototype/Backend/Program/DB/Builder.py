@@ -70,6 +70,7 @@ def add_column(table_rows):
                 default = ''
             else:
                 default = f"DEFAULT '{new_row.default.arg}'"
+
             engine.execute('ALTER TABLE %s ADD COLUMN %s %s %s' % (table_name, column_name, column_type, default))
             if len(foreign_keys) == 0:
                 foreign_keys = ''
@@ -78,3 +79,5 @@ def add_column(table_rows):
                     split_key = key.target_fullname.split(".")
                     engine.execute(f"ALTER TABLE {table_name} ADD CONSTRAINT FK_{column_name} FOREIGN KEY ({column_name})"
                                    f" REFERENCES {split_key[0]} ({'.'.join(split_key[1:])})")
+            if new_row.unique is not None:
+                engine.execute(f"ALTER TABLE {table_name} ADD UNIQUE ({column_name})")

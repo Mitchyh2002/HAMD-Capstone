@@ -1,7 +1,7 @@
 import os
 
 
-def dir_tree(start_path):
+def dir_tree(start_path, tableUpdate=False):
     """
     Re-Usable Function to get the localpaths of all files from a given starting directory.
 
