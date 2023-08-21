@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Directory } from "moduleDefs";
 import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
 import "../App.css"
+import Breadcrumbs from "Components/Breadcrumbs.js";
 
 /*Sub Menu
     Description: SubMenu for all sub components of and corresponding links based on the values defined in modulesDefs.js
@@ -13,9 +14,6 @@ import "../App.css"
 export default function SubMenu(props){
     //Extract sub components from directory
     const subComponents = Directory[props.prefix];
-    console.log(props.prefix);
-    console.log("Matchiong Path")
-    console.log(useMatch({path: "mst", exact: false}))
 
     //Creates the navlinks objects
     //Input: function
@@ -23,22 +21,29 @@ export default function SubMenu(props){
     function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={props.prefix + "/" + component.name} name={component.name} />
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
             </div>
         )
     }
 
     return(
         <>
-            {subComponents&&
-                    <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
-                        {subComponents.map(component => createNavLinks(component))}
-                    </div>}
+            <div className="subNavContainer">
+            <div>
+                <Breadcrumbs />
+            </div>
+                {subComponents&&
+                        <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
+                                {subComponents.map(component => createNavLinks(component))}
+                        </div>}
+            </div>
         </>
     )
 }
 
 /*
+    {subComponents.map(component, index => createNavLinks(component))}
+
     Sub Nav Button
     Links to a given location, know when it is active and changes classes accrodingly
     Props:

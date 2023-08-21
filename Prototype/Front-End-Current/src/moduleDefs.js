@@ -1,22 +1,18 @@
 //REGEX_START
+import tst_master, { tst_pages } from "modules/tst/main.js";
 import random from "./modules/mst/main.js";
 import { pages } from "./modules/mst/main.js";
-import { df1_main } from "./modules/df1/main.js";
 //IMPORT_END
 
 //Defintion of components, correlates the module id of the database to the component
 export const Modules = {
     mst: random,
-    df1: df1_main
+    tst: tst_master
 }
 
 export const Directory = {
   mst: pages,
-    df1: []
+  tst: tst_pages
 }
+
 //REGEX_END
-
-
-
-
-

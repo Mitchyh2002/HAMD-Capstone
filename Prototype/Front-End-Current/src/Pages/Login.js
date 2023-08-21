@@ -148,6 +148,7 @@ function RegisterForm() {
             <form className="login-form" id="Register">
                 <div className="login-form-content">
                     <div className="form-group">
+                        <label>Name</label>
                         <input
                             type="text"
                             name="firstName"
@@ -155,6 +156,7 @@ function RegisterForm() {
                         />
                     </div>
                     <div className="form-group">
+                        <label>D.O.B</label>
                         <input
                             type="number"
                             min="1910"
@@ -164,6 +166,7 @@ function RegisterForm() {
                         />
                     </div>
                     <div className="form-group">
+                        <label>Email</label>
                         <input
                             type="email"
                             name="email"
@@ -172,6 +175,7 @@ function RegisterForm() {
                         />
                     </div>
                     <div className="form-group">
+                        <label>Password</label>
                         <input
                             type="password"
                             name="password"
