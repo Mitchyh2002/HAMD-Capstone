@@ -21,7 +21,7 @@ export default function SubMenu(props){
     function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.name} name={component.name} />
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
             </div>
         )
     }

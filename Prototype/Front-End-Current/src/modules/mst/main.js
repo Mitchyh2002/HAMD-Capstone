@@ -5,12 +5,12 @@ import { getPlugins } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
 export const pages = [{
-    name: "Plugins",
-    component: PluginList,
+    path: "Plugins",
+    element: PluginList,
     loader: getPlugins
 },{
-    name: "Add Plugin",
-    component: Upload
+    path: "Add Plugin",
+    element: Upload
 }];
 
 
