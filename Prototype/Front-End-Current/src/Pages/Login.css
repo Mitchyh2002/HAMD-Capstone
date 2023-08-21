@@ -1,0 +1,113 @@
+.login-image{
+    width: 50vw;
+    min-width: 380px;
+    opacity: 85%;
+    position: absolute;
+    flex: 1;
+}
+
+.welcome-text{
+    color: white;
+    position: relative;
+}
+
+/* Container CSS */
+
+.maindiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+@media (max-width: 760px){
+    .maindiv{
+        flex-direction: column;
+    }
+    .seconddiv{
+        flex-shrink: 1;
+    }
+    .thirddiv{
+        order: -1;
+        min-width: 80vw;
+    }
+}
+@media (max-width: 760px){
+    .bee-image{
+    transform: rotate(10deg);
+    }
+}
+
+.seconddiv{
+    display: flex;
+    justify-content: flex-start;
+    width: 50vw;
+    min-height: 630px;
+    flex-shrink: 0;
+}
+
+.thirddiv{
+    width: 50vw;
+    padding: 50px;
+}
+
+/* Form CSS */
+
+.form-header{
+  background-color: #FFE69A;
+  border-radius: 20px 20px 0px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+}
+
+.bee-image{
+    width: 100px;
+    transform: rotate(20deg);
+    position: absolute;
+    right: 15px;
+    bottom: 540px;
+}
+
+.login-form-content{
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    width: 100%;
+}
+
+input::placeholder{
+    opacity: 0.6;
+    font-size: 16px;
+    font-family: "Lato", sans-serif;
+}
+
+.forgot-password{
+    text-decoration: none;
+    color: black;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+.form-group{
+    row-gap: 8px;
+    width: 100%;
+}
+
+.sign-in-button{
+    margin-top: 20px;
+}
+
+.create-account-button{
+    background-color: rgba(242, 143, 59, 0.4);
+    margin-top: 10px;
+}
+
+/* Error CSS */
+#email-error{
+    color: red;
+}
+
+#password-error{
+    color: red;
+}

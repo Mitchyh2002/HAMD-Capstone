@@ -1,28 +1,31 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
-import MOCK_DATA from "./MOCK_DATA.json";
 import "./PluginList.css";
+import { useLoaderData } from 'react-router-dom';
+import Modal from './Components.js'
 
 export default function PluginList() {
+    
+    const plugins = useLoaderData();
 
-    console.log(MOCK_DATA);
-    const data = useMemo(() => MOCK_DATA, []);
+    /* Setting the state for the modal */
+    const [modal, setModal] = useState(false);
+    const toggleModal = () => {
+        setModal(!modal);
+    }
+
+    /* Getting the data from the database  */
+    const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
-    {
+    /*{
         Header: "ID",
         accessor: "id",
-    },{
+    },*/{
         Header: "Prefix",
         accessor: "prefix",
     },{
         Header: "Display Name",
-        accessor: "display_name",
-    },{
-        Header: "Date Added",
-        accessor: "date_added",
-    },{
-        Header: "Action",
-        accessor: "action",
+        accessor: "displayName",
     }
     ], []);
 
@@ -30,37 +33,52 @@ export default function PluginList() {
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
     return(
-    <div className="pluginPage">
-        <h2>Plugins</h2>
-            <div className="pluginTable">
-                <table {...getTableProps()}>
-                    <thead>
-                    {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map((column) => (
-                                <th{...column.getHeaderProps()}>
-                                    {column.render("Header")}
-                                </th>
+        <>
+            <div className="pluginPage">
+                <h2>Plugins</h2>
+                    <div className="pluginTable">
+                        <table {...getTableProps()}>
+                            <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map((column) => (
+                                        <th{...column.getHeaderProps()}>
+                                            {column.render("Header")}
+                                        </th>
+                                    ))}
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
                             ))}
-                        </tr>
-                    ))}
-                    </thead>
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row)
-                                return (
-                                    <tr{...row.getRowProps()}>
-                                        {row.cells.map((cell) => (
-                                            <td className="pluginTableCell"{...cell.getCellProps()}>
-                                                {cell.render("Cell")}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                </table>
+                            </thead>
+                                <tbody {...getTableBodyProps()}>
+                                    {rows.map((row) => {
+                                        prepareRow(row)
+                                        return (
+                                            <tr{...row.getRowProps()}>
+                                                {row.cells.map((cell) => (
+                                                    <td className="pluginTableCell"{...cell.getCellProps()}>
+                                                        {cell.render("Cell")}
+                                                    </td>
+                                                ))}
+                                                <td>
+                                                    <button onClick={toggleModal} className="btn-modal">
+                                                            Edit
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                        </table>
+                    </div>
             </div>
-    </div>
-    )
-};
+            {modal && (
+                <Modal show={modal} change={setModal}/>
+            )}
+        </>
+        )
+    };
+    
+    

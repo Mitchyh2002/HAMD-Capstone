@@ -1,17 +1,20 @@
 import bcrypt
+import jwt
 
+from datetime import datetime, timedelta
 from sqlalchemy import Text, TypeDecorator
 from sqlalchemy.orm import validates
 from flask_login import UserMixin
 
 from Program import db
 from Program.ResponseHandler import on_error
+from Program.DB.Models.master.Admin import refAdminRoles
 
 class PasswordHash(object):
     def __init__(self, hash_):
         #assert len(self.hash) == 60, 'bcrypt hash should be 60 chars.'
+        #assert str(hash_).count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
-        assert self.hash.count('$'), 'bcrypt hash should have 3x "$".'
         self.rounds = int(self.hash.split('$')[2])
 
     def __eq__(self, candidate):
@@ -53,18 +56,32 @@ class Password(TypeDecorator):
             return PasswordHash.new(value, self.rounds)
         elif value is not None:
             raise TypeError('Cannot convert {} to a PasswordHash'.format(type(value)))
-        
+
 class User(UserMixin, db.Model):
     __tablename__ = "user"
     userID = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String, unique = True, nullable = False)
-    phoneNumber = db.Column(db.String, unique = True)
-    firstName = db.Column(db.String, nullable = False)
+    phoneNumber = db.Column(db.String(12), unique = True)
+    firstName = db.Column(db.String(255), nullable = False)
     passwordHash = db.Column(Password)
-    dateOfBirth = db.Column(db.String, nullable = False)
+    dateOfBirth = db.Column(db.String(4), nullable = False)
+    token = db.Column(db.String)
+    adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
+                           
 
     def get_id(self):
-        return str(self.userID)
+        return str(self.token)
+    
+    def set_id(self):
+        toBeEncoded = self.toJSON(True)
+        toBeEncoded['exp'] = datetime.now()+timedelta(hours=12)
+
+        self.token = jwt.encode(toBeEncoded, "1738", algorithm="HS256")
+        db.session.commit()
+
+    def del_id(self):
+        self.token = None
+        db.session.commit()
 
     @validates
     def _validate(self, key, password):
@@ -81,15 +98,17 @@ class User(UserMixin, db.Model):
             Dict Representation of OBJ
         '''
         if is_query:
-            return {"userID": self.userID,
+            return {
                     "email": self.email.strip(),
-                    "firstName": self.firstName.strip()}
+                    "adminLvl": self.adminLevel,
+                    #"membership": self.membership,
+                    "name": self.firstName.strip()}
         if self.phoneNumber is None:
             return {
             "userID": self.userID,
             "email": self.email.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash.hash,
+            "passwordHash": self.passwordHash,
             "dateOfBirth": self.dateOfBirth.strip()
         }
 
@@ -98,7 +117,7 @@ class User(UserMixin, db.Model):
             "email": self.email.strip(),
             "phoneNumber": self.phoneNumber.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash.hash,
+            "passwordHash": self.passwordHash,
             "dateOfBirth": self.dateOfBirth.strip()
         }
 
@@ -122,9 +141,10 @@ def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
     created_user.passwordHash = passwordHash
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
+    created_user.adminLevel = 1
     created_user.setIsAuthenticated(True)
     created_user.setIsActive(True)
-    created_user.setIsAnonymous(True)
+    created_user.setIsAnonymous(False)
 
     return created_user
 
@@ -154,6 +174,3 @@ def JSONtoUser(JSON):
         return on_error(1, "JSON Missing Import Keys, Please confirm that all values are correct")
 
     return created_user
-
-def export_salt(rounds=12):
-    return bcrypt.gensalt(rounds)

@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter} from 'react-router-dom';
 import { AllRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
+import { getToken } from 'Functions/User';
 
 function App() {
   const [modules, setModules] = useState([]);
@@ -9,10 +10,15 @@ function App() {
 
   //Get all active modules from the server and store in state
   useEffect(() => {
-    fetch("http://localhost:5000/module/getactive")
+    fetch("http://localhost:5000/module/getactive", {
+      method: "GET",
+      Authorisation: getToken()
+    })
     .then( response => {
         return response.json();
     }).then(data => {
+      console.log(data)
+      console.log("Modules")
       setModules(data.Values)
     }).then(() => {
       setLoaded(true);

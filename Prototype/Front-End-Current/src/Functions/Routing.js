@@ -1,7 +1,12 @@
 import {Directory, Modules } from "../moduleDefs"
-import { Outlet, useOutlet, useRoutes } from "react-router-dom";
+import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
 import Main from "Pages/Main";
 import React from "react";
+import SubMenu from "Components/SubMenu";
+import Login from "Pages/Login";
+import NoMatchingPage from "Pages/404";
+import { getToken } from "./User";
+import Breadcrumbs from "Components/Breadcrumbs";
 
 
 /*All Routes
@@ -9,8 +14,8 @@ import React from "react";
     Input: Modules
     Output: List of Routes
 */
-export function AllRoutes(props){
-    return(useRoutes(CreateAllPaths(props.Modules)));
+export function allRoutes(Modules){
+    return(CreateAllPaths(Modules));
 }
 
 /*Create All Paths
@@ -23,10 +28,28 @@ export function CreateAllPaths(Components) {
     console.log(Components);
     //Create Route Directory
     const Routes = [{
-        path: "/",
+        path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
-        children: Components.map(e => createComponentRoutes(e))
+        children: Components.map(e => createComponentRoutes(e)),
+        loader: async ()  => {
+            const token = await(getToken());
+            console.log(token);
+            if(token == null){
+                return redirect("/login");
+            }else{
+                return token;
+            }
+        }
+    },{
+        path:"/Login",
+        element: <Login register={false}/>
+    },{
+        path:"/Register",
+        element: <Login register={true}/>
+    },{
+        path:'*',
+        element:<NoMatchingPage />
     }];
     console.log(Routes);
     return Routes;
@@ -41,14 +64,17 @@ export function CreateAllPaths(Components) {
 export function createComponentRoutes(module) {
     const Root = {
         //Create Index as Display Name
-        path: "/" + module.prefix,
+        path: module.prefix,
         //Element function from main.js of the module
         element: <CreateParentOutlet module = {module} />,
 
         //Create child path for each directory
         children: Directory[module.prefix].map(e => {
-            console.log(e)
-            return({path: e.name,
+            console.log(e.children)
+            return({
+            path: e.name,
+            ...e.loader&& {loader: e.loader},
+            ...e.children&& {children: e.children},
             element: React.createElement(e.component)})
         }),
         //Create sub directories from pages
@@ -67,6 +93,7 @@ export function CreateParentOutlet (props) {
     console.log(child);
     return(
         <>
+            <SubMenu prefix={props.module.prefix} />
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )
