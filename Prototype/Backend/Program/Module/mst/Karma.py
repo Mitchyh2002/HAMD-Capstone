@@ -85,4 +85,3 @@ def karma_handler():
     elif request.method == 'POST':
         return assign_user_karma(request)
 
-
