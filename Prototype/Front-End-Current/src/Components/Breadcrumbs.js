@@ -11,7 +11,8 @@ export default function Breadcrumbs() {
         .filter(crumb => crumb !== '')
         .map(crumb => {
             currentLink += `/${crumb}` 
-
+            crumb = crumb.replace("%20", " ");
+            crumb = crumb.charAt(0).toUpperCase() + crumb.slice(1);
             return(
                 <div className="crumb" key={crumb}>
                     <Link to={currentLink}>{crumb}</Link>

@@ -26,6 +26,7 @@ h4{
 }
 
 form{
+  row-gap: 8px;
   font-family: 'Lato', sans-serif;
   font-size: 16px;
   padding: 20px 0px;
@@ -36,10 +37,13 @@ label{
   font-size: 25px;
 }
 
+a{
+  text-decoration: none;
+  font-size: 16px;
+}
 /*a tag*/
 /*Button*/
 /*Input*/
-
 
 body{
   font-family: 'Lato', sans-serif;
@@ -88,6 +92,42 @@ header li a:hover {
   margin-right: auto;
 }
 
+/* Breadcrumb Nav CSS */ 
+.breadcrumbs{
+  margin-right: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.breadcrumbs1{
+  display: flex;
+}
+
+.breadcrumbs > *{
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.breadcrumbs .crumb:after{
+  content: '>';
+  margin-left: 20px;
+}
+
+.breadcrumbs .crumb:last-child:after{
+  display: none;
+}
+
+.breadcrumbs .crumb a{
+  color: black;
+  text-decoration: none;
+  font-family: 'Lato', sans-serif;
+  transition: all 0.3s ease 0s;
+}
+
+.crumb a:hover{
+  color: white;
+}
+
 /*Main Nav Css*/
 .wrapperMainNav{
   background-color: rgba(242, 143, 59, 0.5);
@@ -133,11 +173,16 @@ header li a:hover {
   background-color: rgba(255,230,154, .4);
   align-items: center;
   border-radius: 0px 20px 0px 0px;
-  margin-top: 12.8px;
+  margin-top: 2px;
 }
 
 .subNav {
   background-color: #FFE69A;
+}
+
+.navButtonContainer{
+  display: flex;
+  flex: 1;
 }
 
 .subNavHighlight {  
@@ -180,6 +225,19 @@ header li a:hover {
   border-radius: 0px 20px 0px 0px;
 }
 
+.menu-icon{
+  width: 35px;
+  object-fit: contain;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.toggle-button{
+  background-color: transparent;
+  border: none;
+}
+
 /* Buttons */
 .primaryButton{
   width: 250px;
@@ -204,8 +262,7 @@ header li a:hover {
   font-family: 'Lato', sans-serif;
   font-size: 30px;
   border-radius: 20px;
-  background-color: #F28F3B;
-  opacity: 50%;
+  background-color: rgba(242, 143, 59, .5);
   cursor: pointer;
   transition: all 0.3s ease 0s;
 }
@@ -246,32 +303,6 @@ input:focus{
   border-left: none;
   border-right: none;
   border-bottom: 1.5px solid;
-}
-
-/* Breadcrumb Nav CSS */ 
-.breadcrumbs{
-  max-width: 1200px;
-}
-
-.breadcrumbs > *{
-  display: inline-block;
-  margin-left: 20px;
-  margin-top: 20px;
-}
-
-.breadcrumbs .crumb:after{
-  content: '>';
-  margin-left: 20px;
-}
-
-.breadcrumbs .crumb:last-child:after{
-  display: none;
-}
-
-.breadcrumbs .crumb a{
-  color: black;
-  text-decoration: none;
-  font-family: 'Lato', sans-serif;
 }
 
 /*alignment*/
