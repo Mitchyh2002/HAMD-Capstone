@@ -5,3 +5,8 @@
 *.pyc
 Prototype/Backend/Program/Module/Main/__pycache__/Module.cpython-311.pyc
 Prototype/Backend/Program/__pycache__/__init__.cpython-311.pyc
+Prototype/Backend/Program/__pycache__/__init__.cpython-311.pyc
+Prototype/Backend/Program/DB/__pycache__/Builder.cpython-311.pyc
+Prototype/Backend/Program/DB/Models/master/__pycache__/Modules.cpython-311.pyc
+Prototype/Backend/Program/Module/Main/__pycache__/Module.cpython-311.pyc
+Prototype/Backend/Program/OS/__pycache__/__init__.cpython-311.pyc

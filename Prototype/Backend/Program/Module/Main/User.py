@@ -127,6 +127,10 @@ def phoneNumberIsValid(phoneNumber):
         return False
     
 
+@blueprint.route('/getall', methods=["GET"])
+def getAllUser():
+    return [User.toJSON() for User in User.query.all()]
+
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB
         if User exists stop
