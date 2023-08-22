@@ -13,7 +13,7 @@ from os.path import splitext
 from os import mkdir
 from re import search
 
-from Program.DB.Models.mst.Modules import Module, create_module
+from Program.DB.Models.mst.Module import Module, create_module
 from Program.DB.Models.mst.User import PasswordHash, User
 from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
 from Program import reload, db
@@ -195,6 +195,7 @@ def get_active_plugins():
         Error Packet, Request.Method is not GET, code -1
     '''
     if request.method == "GET":
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
         valid_modules = []
         for module in Module.query.filter(Module.status == True).all():
             valid_modules.append(module.toJSON(True))

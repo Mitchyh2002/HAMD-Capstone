@@ -64,9 +64,9 @@ def send_email(to, subject, template):
 
 def QuerySelectUser(userKey: str, indicator=True):
     if indicator:
-        stmt = Select(User).where(User.email == userKey)
+        stmt = select(User).where(User.email == userKey)
     else:
-        stmt = Select(User).where(User.phoneNumber == userKey)
+        stmt = select(User).where(User.phoneNumber == userKey)
 
     user = db.session.scalar(stmt)
     return user

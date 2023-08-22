@@ -68,7 +68,8 @@ class User(UserMixin, db.Model):
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
     registeredDate = db.Column(db.DateTime,nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirmedDate = db.Column(db.Boolean, nullable=True)
+    confirmedDate = db.Column(db.Date, nullable=True)
+    totalKarma = db.Column(db.Integer, default=0, nullable=False)
                            
 
     def get_id(self):
@@ -102,7 +103,7 @@ class User(UserMixin, db.Model):
         if is_query:
             return {
                     "email": self.email.strip(),
-                    "adminLvl": self.roles,
+                    "adminLvl": self.adminLevel,
                     #"membership": self.membership,
                     "name": self.firstName.strip()}
         if self.phoneNumber is None:

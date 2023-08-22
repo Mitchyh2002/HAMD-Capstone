@@ -2,10 +2,10 @@ from Program import db
 from Program.ResponseHandler import on_error
 
 class mouduleGroups(db.Model):
-    __tablename__ = "mouduleGroup"
+    __tablename__ = "grp_mouduleGroup"
     mouduleGroupID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    module_prefix = db.Column(db.String(3), db.ForeignKey('modules.prefix'))
-    groupID = db.Column(db.Integer, db.ForeignKey('group.groupID'))
+    module_prefix = db.Column(db.String(3), db.ForeignKey('modules.prefix'), nullable=False)
+    groupID = db.Column(db.Integer, db.ForeignKey('grp_group.groupID'), nullable=False)
 
     def toJSON(self):
         '''

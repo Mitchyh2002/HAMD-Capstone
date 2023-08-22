@@ -2,9 +2,9 @@ from Program import db
 from Program.ResponseHandler import on_error
 
 class Group(db.Model):
-    __tablename__ = "group"
+    __tablename__ = "grp_group"
     groupID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    displayName = db.Column(db.String(200))
+    displayName = db.Column(db.String(200), nullable=False)
 
     def toJSON(self):
         '''

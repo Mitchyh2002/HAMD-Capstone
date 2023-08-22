@@ -7,6 +7,8 @@ from sqlalchemy import select
 
 from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
+from Program.DB.Models.mst.Admin import *
+
 import Program.templates
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email
 from Program.ResponseHandler import on_error, on_success
@@ -94,8 +96,9 @@ def register():
             return on_error(51, "Phone number entered is invalid, please enter a valid phone number.")
     
     user = JSONtoUser(input)
-    QueryInsertUser(user)
-
+    UserCheck = QueryInsertUser(user)
+    if UserCheck is not None:
+        return UserCheck
     
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
@@ -140,24 +143,19 @@ def QueryInsertUser(new_user: User):
         if User exists stop
     """
     #If User Exists Stop
-    try:
+    existing_user = User.query.filter_by(email=new_user.email).first()
 
-        existing_user = User.query.filter_by(email=new_user.email)
+    if type(existing_user).__name__ == "user":
+        raise Exception
+    print("made it here")
+    new_user.insert()
+    print("should've been committed")
 
-        if type(existing_user).__name__ == "user":
-            raise Exception
-        print("made it here")
-        db.session.add(new_user)
-        db.session.commit()
-        print("should've been committed")
-    except:
-        return on_error(19, "User already in system, code failure")
-    
 def QuerySelectUser(userKey: str, indicator=True):
     if indicator:
-        stmt = Select(User).where(User.email == userKey)
+        stmt = select(User).where(User.email == userKey)
     else:
-        stmt = Select(User).where(User.phoneNumber == userKey)
+        stmt = select(User).where(User.phoneNumber == userKey)
 
     user = db.session.scalar(stmt)
     return user

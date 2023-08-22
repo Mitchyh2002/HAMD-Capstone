@@ -2,10 +2,10 @@ from Program import db
 from Program.ResponseHandler import on_error
 
 class userGroup(db.Model):
-    __tablename__ = "userGroup"
+    __tablename__ = "grp_userGroup"
     userGroupID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    groupID = db.Column(db.Integer, db.ForeignKey('group.groupID'))
-    userID = db.Column(db.Integer, db.ForeignKey('user.userID'))
+    groupID = db.Column(db.Integer, db.ForeignKey('grp_group.groupID'),nullable=False)
+    userID = db.Column(db.Integer, db.ForeignKey('user.userID'), nullable=False)
 
     def toJSON(self):
         '''

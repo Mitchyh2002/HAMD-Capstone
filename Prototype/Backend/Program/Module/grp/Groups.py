@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
-from Program.DB.Models.mst.Modules import Module
+from Program.DB.Models.mst.Module import Module
 from Program.DB.Models.grp.userGroups import userGroup, create_userGroup
 from Program.DB.Models.grp.Groups import Group, create_group
 from Program.DB.Models.grp.moduleGroups import mouduleGroups, create_moduleGroup

@@ -1,6 +1,6 @@
 import './App.css';
-import { BrowserRouter} from 'react-router-dom';
-import { AllRoutes } from 'Functions/Routing';
+import { BrowserRouter, RouterProvider, createBrowserRouter} from 'react-router-dom';
+import { AllRoutes, allRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
 import { getToken } from 'Functions/User';
 
@@ -12,7 +12,9 @@ function App() {
   useEffect(() => {
     fetch("http://localhost:5000/module/getactive", {
       method: "GET",
-      Authorisation: "Bearer" +  getToken()
+      headers: {
+	'Authorization': "Bearer " + getToken(),
+	}
     })
     .then( response => {
         return response.json();
@@ -27,10 +29,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
-      {(loaded == true)&&
-        <AllRoutes Modules={modules}/>}
-      </BrowserRouter>
+      <RouterProvider router={createBrowserRouter(allRoutes(modules))} />
     </>
   );
 }
