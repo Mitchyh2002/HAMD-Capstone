@@ -17,10 +17,8 @@ export default function Login(props) {
                     <img className="bee-image" src="/bee3.png" alt="small-bee-image" />
                         <h3>{register ? "Create Account" : "Sign In"}</h3>
                     </div>
-
                     {register ?
                         <RegisterForm /> : <LoginForm />}
-
                 </div>
             </div>
         </>
@@ -53,10 +51,10 @@ function LoginForm() {
         message.innerHTML = "";
         let x = document.getElementById("emailInput").value;
         try { 
-          if(x.trim() == "") throw "Email address";
+          if(x.trim() == "") throw "Email address can't be empty.";
         }
         catch(err) {
-          message.innerHTML = err + " cannot be empty";
+          message.innerHTML = err;
         }
 
         /* Catch password errors */
@@ -64,10 +62,11 @@ function LoginForm() {
         message2.innerHTML = "";
         let y = document.getElementById("passwordInput").value;
         try { 
-          if(y.trim() == "") throw "Password";
+          if(y.trim() == "") throw "Password can't be empty.";
+          if(response == "error") throw "Invalid email or password. Please try again."
         }
         catch(err) {
-          message2.innerHTML = err + " cannot be empty";
+          message2.innerHTML = err;
         }
 
     }
@@ -76,7 +75,7 @@ function LoginForm() {
         <>
             <form className="login-form" id="Login">
                 <div className="login-form-content">
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <input
                             id="emailInput"
                             type="email"
@@ -85,7 +84,7 @@ function LoginForm() {
                         />
                         <p id="email-error"></p>
                     </div>
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <input
                             id="passwordInput"
                             type="password"
@@ -243,7 +242,7 @@ function checkEmailValid(email){
     const checkValid = new RegExp(regEx);
 
     if (email == "") {
-        return "Email Can be empty";
+        return "Email can't be empty";
     } else if(!checkValid.exec(email)){
         return "Please check the email format";
     }
@@ -252,7 +251,7 @@ function checkEmailValid(email){
 function checkDOB(dob){
     const currentDate = new Date();
         if (!dob) {
-            return "DOB can't be empty";
+            return "D.O.B can't be empty";
         } else if(dob > currentDate.getFullYear() - 13){
             return "You need to be over 13";
         }
@@ -266,7 +265,7 @@ function checkName(name){
 
 function checkPass(pass) {
     if(!pass){
-        return "Pass cant be empty"
+        return "Password can't be empty"
     }
 }
 
