@@ -15,3 +15,13 @@ export function updateName(form){
         }
     ).then(res => res.json()).then( res => {return res})
 }
+
+/*export async function getUsers(){
+    return fetch("")
+    .then(res => res.json())
+    .then(res => {
+        return res;
+    }).catch(error => {
+        return error;
+    })
+}*/

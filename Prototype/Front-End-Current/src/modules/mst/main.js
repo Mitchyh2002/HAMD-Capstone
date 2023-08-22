@@ -1,5 +1,6 @@
 import Upload from "./Upload";
 import PluginList from "./PluginList";
+import Users from "./Users"
 import { Outlet } from "react-router-dom";
 import { getPlugins } from "./loaderFunctions";
 
@@ -11,6 +12,9 @@ export const pages = [{
 },{
     path: "Add Plugin",
     element: Upload
+},{
+    path: "Users",
+    element: Users,
 }];
 
 
