@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import { Directory } from "moduleDefs";
 import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
 import "../App.css"
+import Breadcrumbs from "Components/Breadcrumbs.js";
 
 /*Sub Menu
     Description: SubMenu for all sub components of and corresponding links based on the values defined in modulesDefs.js
@@ -10,39 +11,31 @@ import "../App.css"
     SubMenu with working links
 */
 
-export default function SubMenu(props) {
+export default function SubMenu(props){
     //Extract sub components from directory
     const subComponents = Directory[props.prefix];
 
     //Creates the navlinks objects
     //Input: function
     //Output: Button with onClick call to input
-    function createNavLinks(component) {
-        return (
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.name} name={component.name} />
+    function createNavLinks(component){
+        return(
+            <div style={{display: "flex", alignItems: "center"}}>
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
             </div>
         )
     }
 
-    //Set state for toggle button to hide sub nav bar
-    const [show, setShow] = useState(true);
-
-    return (
+    return(
         <>
             <div className="subNavContainer">
-                <div>
-                    <button type="button" onClick={() => setShow(!show)} className="toggle-button">
-                        <img className="menu-icon" src="/menu.png" alt="menu" />
-                    </button>
-                </div>
-                {show &&
-                    <div className="navButtonContainer">
-                        {subComponents &&
-                            <div className="flexBoxColumnGrow subNavBar" style={{ maxWidth: "160px" }}>
+            <div>
+                <Breadcrumbs />
+            </div>
+                {subComponents&&
+                        <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
                                 {subComponents.map(component => createNavLinks(component))}
-                            </div>}
-                    </div>}
+                        </div>}
             </div>
         </>
     )
@@ -71,8 +64,8 @@ function SubNavButton(props) {
         navigate(props.to);
     }
 
-    return (
-        <button onClick={handleClick} className={(active) ? props.activeClass : props.passiveClass}>{props.name}</button>
+    return(
+        <button onClick={handleClick} className={(active)? props.activeClass: props.passiveClass}>{props.name}</button>
     )
 
 }
