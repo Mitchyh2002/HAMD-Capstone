@@ -2,7 +2,7 @@ import Upload from "./Upload";
 import PluginList from "./PluginList";
 import Users from "./Users"
 import { Outlet } from "react-router-dom";
-import { getPlugins } from "./loaderFunctions";
+import { getPlugins, getUsers } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
 export const pages = [{
@@ -15,9 +15,8 @@ export const pages = [{
 },{
     path: "Users",
     element: Users,
+    loader: getUsers
 }];
-
-
 
 export default function mst_master(){
     return(

@@ -8,6 +8,7 @@ from sqlalchemy import Select
 from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
 from Program.ResponseHandler import on_error, on_success
+from Program.DB.Models.master.Admin import refAdminRoles
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
 
@@ -126,6 +127,10 @@ def phoneNumberIsValid(phoneNumber):
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
     
+
+@blueprint.route('/getall', methods=["GET"])
+def getAllUser():
+    return [User.toJSON() for User in User.query.all()]
 
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB

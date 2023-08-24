@@ -2,11 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData } from 'react-router-dom';
 import "./admin.css";
-import mockdata from "./mockdata.json";
 
 export default function Users() {
 
-    //const users = useLoaderData();
+    const users = useLoaderData();
 
     /* Setting the state for the modal*/
     const [modal, setModal] = useState(false);
@@ -15,7 +14,7 @@ export default function Users() {
     }
 
     /* Getting the data from the database  */
-    const data = useMemo(() => mockdata, []);
+    const data = useMemo(() => users, []);
     const columns = useMemo(() => [
         {
             Header: "ID",
