@@ -1,9 +1,0 @@
- [
-        {
-            "userID":1,
-            "firstName":"Chris",
-            "dateOfBirth":1987,
-            "email":"chris@gmail.com",
-            "phoneNumber":"0478987659"
-        }
-    ]
