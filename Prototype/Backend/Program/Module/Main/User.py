@@ -1,12 +1,13 @@
 import bcrypt
 
 from datetime import datetime
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template, url_for
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import Select
 
 from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
+from Program.Module.Main.Confirmation import generate_confirmation_token, send_email
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
@@ -93,8 +94,14 @@ def register():
     
     user = JSONtoUser(input)
     QueryInsertUser(user)
-    db.session.commit()
-    return on_success(user.token)
+
+    
+    token = generate_confirmation_token(user.email)
+    confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
+    html = render_template('activate.html', confirm_url=confirm_url)
+    subject = "Please confirm your email"
+    send_email(user.email, subject, html)
+    return on_success(token)
 
 
 def emailIsValid(email):
@@ -138,10 +145,8 @@ def QueryInsertUser(new_user: User):
 
         if type(existing_user).__name__ == "user":
             raise Exception
-        
         db.session.add(new_user)
         db.session.commit()
-
     except:
         return on_error(19, "User already in system, code failure")
     
