@@ -108,8 +108,8 @@ class User(UserMixin, db.Model):
             "userID": self.userID,
             "email": self.email.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
-            "dateOfBirth": self.dateOfBirth.strip()
+            "dateOfBirth": self.dateOfBirth.strip(),
+            "adminLevel": self.adminLevel
         }
 
         return {
@@ -117,8 +117,8 @@ class User(UserMixin, db.Model):
             "email": self.email.strip(),
             "phoneNumber": self.phoneNumber.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
-            "dateOfBirth": self.dateOfBirth.strip()
+            "dateOfBirth": self.dateOfBirth.strip(),
+            "adminLevel": self.adminLevel
         }
 
     def insert(self):
