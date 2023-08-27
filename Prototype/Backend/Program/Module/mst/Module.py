@@ -605,10 +605,9 @@ def upload_module():
         accessGranted = userFunctionAuthorisations(user_bearer, 2)
         if accessGranted == False:
             return accessGranted
-
+        
         # update = request.values.get('update') == True
         userFunctionAuthorisations()
-        update = True
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':

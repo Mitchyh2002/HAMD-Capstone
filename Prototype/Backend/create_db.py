@@ -7,7 +7,7 @@ from Program.DB.Models.mst.Admin import initRefTable
 
 from werkzeug.serving import run_simple
 
-if __name__ == "__main__":
+def sys_create():
     create_db()
 
     app = init_app()
@@ -24,3 +24,6 @@ if __name__ == "__main__":
         new_module.insert()
         grp_module.insert()
         grp.insert()
+
+if __name__ == "__main__":
+    sys_create()

@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, delete
 import re
 from Program import db
 
-url = f"postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB"
+url = 'postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB'
 
 def create_db(modules=None):
 
