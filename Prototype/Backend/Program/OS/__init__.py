@@ -54,7 +54,6 @@ def userFunctionAuthorisations(Auth_Header, adminLvl=1, modulePrefix=None):
         return user
     if user_values['adminLvl'] < adminLvl:
         return on_error(401, "You do not have access to the function")
-
     return True
 
 
