@@ -16,8 +16,12 @@ from re import search
 from Program.DB.Models.mst.Module import Module, create_module
 from Program.DB.Models.mst.User import PasswordHash, User
 from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
+from Program.DB.Models.grp.userGroups import userGroup
+from Program.DB.Models.grp.Groups import Group
+from Program.DB.Models.grp.moduleGroups import mouduleGroups
+
 from Program import reload, db
-from Program.OS import dir_tree, convert_to_imports
+from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunctionAuthorisations
 
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
@@ -109,8 +113,8 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
                     new_rows[match] = set(lines).difference(set(alt_lines))
     in_file.seek(0)
     keys = {}
-    if os.path.exists('Program\Temp_Module\keys.txt'):
-        with open(os.path.exists('Program\Temp_Module\keys.txt')) as key_pairs:
+    if os.path.exists(f'Program\Temp_Module\\{modulename}\keys.txt'):
+        with open(os.path.exists(f'Program\Temp_Module\\{modulename}\keys.txt')) as key_pairs:
             lines = key_pairs.readlines()
             for line in lines:
                 line = line.split(":")
@@ -196,10 +200,31 @@ def get_active_plugins():
     '''
     if request.method == "GET":
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        valid_modules = []
-        for module in Module.query.filter(Module.status == True).all():
-            valid_modules.append(module.toJSON(True))
-        return on_success(valid_modules)
+        user_data = bearer_decode(user_bearer)
+        if user_data['Success'] == False:
+            return user_data
+        user_data = user_data['Values']
+        #If Breakglass Show All Active Modules
+        if user_data['adminLvl'] == 9:
+            valid_modules = []
+            for module in Module.query.filter(Module.status == True).all():
+                valid_modules.append(module.toJSON(True))
+            return on_success(valid_modules)
+        elif user_data['adminLvl'] == 0:
+            return on_success(None)
+        user = User.query.filter_by(email=user_data['email']).first()
+        userGroupsIDS = [x.groupID for x in userGroup.query.filter_by(userID=user.userID).all()]
+        group_modules = []
+        if userGroupsIDS != None:
+            group_modules = [x.module_prefix for x
+                             in mouduleGroups.query.filter(mouduleGroups.groupID.in_(userGroupsIDS)).all()]
+
+        user_modules = [x.modulePrefix for x in
+                        moduleAccess.query.filter_by(userID=user.userID).all()]
+        modules = list(set(group_modules + user_modules))
+        valid_modules = Module.query.filter(Module.status == True, Module.prefix.in_(modules)).all()
+        return on_success([x.toJSON(True) for x in valid_modules])
+
     return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
 
@@ -214,7 +239,11 @@ def get_all_plugins():
        Returns:
            A List containing all modules
        '''
-    return [Module.toJSON(True) for Module in Module.query.all()]
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 9)
+    if accessGranted:
+        return [Module.toJSON(True) for Module in Module.query.all()]
+    return accessGranted
 
 
 def check_files(temp_dir, module_prefix):
@@ -432,6 +461,10 @@ def get_module(prefix):
 
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    if accessGranted == False:
+        return accessGranted
     userID = request.values.get("userID")
     modulePrefix = request.values.get("modulePrefix")
     if userID is None:
@@ -486,6 +519,10 @@ def update_module_ref():
         On Error:
             Error Code 16 - Incorrect Password Given
     """
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    if accessGranted == False:
+        return accessGranted
     from Program import db
     save_dir = os.getcwd()
     modulePrefix = request.values.get('modulePrefix')
@@ -515,6 +552,10 @@ def update_module_ref():
 @blueprint.route('activate', methods=["POST"])
 def activate_module():
     from Program import db
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    if accessGranted == False:
+        return accessGranted
     modulePrefix = request.values.get('modulePrefix')
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
         return on_error(3, "Specified Module Does Not Exist")
@@ -526,6 +567,10 @@ def activate_module():
 
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    if accessGranted == False:
+        return accessGranted
     modulePrefix = request.values.get('modulePrefix')
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
         return on_error(3, "Specified Module Does Not Exist")
@@ -556,7 +601,13 @@ def upload_module():
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'OPTIONS']:
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        accessGranted = userFunctionAuthorisations(user_bearer, 5)
+        if accessGranted == False:
+            return accessGranted
+
         # update = request.values.get('update') == True
+        userFunctionAuthorisations()
         update = True
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
@@ -565,6 +616,8 @@ def upload_module():
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
+        ModulePass = PasswordHash.new(ModulePass)
+
         if '' in [DisplayName, ModulePass]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)

@@ -1,5 +1,7 @@
 import os
-
+from Program import export_key
+from Program.ResponseHandler import on_error, on_success
+import jwt
 
 def dir_tree(start_path, tableUpdate=False):
     """
@@ -45,6 +47,31 @@ def convert_to_imports(dir_tree):
             imports.append(filename.replace("/", "."))
     return imports
 
+def userFunctionAuthorisations(Auth_Header, adminLvl=1, modulePrefix=None):
+    user = bearer_decode(Auth_Header)
+    user_values = user['Values']
+    if user['Success'] == False:
+        return user
+    if user_values['adminLvl'] < adminLvl:
+        return on_error(401, "You do not have access to the function")
+
+    return True
+
+
+def bearer_decode(Auth_Header, algorithms=["HS256"]):
+    if Auth_Header == '':
+        return on_error(400, "Token Not Sent")
+    if 'Bearer ' in Auth_Header:
+        Auth_Header = Auth_Header.split('Bearer ')[1]
+
+    try:
+        decoded_data = jwt.decode(jwt=Auth_Header,
+                                  key=export_key(),
+                                  algorithms=algorithms)
+    except jwt.ExpiredSignature:
+        return on_error(403, "Invalid Token, This Token Has Expired")
+
+    return on_success(decoded_data)
 
 if __name__ == "__main__":
     ff = convert_to_imports(dir_tree(

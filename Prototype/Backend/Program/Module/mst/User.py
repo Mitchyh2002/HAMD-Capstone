@@ -3,15 +3,16 @@ import bcrypt
 from datetime import datetime
 from flask import Blueprint, request, render_template, url_for
 from flask_login import current_user, login_user, logout_user, login_required
-from sqlalchemy import select
+try:
+    from sqlalchemy import Select
+except ImportError:
+    from sqlalchemy import select as Select
 
 from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
-from Program.DB.Models.mst.Admin import *
-
-import Program.templates
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email
 from Program.ResponseHandler import on_error, on_success
+from Program.DB.Models.mst.Admin import refAdminRoles
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
 
@@ -96,9 +97,8 @@ def register():
             return on_error(51, "Phone number entered is invalid, please enter a valid phone number.")
     
     user = JSONtoUser(input)
-    UserCheck = QueryInsertUser(user)
-    if UserCheck is not None:
-        return UserCheck
+    QueryInsertUser(user)
+
     
     token = generate_confirmation_token(user.email)
     confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
@@ -138,24 +138,31 @@ def phoneNumberIsValid(phoneNumber):
         return False
     
 
+@blueprint.route('/getall', methods=["GET"])
+def getAllUser():
+    return [User.toJSON() for User in User.query.all()]
+
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB
         if User exists stop
     """
     #If User Exists Stop
-    existing_user = User.query.filter_by(email=new_user.email).first()
+    try:
 
-    if type(existing_user).__name__ == "user":
-        raise Exception
-    print("made it here")
-    new_user.insert()
-    print("should've been committed")
+        existing_user = User.query.filter_by(email=new_user.email)
 
+        if type(existing_user).__name__ == "user":
+            raise Exception
+        db.session.add(new_user)
+        db.session.commit()
+    except:
+        return on_error(19, "User already in system, code failure")
+    
 def QuerySelectUser(userKey: str, indicator=True):
     if indicator:
-        stmt = select(User).where(User.email == userKey)
+        stmt = Select(User).where(User.email == userKey)
     else:
-        stmt = select(User).where(User.phoneNumber == userKey)
+        stmt = Select(User).where(User.phoneNumber == userKey)
 
     user = db.session.scalar(stmt)
     return user

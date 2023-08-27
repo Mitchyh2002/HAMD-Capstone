@@ -7,4 +7,5 @@ flask_login
 flask_mail
 psycopg2
 bcrypt
-jwt
+
+PyJWT

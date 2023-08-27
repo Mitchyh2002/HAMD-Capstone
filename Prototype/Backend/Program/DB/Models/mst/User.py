@@ -1,18 +1,20 @@
 import bcrypt
 import jwt
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import Text, TypeDecorator
 from sqlalchemy.orm import validates
 from flask_login import UserMixin
 
 from Program import db, export_key
 from Program.ResponseHandler import on_error
+from Program.DB.Models.mst.Admin import refAdminRoles
+from Program.DB.Models.mst.Admin import refAdminRoles
 
 class PasswordHash(object):
     def __init__(self, hash_):
         #assert len(self.hash) == 60, 'bcrypt hash should be 60 chars.'
-        assert str(hash_).count('$'), 'bcrypt hash should have 3x "$".'
+        #assert str(hash_).count(b'$'), 'bcrypt hash should have 3x "$".'
         self.hash = str(hash_)
         self.rounds = int(self.hash.split('$')[2])
 
@@ -66,18 +68,17 @@ class User(UserMixin, db.Model):
     dateOfBirth = db.Column(db.String(4), nullable = False)
     token = db.Column(db.String, unique=True, nullable=True)
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
-    registeredDate = db.Column(db.DateTime,nullable=False)
+    registeredDate = db.Column(db.Date, nullable=False, default=datetime.utcnow)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
-    confirmedDate = db.Column(db.Date, nullable=True)
-    totalKarma = db.Column(db.Integer, default=0, nullable=False)
-                           
+    confirmedDate = db.Column(db.Date, nullable=True, default=None)
+    totalKarma = db.Column(db.Integer, default=0)
 
     def get_id(self):
         return str(self.token)
     
     def set_id(self):
         toBeEncoded = self.toJSON(True)
-        toBeEncoded['exp'] = datetime.now()+timedelta(hours=12)
+        toBeEncoded["exp"] = datetime.now()+timedelta(hours=12)
 
         self.token = jwt.encode(toBeEncoded, export_key(), algorithm="HS256")
         db.session.commit()
@@ -111,8 +112,8 @@ class User(UserMixin, db.Model):
             "userID": self.userID,
             "email": self.email.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
-            "dateOfBirth": self.dateOfBirth.strip()
+            "dateOfBirth": self.dateOfBirth.strip(),
+            "adminLevel": self.adminLevel
         }
 
         return {
@@ -120,8 +121,8 @@ class User(UserMixin, db.Model):
             "email": self.email.strip(),
             "phoneNumber": self.phoneNumber.strip(),
             "firstName": self.firstName.strip(),
-            "passwordHash": self.passwordHash,
-            "dateOfBirth": self.dateOfBirth.strip()
+            "dateOfBirth": self.dateOfBirth.strip(),
+            "adminLevel": self.adminLevel
         }
 
     def insert(self):
@@ -145,7 +146,7 @@ def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
     created_user.adminLevel = 1
-    created_user.registeredDate = datetime.now()
+    created_user.registeredDate = date.today()
     created_user.confirmed = False
     created_user.setIsAuthenticated(True)
     created_user.setIsActive(True)
