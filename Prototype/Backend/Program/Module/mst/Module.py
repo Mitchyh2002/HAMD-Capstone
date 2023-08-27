@@ -205,14 +205,14 @@ def get_active_plugins():
             return user_data
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
-        if user_data['adminLvl'] == 9:
+        if user_data['adminLvl'] == 2:
             valid_modules = []
             for module in Module.query.filter(Module.status == True).all():
                 valid_modules.append(module.toJSON(True))
             return on_success(valid_modules)
-        elif user_data['adminLvl'] == 0:
-            return on_success(None)
         user = User.query.filter_by(email=user_data['email']).first()
+        if user.is_active != True:
+            return on_success(None)
         userGroupsIDS = [x.groupID for x in userGroup.query.filter_by(userID=user.userID).all()]
         group_modules = []
         if userGroupsIDS != None:
