@@ -14,7 +14,6 @@ def db_conn():
 
     return db_conn_string
 
-
 if __name__ == "__main__":
     db_conn()
     sys_create()
