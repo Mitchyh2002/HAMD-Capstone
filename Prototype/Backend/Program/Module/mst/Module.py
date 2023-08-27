@@ -240,7 +240,7 @@ def get_all_plugins():
            A List containing all modules
        '''
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 9)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2)
     if accessGranted:
         return [Module.toJSON(True) for Module in Module.query.all()]
     return accessGranted
@@ -462,7 +462,7 @@ def get_module(prefix):
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = userFunctionAuthorisations(user_bearer, 1)
     if accessGranted == False:
         return accessGranted
     userID = request.values.get("userID")
@@ -520,7 +520,7 @@ def update_module_ref():
             Error Code 16 - Incorrect Password Given
     """
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2)
     if accessGranted == False:
         return accessGranted
     from Program import db
@@ -553,7 +553,7 @@ def update_module_ref():
 def activate_module():
     from Program import db
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2)
     if accessGranted == False:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -568,7 +568,7 @@ def activate_module():
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2)
     if accessGranted == False:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -602,7 +602,7 @@ def upload_module():
     '''
     if request.method in ['POST', 'OPTIONS']:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        accessGranted = userFunctionAuthorisations(user_bearer, 5)
+        accessGranted = userFunctionAuthorisations(user_bearer, 2)
         if accessGranted == False:
             return accessGranted
 
