@@ -2,6 +2,7 @@ import Header from "Components/Header";
 import './Login.css';
 import { login } from "Functions/User";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 export default function Login(props) {
     const register = props.register;
@@ -12,14 +13,12 @@ export default function Login(props) {
             <div className="maindiv">
                 <WelcomeMessage />
                 <div className="thirddiv">
-                    <img className="bee-image" src="/bee3.png" alt="small-bee-image" />
                     <div className="form-header">
+                    <img className="bee-image" src="/bee3.png" alt="small-bee-image" />
                         <h3>{register ? "Create Account" : "Sign In"}</h3>
                     </div>
-
                     {register ?
                         <RegisterForm /> : <LoginForm />}
-
                 </div>
             </div>
         </>
@@ -52,10 +51,10 @@ function LoginForm() {
         message.innerHTML = "";
         let x = document.getElementById("emailInput").value;
         try { 
-          if(x.trim() == "") throw "Email address";
+          if(x.trim() == "") throw "Email address can't be empty.";
         }
         catch(err) {
-          message.innerHTML = err + " cannot be empty";
+          message.innerHTML = err;
         }
 
         /* Catch password errors */
@@ -63,10 +62,11 @@ function LoginForm() {
         message2.innerHTML = "";
         let y = document.getElementById("passwordInput").value;
         try { 
-          if(y.trim() == "") throw "Password";
+          if(y.trim() == "") throw "Password can't be empty.";
+          if(response == "error") throw "Invalid email or password. Please try again."
         }
         catch(err) {
-          message2.innerHTML = err + " cannot be empty";
+          message2.innerHTML = err;
         }
 
     }
@@ -75,7 +75,7 @@ function LoginForm() {
         <>
             <form className="login-form" id="Login">
                 <div className="login-form-content">
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <input
                             id="emailInput"
                             type="email"
@@ -84,7 +84,7 @@ function LoginForm() {
                         />
                         <p id="email-error"></p>
                     </div>
-                    <div className="form-group">
+                    <div className="login-form-group">
                         <input
                             id="passwordInput"
                             type="password"
@@ -124,65 +124,96 @@ function LoginForm() {
 
 //Registration Form
 function RegisterForm() {
+    const [nameError, setNameError] = useState();
+    const [emailError, setEmailError] = useState();
+    const [dobError, setDobError] = useState();
+    const [passError, setPassError]  = useState();
+
+    const validateFrom = (formData) =>{
+        setNameError(checkName(formData.get("firstName")));
+        setEmailError(checkEmailValid(formData.get("email")));
+        setDobError(checkDOB(formData.get("dateOfBirth")));
+        setPassError(checkPass(formData.get("password")));
+        let error = false;
+
+        if (nameError) {
+            error = true;
+        }
+
+        if(emailError){
+            error = true;
+        }
+
+        if(dobError){
+            error = true;
+        }
+
+        if(passError){
+            error = true;
+        }
+
+    }
+
     //const navigate = useNavigate();
     const handleRegister = (e) => {
         const form = document.getElementById("Register");
         const formData = new FormData(form);
 
-        fetch("http://localhost:5000/user/register", {
-            method: "POST",
-            body: formData,
-        }).then(response => (response.json()
-        )).then((response) => {
-            if (response.Success == true) {
-                window.alert("Success!!!")
+        const valid = validateFrom(formData);
+        if(valid){
+            fetch("http://localhost:5000/user/register", {
+                method: "POST",
+                body: formData,
+            }).then(response => (response.json()
+            )).then((response) => {
+                if (response.Success == true) {
+                    window.alert("Success!!!")
+                }else{
+                    console.log(response)
+                    window.alert(response.error)
+                }
             }
-            console.log(response);
+            ).catch(function (error) {
+                console.log(error);
+            })
         }
-        ).catch(function (error) {
-            console.log(error);
-        })
     }
     return (
         <>
             <form className="login-form" id="Register">
                 <div className="login-form-content">
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input
+                    <FormInput
+                            label="First Name"
                             type="text"
                             name="firstName"
                             placeholder="Full Name"
+                            error = {nameError}
                         />
-                    </div>
-                    <div className="form-group">
-                        <label>D.O.B</label>
-                        <input
+                    <FormInput
+                            label="D.O.B"
+                            error={dobError}
                             type="number"
                             min="1910"
                             max="2099"
                             name="dateOfBirth"
                             placeholder="Birth Month"
                         />
-                    </div>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
+                    <FormInput
+                            label="Email"
+                            error={emailError}
                             type="email"
                             name="email"
                             className="emailAddress"
                             placeholder="Email Address"
                         />
-                    </div>
-                    <div className="form-group">
-                        <label>Password</label>
-                        <input
+                    <FormInput
+                            label="Password"
+                            error={passError}
                             type="password"
                             name="password"
                             className="password"
                             placeholder="Password"
                         />
-                    </div>
                 </div>
             </form>
 
@@ -202,5 +233,55 @@ function RegisterForm() {
                 </Link>
             </div>
         </>
+    )
+}
+
+//Validation Functions
+function checkEmailValid(email){
+    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const checkValid = new RegExp(regEx);
+
+    if (email == "") {
+        return "Email can't be empty";
+    } else if(!checkValid.exec(email)){
+        return "Please check the email format";
+    }
+}
+
+function checkDOB(dob){
+    const currentDate = new Date();
+        if (!dob) {
+            return "D.O.B can't be empty";
+        } else if(dob > currentDate.getFullYear() - 13){
+            return "You need to be over 13";
+        }
+}
+
+function checkName(name){
+    if(!name){
+        return "Name can't be empty";
+    }
+}
+
+function checkPass(pass) {
+    if(!pass){
+        return "Password can't be empty"
+    }
+}
+
+function FormInput(props){
+    return(
+        <div className="form-group">
+        <label>{props.label}</label>
+        <div>
+            <input
+                type={props.type}
+                name={props.name}
+                className={props.class}
+                placeholder={props.placeholder}
+            />
+            <p style={{color: "red"}}>{props.error}</p>
+        </div>
+    </div>
     )
 }

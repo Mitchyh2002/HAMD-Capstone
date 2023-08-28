@@ -67,7 +67,7 @@ def bearer_decode(Auth_Header, algorithms=["HS256"]):
         decoded_data = jwt.decode(jwt=Auth_Header,
                                   key=export_key(),
                                   algorithms=algorithms)
-    except jwt.ExpiredSignature:
+    except jwt.ExpiredSignatureError:
         return on_error(403, "Invalid Token, This Token Has Expired")
 
     return on_success(decoded_data)

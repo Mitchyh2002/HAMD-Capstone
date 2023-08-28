@@ -1,26 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
-import "./PluginList.css";
 import { useLoaderData } from 'react-router-dom';
-import Modal from './Components.js'
+import { updateName } from "./loaderFunctions";
+import Modal from './Components.js';
+import "./admin.css";
 
 export default function PluginList() {
     
+    /* Calls to the loader function defined in main.js */
     const plugins = useLoaderData();
-
-    /* Setting the state for the modal */
-    const [modal, setModal] = useState(false);
-    const toggleModal = () => {
-        setModal(!modal);
-    }
 
     /* Getting the data from the database  */
     const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
-    /*{
-        Header: "ID",
-        accessor: "id",
-    },*/{
+    {
         Header: "Prefix",
         accessor: "prefix",
     },{
@@ -29,8 +22,22 @@ export default function PluginList() {
     }
     ], []);
 
-    const tableInstance = useTable({ columns, data })
+    const tableInstance = useTable({ columns, data });
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
+
+    /* Setting the state for the modal */
+    const [modal, setModal] = useState(false);
+    const toggleModal = () => {
+        setModal(!modal);
+    }
+
+    const updatePlugin = () => {
+        const form = document.getElementById("modalForm");
+        const formData = new FormData(form);
+        const response = updateName(formData);
+        console.log(response);
+        window.alert("hello")
+    }
 
     return(
         <>
@@ -75,7 +82,7 @@ export default function PluginList() {
                     </div>
             </div>
             {modal && (
-                <Modal show={modal} change={setModal}/>
+                <Modal label1="Change Display Name:" show={modal} change={setModal}/>
             )}
         </>
         )

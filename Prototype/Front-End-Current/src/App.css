@@ -26,6 +26,7 @@ h4{
 }
 
 form{
+  row-gap: 8px;
   font-family: 'Lato', sans-serif;
   font-size: 16px;
   padding: 20px 0px;
@@ -33,13 +34,16 @@ form{
 
 label{
   font-family: "Lato";
-  font-size: 25px;
+  font-size: 18px;
 }
 
+a{
+  text-decoration: none;
+  font-size: 16px;
+}
 /*a tag*/
 /*Button*/
 /*Input*/
-
 
 body{
   font-family: 'Lato', sans-serif;
@@ -88,7 +92,43 @@ header li a:hover {
   margin-right: auto;
 }
 
-/* Main Nav Css */
+/* Breadcrumb Nav CSS */ 
+.breadcrumbs{
+  margin-right: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.breadcrumbs1{
+  display: flex;
+}
+
+.breadcrumbs > *{
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.breadcrumbs .crumb:after{
+  content: '>';
+  margin-left: 20px;
+}
+
+.breadcrumbs .crumb:last-child:after{
+  display: none;
+}
+
+.breadcrumbs .crumb a{
+  color: black;
+  text-decoration: none;
+  font-family: 'Lato', sans-serif;
+  transition: all 0.3s ease 0s;
+}
+
+.crumb a:hover{
+  color: white;
+}
+
+/*Main Nav Css*/
 .wrapperMainNav{
   background-color: rgba(242, 143, 59, 0.5);
   display: flex;
@@ -103,7 +143,7 @@ header li a:hover {
   background-color: rgba(242, 143, 59, 0.0);
   border: none;
   height: 110px;
-  font-family: 'Lato', sans-serif;
+  font-family: "lato";
   font-size: 20px;
 }
 
@@ -112,23 +152,41 @@ header li a:hover {
   cursor: pointer;
 }
 
-.mainNavItem:active{
+.mainNavItemActive{
   background-color: #F28F3B;
+  border: none;
+  height: 110px;
+  font-family: "lato";
+  font-size: 20px;
+}
+.mainNavItemActive:hover{
+  cursor: pointer;
 }
 
 /* SubNav CSS */
+.subNavContainer{
+  display: flex;
+  flex-direction: column;
+}
+
 .subNavBar{
   background-color: rgba(255,230,154, .4);
   align-items: center;
   border-radius: 0px 20px 0px 0px;
-  margin-top: 50px;
+  margin-top: 2px;
 }
 
 .subNav {
   background-color: #FFE69A;
 }
 
-.subNavHighlight {  width: 160px;
+.navButtonContainer{
+  display: flex;
+  flex: 1;
+}
+
+.subNavHighlight {  
+  width: 160px;
   height: 60px;
   font-size: 15px;
   border: none;
@@ -167,6 +225,19 @@ header li a:hover {
   border-radius: 0px 20px 0px 0px;
 }
 
+.menu-icon{
+  width: 35px;
+  object-fit: contain;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.toggle-button{
+  background-color: transparent;
+  border: none;
+}
+
 /* Buttons */
 .primaryButton{
   width: 250px;
@@ -178,6 +249,7 @@ header li a:hover {
   cursor: pointer;
   border: 1px;
   text-shadow: 1.3px 1.3px #C0A080;
+  transition: all 0.3s ease 0s;
 }
 
 .primaryButton:hover{
@@ -190,15 +262,15 @@ header li a:hover {
   font-family: 'Lato', sans-serif;
   font-size: 30px;
   border-radius: 20px;
-  background-color: #F28F3B;
-  opacity: 50%;
+  background-color: rgba(242, 143, 59, .5);
   cursor: pointer;
+  transition: all 0.3s ease 0s;
 }
 
 .formButton{
   color: #000000;
-  width: 230px;
-  height: 40px;
+  width: 150px;
+  height: 35px;
   font-family: 'Lato', sans-serif;
   font-size: 16px;
   border-radius: 20px;
@@ -207,6 +279,7 @@ header li a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease 0s;
 }
 
 .formButton:hover{
@@ -218,43 +291,18 @@ input{
   border-top: none;
   border-left: none;
   border-right: none;
+  border-bottom: 1px solid black;
   font-family: "lato";
   outline: 0px;
   font-size: 20px;
+  width: 100%;
 }
 
 input:focus{
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 2px solid;
-}
-
-/*Main Nav Css*/
-.wrapperMainNav{
-  background-color: rgba(242, 143, 59, 0.5);
-  display: flex;
-  align-content: center;
-  border-radius: 0px 20px 0px 0px;
-  flex-direction: column;
-  flex: 1;
-}
-
-.mainNavItem{
-  background-color: rgba(242, 143, 59, 0.0);
-  border: none;
-  height: 110px;
-  font-family: "lato";
-  font-size: 20px;
-}
-
-.mainNavItem:hover{
-  background-color: #F28F3B;
-  cursor: pointer;
-}
-
-.mainNavItemActive{
-  background-color: #F28F3B;
+  border-bottom: 1.5px solid;
 }
 
 /*alignment*/

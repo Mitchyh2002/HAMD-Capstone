@@ -31,17 +31,16 @@ export default function Modal(props) {
                         </button>
                         <h4 className='modal-heading'>Edit</h4>
                         <form id="modalForm">
-                            <label className='modal-label'>Change display name:
+                            <label className='modal-label'>{props.label1}
                                 <input className='modal-input' type="text" />
                             </label>
-                            <input className='confirm-button' type="submit" />
                         </form>
                         <br></br>
                         <br></br>
-                        <button className='confirm-button' onClick={updatePlugin}>
+                        <button className='buttons confirm-button' onClick={updatePlugin}>
                             Confirm Changes
                         </button>
-                        <button className='cancel-button' onClick={toggleModal}>
+                        <button className='buttons cancel-button' onClick={toggleModal}>
                             Cancel
                         </button>
                     </div>

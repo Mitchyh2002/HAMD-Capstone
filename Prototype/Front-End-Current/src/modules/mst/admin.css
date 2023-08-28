@@ -4,6 +4,228 @@
     padding-top: 20px;
 }
 
+/* Page CSS */
 h2{
-    font-weight: normal;
+    margin-left: 20px;
+  }
+
+.pluginPage{
+  width: 100%;
 }
+
+.user-top-page{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+  
+/* Table CSS */  
+
+table{
+    margin-left: 20px;
+    margin-right: 20px;
+    box-shadow: 0px 5px 5px #ccc;
+  }
+  
+h4{
+    font-family: 'Merriweather', serif;
+    font-size: 25px;
+    font-weight: bold;
+  }
+  
+th{
+    background-color: #EFEFEF;
+    font-weight: normal;
+    width: 180px;
+  }
+  
+tr:hover{
+    background-color: #f8f8f8;
+  }
+  
+td{
+    border: 0px;
+    text-align: center;
+  }
+  
+table, th, td{
+    border-collapse: collapse;
+    padding: 1rem;
+  }
+  
+/* Plugin List Modal */
+
+body.active-modal {
+    overflow-y: hidden;
+  }
+  
+.btn-modal {
+    font-family: "lato";
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    color: #083898;
+  }
+  
+.btn-modal:hover {
+    cursor: pointer;
+  }
+  
+.modal, .overlay {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+}
+  
+.overlay {
+    background: rgba(49,49,49,0.8);
+  }
+  
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 15px;
+    max-width: 300px;
+    min-width: 300px;
+    max-height: 230px;
+  }
+  
+.modal-heading{
+    position: relative;
+    bottom: 10px;
+    left: 120px;
+  }
+  
+.modal-label{
+    font-family: "Lato";
+    position: relative;
+    bottom: 50px;
+    font-size: 14px;
+  }
+  
+.modal-input{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: black;
+    opacity: 100;
+    font-size: 16px;
+  }
+  
+.modal-input:focus{
+    outline: none;
+    border: 1px solid #555;
+  }
+
+/* User List Modal  */
+
+.user-modal{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 15px;
+    max-width: 300px;
+    min-width: 300px;
+    min-height: 520px;
+}
+  
+/* Modal Buttons CSS */
+.buttons{
+  border: none;
+  border-radius: 10px;
+  font-family: "Lato";
+  padding: 10px 10px;
+  width: 130px;
+  height: 37px;
+}
+
+.new-user-button{
+  background-color: rgba(242, 143, 59, 1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 7px;
+    border: none;
+  }
+  
+.confirm-button {
+    background-color: rgba(242, 143, 59, 1);
+    position: absolute;
+    bottom: 20px;
+    left: 40px;
+  }
+  
+.cancel-button {
+    background-color: rgba(242, 143, 59, 0.5);
+    position: absolute;
+    bottom: 20px;
+    left: 190px;
+  }
+
+.remove-user-button{
+    background-color: rgba(242, 143, 59, 1);
+    position: absolute;
+    bottom: 20px;
+    left: 110px;
+}
+
+.user-confirm-button{
+  background-color: rgba(242, 143, 59, 1);
+  position: absolute;
+  bottom: 78px;
+  left: 35px;
+}
+
+.user-cancel-button{
+background-color: rgba(242, 143, 59, 0.5);
+position: absolute;
+bottom: 78px;
+left: 190px;
+}
+
+.remove-user-button,
+.user-cancel-button,
+.user-confirm-button,
+.confirm-button:hover,
+.cancel-button:hover,
+.close-modal:hover,
+.add-user-button:hover {
+    cursor: pointer;
+}
+
+/* Page Buttons CSS */
+
+.add-user-button{
+  width: 180px;
+  height: 50px;
+  background-color: rgba(242, 143, 59, 1);
+  margin-top: 10px;
+  margin-right: 50px;
+  font-size: 18px;
+}
+.add-user-button:hover {
+  background-color: rgba(242, 143, 59, 0.7);
+}
+  
+
