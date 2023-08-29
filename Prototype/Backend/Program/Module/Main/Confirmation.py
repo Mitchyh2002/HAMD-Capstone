@@ -55,7 +55,7 @@ def unconfirmed_account():
         return on_error(61, "Account has already been confirmed. Please Login")
     else:
         token = generate_confirmation_token(current_user.email)
-        confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
+        confirm_url = url_for('http://localhost:3000/Confirm/', token= token, _external=True)
         html = render_template('activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
         send_email(current_user.email, subject, html)

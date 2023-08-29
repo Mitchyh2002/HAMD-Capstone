@@ -98,7 +98,7 @@ def register():
 
     
     token = generate_confirmation_token(user.email)
-    confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
+    confirm_url = url_for('http://localhost:3000/Confirm/', token= token, _external=True)
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
