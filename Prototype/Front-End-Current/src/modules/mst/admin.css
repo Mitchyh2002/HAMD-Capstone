@@ -8,20 +8,14 @@
 h2{
     margin-left: 20px;
   }
-
-.pluginPage{
-  width: 100%;
-}
-
-.user-top-page{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
   
 /* Table CSS */  
-
+.pluginTable{
+    display: flex;
+    font-family: "lato";
+    justify-content: center;
+  }
+  
 table{
     margin-left: 20px;
     margin-right: 20px;
@@ -55,7 +49,6 @@ table, th, td{
   }
   
 /* Plugin List Modal */
-
 body.active-modal {
     overflow-y: hidden;
   }
@@ -146,21 +139,34 @@ body.active-modal {
     min-width: 300px;
     min-height: 520px;
 }
-  
-/* Modal Buttons CSS */
-.buttons{
+
+.user-confirm-button{
+    border: none;
+    background-color: rgba(242, 143, 59, 1);
+    border-radius: 10px;
+    font-family: "Lato";
+    position: absolute;
+    bottom: 78px;
+    left: 35px;
+    padding: 10px 10px;
+    width: 130px;
+    height: 37px;
+}
+
+.user-cancel-button{
   border: none;
+  background-color: rgba(242, 143, 59, 0.5);
   border-radius: 10px;
   font-family: "Lato";
+  position: absolute;
+  bottom: 78px;
+  left: 190px;
   padding: 10px 10px;
   width: 130px;
   height: 37px;
 }
-
-.new-user-button{
-  background-color: rgba(242, 143, 59, 1);
-}
-
+  
+/* Modal Buttons CSS */
 .close-modal {
     position: absolute;
     top: 10px;
@@ -170,38 +176,42 @@ body.active-modal {
   }
   
 .confirm-button {
+    border: none;
     background-color: rgba(242, 143, 59, 1);
+    border-radius: 10px;
+    font-family: "Lato";
     position: absolute;
     bottom: 20px;
     left: 40px;
+    padding: 10px 10px;
+    width: 130px;
+    height: 37px;
   }
   
 .cancel-button {
+    border: none;
     background-color: rgba(242, 143, 59, 0.5);
+    border-radius: 10px;
+    font-family: "Lato";
     position: absolute;
     bottom: 20px;
     left: 190px;
+    padding: 10px 10px;
+    width: 130px;
+    height: 37px;
   }
 
 .remove-user-button{
+    border: none;
     background-color: rgba(242, 143, 59, 1);
+    border-radius: 10px;
+    font-family: "Lato";
+    padding: 10px 10px;
+    width: 130px;
+    height: 37px;
     position: absolute;
     bottom: 20px;
     left: 110px;
-}
-
-.user-confirm-button{
-  background-color: rgba(242, 143, 59, 1);
-  position: absolute;
-  bottom: 78px;
-  left: 35px;
-}
-
-.user-cancel-button{
-background-color: rgba(242, 143, 59, 0.5);
-position: absolute;
-bottom: 78px;
-left: 190px;
 }
 
 .remove-user-button,
@@ -209,23 +219,8 @@ left: 190px;
 .user-confirm-button,
 .confirm-button:hover,
 .cancel-button:hover,
-.close-modal:hover,
-.add-user-button:hover {
+.close-modal:hover {
     cursor: pointer;
-}
-
-/* Page Buttons CSS */
-
-.add-user-button{
-  width: 180px;
-  height: 50px;
-  background-color: rgba(242, 143, 59, 1);
-  margin-top: 10px;
-  margin-right: 50px;
-  font-size: 18px;
-}
-.add-user-button:hover {
-  background-color: rgba(242, 143, 59, 0.7);
 }
   
 

@@ -7,13 +7,15 @@ import "./admin.css";
 
 export default function PluginList() {
     
-    /* Calls to the loader function defined in main.js */
     const plugins = useLoaderData();
 
     /* Getting the data from the database  */
     const data = useMemo(() => plugins, []);
     const columns = useMemo(() => [  
     {
+        Header: "ID",
+        accessor: "id",
+    },{
         Header: "Prefix",
         accessor: "prefix",
     },{

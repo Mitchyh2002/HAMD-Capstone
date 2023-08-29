@@ -37,10 +37,10 @@ export default function Modal(props) {
                         </form>
                         <br></br>
                         <br></br>
-                        <button className='buttons confirm-button' onClick={updatePlugin}>
+                        <button className='confirm-button' onClick={updatePlugin}>
                             Confirm Changes
                         </button>
-                        <button className='buttons cancel-button' onClick={toggleModal}>
+                        <button className='cancel-button' onClick={toggleModal}>
                             Cancel
                         </button>
                     </div>
