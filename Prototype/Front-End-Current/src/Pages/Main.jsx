@@ -9,7 +9,7 @@ export default function Main(props) {
 
     return(
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
-            <Header breadcrumbs = {<Breadcrumbs />} accountButton={accountButton} logoutButton={logoutButton}/>
+            <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} accountButton={accountButton} logoutButton={logoutButton}/>
             <Content modules={props.modules}/>
         </div>
     )

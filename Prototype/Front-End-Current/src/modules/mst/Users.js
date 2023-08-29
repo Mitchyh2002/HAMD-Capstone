@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, Link } from 'react-router-dom';
 import "./admin.css";
 
 export default function Users() {
 
+    /* Calls to the loader function defined in main.js */
     const users = useLoaderData();
 
     /* Setting the state for the modal*/
@@ -41,9 +42,15 @@ export default function Users() {
     return (
         <>
             <div className="pluginPage">
+                <div className='user-top-page'>
                 <h2>Users</h2>
-                <div className="pluginTable">
-                    <table {...getTableProps()}>
+                <Link
+                    to="/Home/mst/Add%20User">
+                    <button className="buttons add-user-button">Add New User</button>
+                </Link>
+                </div>
+                <div>
+                    <table className='userTable'{...getTableProps()}>
                         <thead>
                             {headerGroups.map((headerGroup) => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
@@ -118,13 +125,13 @@ function UserListModal(props) {
                     <label className='modal-label'>Phone Number:
                         <input className='modal-input' type="text" />
                     </label>
-                    <button className='user-confirm-button' onClick={toggleModal}>
+                    <button className='buttons user-confirm-button' onClick={toggleModal}>
                         Confirm Changes
                     </button>
-                    <button className='user-cancel-button' onClick={toggleModal}>
+                    <button className='buttons user-cancel-button' onClick={toggleModal}>
                         Cancel
                     </button>
-                    <button className='remove-user-button' onClick={toggleModal}>
+                    <button className='buttons remove-user-button' onClick={toggleModal}>
                         Remove User
                     </button>
                 </form>
