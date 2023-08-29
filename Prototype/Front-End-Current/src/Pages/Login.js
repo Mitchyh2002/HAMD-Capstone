@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Login(props) {
     const register = props.register;
+    const [email, setEmail] = useState();
 
     return (
         <>
@@ -17,8 +18,9 @@ export default function Login(props) {
                     <img className="bee-image" src="/bee3.png" alt="small-bee-image" />
                         <h3>{register ? "Create Account" : "Sign In"}</h3>
                     </div>
-                    {register ?
-                        <RegisterForm /> : <LoginForm />}
+                    {email? <EmailConfirmation email={email}/> : 
+                    register ?
+                        <RegisterForm setEmail={setEmail}/> : <LoginForm />}
                 </div>
             </div>
         </>
@@ -123,39 +125,44 @@ function LoginForm() {
 }
 
 //Registration Form
-function RegisterForm() {
+function RegisterForm(props) {
     const [nameError, setNameError] = useState();
     const [emailError, setEmailError] = useState();
     const [dobError, setDobError] = useState();
     const [passError, setPassError]  = useState();
+    const [loading, setLoading] = useState(false);
 
     const validateFrom = (formData) =>{
         setNameError(checkName(formData.get("firstName")));
         setEmailError(checkEmailValid(formData.get("email")));
         setDobError(checkDOB(formData.get("dateOfBirth")));
         setPassError(checkPass(formData.get("password")));
-        let error = false;
+
+        let valid = true;
 
         if (nameError) {
-            error = true;
+            valid = false;
         }
 
         if(emailError){
-            error = true;
+            valid = false;
         }
 
         if(dobError){
-            error = true;
+            valid = false;
         }
 
         if(passError){
-            error = true;
+            valid = false;
         }
+
+        return(valid)
 
     }
 
     //const navigate = useNavigate();
     const handleRegister = (e) => {
+        setLoading(true);
         const form = document.getElementById("Register");
         const formData = new FormData(form);
 
@@ -167,15 +174,19 @@ function RegisterForm() {
             }).then(response => (response.json()
             )).then((response) => {
                 if (response.Success == true) {
-                    window.alert("Success!!!")
+                    props.setEmail(formData.get("email"));
                 }else{
-                    console.log(response)
+                    console.log(response);
                     window.alert(response.error)
                 }
+                setLoading(false);
             }
             ).catch(function (error) {
                 console.log(error);
+                setLoading(false);
             })
+        }else{
+            setLoading(false);
         }
     }
     return (
@@ -219,7 +230,7 @@ function RegisterForm() {
 
 
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <button className="primaryButton sign-in-button" onClick={handleRegister}>Register</button>
+                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px"}}>
                 <p style={{fontSize: "14px"}}>
@@ -234,6 +245,21 @@ function RegisterForm() {
             </div>
         </>
     )
+}
+
+function EmailConfirmation(props) {
+    function handleResend(){
+        //resend props.email to endpoint
+    }
+    return(
+    <div>
+        <p>Just one more step to finalise your account. We need to validate your email address and have sent you a confirmation email. Follow the link if you didnt recieve the link click 
+            on the button below!
+        </p>
+        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
+            </div>
+    </div>)
 }
 
 //Validation Functions
