@@ -98,11 +98,11 @@ def register():
 
     
     token = generate_confirmation_token(user.email)
-    confirm_url = url_for('http://localhost:3000/Confirm/', token= token, _external=True)
+    confirm_url = 'http://localhost:3000/Confirm/' + token
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
-    return on_success(token)
+    return on_success("Potentially email for resend endpoint but security")
 
 
 def emailIsValid(email):

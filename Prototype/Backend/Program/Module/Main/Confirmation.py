@@ -12,20 +12,24 @@ from Program.ResponseHandler import on_error, on_success
 blueprint = Blueprint('confirmation', __name__, url_prefix="/confirm")
 
 TESTING = True
+email_salt = export_salt()
 
 def generate_confirmation_token(email):
    serializer = URLSafeTimedSerializer(export_key())
-   return serializer.dumps(email, salt=export_salt())
+   return serializer.dumps(email, salt=email_salt)
 
 def confirm_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(export_key())
     try:
+        print(export_key())
+        print(export_salt())
         email = serializer.loads(
             token,
-            salt=export_salt(),
+            salt=email_salt,
             max_age=expiration
         )
     except:
+        print("exception")
         return False
     return email
 
@@ -49,13 +53,13 @@ def confirm_email(token):
         db.session.commit()
         return on_success("You have successfully confirmed your account") 
     
-@blueprint.route('/unconfirmed')
-def unconfirmed_account():
+@blueprint.route('/resend')
+def resend_email():
     if current_user.confirmed:
         return on_error(61, "Account has already been confirmed. Please Login")
     else:
         token = generate_confirmation_token(current_user.email)
-        confirm_url = url_for('http://localhost:3000/Confirm/', token= token, _external=True)
+        confirm_url = 'http://localhost:3000/Confirm/' + token
         html = render_template('activate.html', confirm_url=confirm_url)
         subject = "Please confirm your email"
         send_email(current_user.email, subject, html)
