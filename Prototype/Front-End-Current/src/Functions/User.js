@@ -4,21 +4,40 @@ const token = "BAtoken";
 //Register User
 
 //Log User In
-export async function login(email, password){
-    //fetch data from server
-    //Check Success(return errors)
-    //Store Token in local storage
+export async function login(formData){
+    return fetch("http://localhost:5000/user/login", {
+        method: "POST",
+        body: formData,
+    }).then(response => (response.json()
+    )).then((response) => {
+        if (response.Success == true) {
+                console.log(response)
+                localStorage.setItem(token, response.Values);
+                return("Success");
+            } else {
+                return("error");
+            }
+
+        }
+    ).catch(function (error) {
+         console.log(error);
+         return error;
+    })
 }
 
 
 //Check User Logged In
-export async function getToken(){
-    return null;
+export function getToken(){
+    const JWT = localStorage.getItem(token)
+    if(JWT){
+        return JWT
+    } else {
+        return null
+    }
 }
 
 
 //Log user out
-export async    function logout(){
-    //fetch server to delete token
-    //clear local storage
+export async function logout(){
+    localStorage.clear();
 }

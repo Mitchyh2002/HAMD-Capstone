@@ -1,9 +1,29 @@
 import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
-import MOCK_DATA from "./MOCK_DATA.json";
-import "./PluginList.css";
+import { useLoaderData } from 'react-router-dom';
+import { updateName } from "./loaderFunctions";
+import Modal from './Components.js';
+import "./admin.css";
 
 export default function PluginList() {
+    
+    /* Calls to the loader function defined in main.js */
+    const plugins = useLoaderData();
+
+    /* Getting the data from the database  */
+    const data = useMemo(() => plugins, []);
+    const columns = useMemo(() => [  
+    {
+        Header: "Prefix",
+        accessor: "prefix",
+    },{
+        Header: "Display Name",
+        accessor: "displayName",
+    }
+    ], []);
+
+    const tableInstance = useTable({ columns, data });
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
     /* Setting the state for the modal */
     const [modal, setModal] = useState(false);
@@ -11,26 +31,13 @@ export default function PluginList() {
         setModal(!modal);
     }
 
-    /* Getting the data from the MOCK_DATA file */
-    const data = useMemo(() => MOCK_DATA, []);
-    const columns = useMemo(() => [  
-    {
-        Header: "ID",
-        accessor: "id",
-    },{
-        Header: "Prefix",
-        accessor: "prefix",
-    },{
-        Header: "Display Name",
-        accessor: "display_name",
-    },{
-        Header: "Date Added",
-        accessor: "date_added",
+    const updatePlugin = () => {
+        const form = document.getElementById("modalForm");
+        const formData = new FormData(form);
+        const response = updateName(formData);
+        console.log(response);
+        window.alert("hello")
     }
-    ], []);
-
-    const tableInstance = useTable({ columns, data })
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
     return(
         <>
@@ -75,29 +82,7 @@ export default function PluginList() {
                     </div>
             </div>
             {modal && (
-                <div className="modal">
-                    <div onClick={toggleModal} className='overlay'></div>
-                    <div className='modal-content'>
-                        <button className='close-modal' onClick={toggleModal}>
-                            x
-                        </button>
-                        <h4 className='modal-heading'>Edit</h4>
-                        <form>
-                            <label className='modal-label'>Change display name:
-                                <input className='modal-input' type="text" />
-                            </label>
-                            <input className='confirm-button' type="submit" />
-                        </form>
-                        <br></br>
-                        <br></br>
-                        <button className='confirm-button' onClick={toggleModal}>
-                            Confirm Changes
-                        </button>
-                        <button className='cancel-button' onClick={toggleModal}>
-                            Cancel
-                        </button>
-                    </div>
-                </div>
+                <Modal label1="Change Display Name:" show={modal} change={setModal}/>
             )}
         </>
         )

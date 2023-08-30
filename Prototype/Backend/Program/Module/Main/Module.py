@@ -111,7 +111,7 @@ def QueryInsertModule(new_module: Module, test=False):
     db.session.commit()
 
 @blueprint.route('/getactive')
-@login_required
+#@login_required
 def get_active_plugins():
     '''
     Get Request that returns all active modules.

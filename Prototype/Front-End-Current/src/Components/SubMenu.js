@@ -21,21 +21,29 @@ export default function SubMenu(props){
     function createNavLinks(component){
         return(
             <div style={{display: "flex", alignItems: "center"}}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.name} name={component.name} />
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
             </div>
         )
     }
+
+    //Set state for toggle button to hide sub nav bar
+    const [show, setShow] = useState(true);
 
     return(
         <>
             <div className="subNavContainer">
             <div>
-                <Breadcrumbs />
-            </div>
-                {subComponents&&
-                        <div className="flexBoxColumnGrow subNavBar" style={{maxWidth: "160px"}}>
+                    <button type="button" onClick={() => setShow(!show)} className="toggle-button">
+                        <img className="menu-icon" src="/menu.png" alt="menu" />
+                    </button>
+                </div>
+                {show &&
+                    <div className="navButtonContainer">
+                        {subComponents &&
+                            <div className="flexBoxColumnGrow subNavBar" style={{ maxWidth: "160px" }}>
                                 {subComponents.map(component => createNavLinks(component))}
-                        </div>}
+                                </div>}
+                    </div>}
             </div>
         </>
     )

@@ -6,6 +6,7 @@ import SubMenu from "Components/SubMenu";
 import Login from "Pages/Login";
 import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
+import { ConfirmEmail } from "Pages/Confirm";
 
 
 /*All Routes
@@ -32,7 +33,7 @@ export function CreateAllPaths(Components) {
         //Map Component Directories
         children: Components.map(e => createComponentRoutes(e)),
         loader: async ()  => {
-            const token = await(getToken());
+            const token = getToken();
             console.log(token);
             if(token == null){
                 return redirect("/login");
@@ -42,7 +43,22 @@ export function CreateAllPaths(Components) {
         }
     },{
         path:"/Login",
-        element: <Login />
+        element: <Login register={false}/>
+    },{
+        path:"/Register",
+        element: <Login register={true}/>
+    },{
+        path:"/Confirm/:id",
+        element: <ConfirmEmail />,
+        loader: async ({params}) => {
+            try{
+                const response = await fetch("http://localhost:5000/confirm/"+params.id);
+                const json = await response.json();
+                return json;
+            }catch{
+                return({Message: "Local error/network error encounterded", StatusCode: -1, Success: false});
+            }
+        }
     },{
         path:'*',
         element:<NoMatchingPage />
@@ -66,9 +82,12 @@ export function createComponentRoutes(module) {
 
         //Create child path for each directory
         children: Directory[module.prefix].map(e => {
-            console.log(e)
-            return({path: e.name,
-            element: React.createElement(e.component)})
+            console.log(e.children)
+            return({
+            path: e.path,
+            ...e.loader&& {loader: e.loader},
+            ...e.children&& {children: e.children},
+            element: React.createElement(e.element)})
         }),
         //Create sub directories from pages
     }
