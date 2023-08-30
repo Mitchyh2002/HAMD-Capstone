@@ -253,14 +253,14 @@ function EmailConfirmation(props) {
     }
     return(
     <div>
-        <p>Just one more step to finalise your account. We need to validate your email address and have sent you a confirmation email. Follow the link if you didnt recieve the link click 
-            on the button below!
+        <p>Just one more step to finalise your account. We need to validate your email address and have sent you a confirmation email.
         </p>
-        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
-            </div>
     </div>)
 }
+
+/*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+<button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
+</div>*/
 
 //Validation Functions
 function checkEmailValid(email){
