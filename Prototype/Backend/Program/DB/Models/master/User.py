@@ -1,13 +1,14 @@
 import bcrypt
 import jwt
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import Text, TypeDecorator
 from sqlalchemy.orm import validates
 from flask_login import UserMixin
 
-from Program import db
+from Program import db, export_key
 from Program.ResponseHandler import on_error
+from Program.DB.Models.master.Admin import refAdminRoles
 from Program.DB.Models.master.Admin import refAdminRoles
 
 class PasswordHash(object):
@@ -30,7 +31,7 @@ class PasswordHash(object):
     def new(cls, password, rounds=12):
         if isinstance(password, str):
             password = password.encode('utf-8')
-        return cls(bcrypt.hashpw(password, bcrypt.gensalt(rounds)))  
+        return cls(bcrypt.hashpw(password, export_salt()))  
     
 class Password(TypeDecorator):
     impl = Text
@@ -65,8 +66,11 @@ class User(UserMixin, db.Model):
     firstName = db.Column(db.String(255), nullable = False)
     passwordHash = db.Column(Password)
     dateOfBirth = db.Column(db.String(4), nullable = False)
-    token = db.Column(db.String)
+    token = db.Column(db.String, unique=True, nullable=True)
     adminLevel = db.Column(db.Integer(), db.ForeignKey('ref.AdminRoles.id'), default=1)
+    registeredDate = db.Column(db.Date, nullable=False, default=datetime.utcnow)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmedDate = db.Column(db.Date, nullable=True, default=None)
                            
 
     def get_id(self):
@@ -74,9 +78,9 @@ class User(UserMixin, db.Model):
     
     def set_id(self):
         toBeEncoded = self.toJSON(True)
-        toBeEncoded['exp'] = datetime.now()+timedelta(hours=12)
+        toBeEncoded["exp"] = datetime.now()+timedelta(hours=12)
 
-        self.token = jwt.encode(toBeEncoded, "1738", algorithm="HS256")
+        self.token = jwt.encode(toBeEncoded, export_key(), algorithm="HS256")
         db.session.commit()
 
     def del_id(self):
@@ -142,6 +146,8 @@ def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
     created_user.adminLevel = 1
+    created_user.registeredDate = date.today()
+    created_user.confirmed = False
     created_user.setIsAuthenticated(True)
     created_user.setIsActive(True)
     created_user.setIsAnonymous(False)
@@ -174,3 +180,6 @@ def JSONtoUser(JSON):
         return on_error(1, "JSON Missing Import Keys, Please confirm that all values are correct")
 
     return created_user
+
+def export_salt(rounds=12):
+    return bcrypt.gensalt(rounds)
