@@ -1,6 +1,7 @@
 import datetime
 
 from Program.ResponseHandler import on_error, on_success
+from Program.OS import userFunctionAuthorisations
 from flask import Blueprint, render_template, request, session, redirect, url_for
 
 from Program.DB.Builder import db
@@ -75,6 +76,8 @@ def assign_user_karma(request):
 
 @blueprint.route('/', methods=['POST', 'GET'])
 def karma_handler():
+    # user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    # accessGranted = userFunctionAuthorisations(user_bearer, 1)
     userID = request.values.get('userID')
     if userID == None:
         return on_error(3, "Request is missing UserID key, please ensure you are sending a valid userID")

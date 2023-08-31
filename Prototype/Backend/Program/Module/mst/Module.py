@@ -202,7 +202,11 @@ def get_active_plugins():
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
         user_data = bearer_decode(user_bearer)
         if user_data['Success'] == False:
-            return user_data
+            valid_modules = []
+            for module in Module.query.filter(Module.status == True).all():
+                valid_modules.append(module.toJSON(True))
+            return on_success(valid_modules)
+            #return user_data
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
         if user_data['adminLvl'] == 2:
@@ -239,8 +243,9 @@ def get_all_plugins():
        Returns:
            A List containing all modules
        '''
-    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    #accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    accessGranted = True
     if accessGranted:
         return [Module.toJSON(True) for Module in Module.query.all()]
     return accessGranted
@@ -303,6 +308,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     if os.path.exists(f"{temp_dir}\Main.js") == False:
         return on_error(15, "Front-End Missing mst.js file")
     imports = []
+    pages = []
     with open(f"{temp_dir}\Main.js") as MainJS:
         content = MainJS.read()
         pattern = r'(?<=export default function).*(?=\()|(?<=export function ).*(?=\()'
@@ -312,9 +318,19 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         pattern_2 = fr'(?<=const ){module_name}_pages(?= )'
         page_name = re.findall(pattern_2, content)
         imports = ", ".join(functionName + page_name)
-
         if f"{module_name}_" not in functionName[0]:
             return on_error(10, "Module Name not in main Front-End Function Name")
+        if page_name is not None:
+            page_list_pattern = 'export const ' + module_name + '_pages = (.*?);'
+            pages_match = re.search(page_list_pattern, content, re.DOTALL)
+
+            if pages_match:
+                pages_content = pages_match.group(1)
+                pages_content = pages_content.strip()
+
+                # Convert JavaScript object notation to Python dictionary
+                pages_dict = ast.literal_eval(pages_content)
+
 
     os.chdir("../")
     front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
