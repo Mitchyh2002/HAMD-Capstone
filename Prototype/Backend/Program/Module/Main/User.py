@@ -7,7 +7,7 @@ from sqlalchemy import Select
 
 from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
-from Program.Module.Main.Confirmation import generate_confirmation_token, send_email
+from Program.Module.Main.Confirmation import generate_confirmation_token, send_email, confirm_token
 from Program.ResponseHandler import on_error, on_success
 from Program.DB.Models.master.Admin import refAdminRoles
 
@@ -138,6 +138,46 @@ def phoneNumberIsValid(phoneNumber):
 @blueprint.route('/getall', methods=["GET"])
 def getAllUser():
     return [User.toJSON() for User in User.query.all()]
+
+@blueprint.route('/forgotPassword')
+def forgotPassword():
+    input = request.values
+    inputEmail = input.get('email')
+    user = QuerySelectUser(inputEmail)
+
+    if type(user).__name__ == "user":
+        token = generate_confirmation_token(user.email)
+        forgot_url = 'http://localhost:3000/resetPassword/' + token
+        html = render_template('reset.html', forgot_url=forgot_url)
+        subject = "BeeAware Password Reset"
+        send_email(user.email, subject, html)
+    else:
+        return on_error(62, "Account is not valid")
+    
+@blueprint.route('/resetPassword')
+def resetPassword(token):
+    email = confirm_token(token)
+    try:
+        if not email:
+            return on_error(60, "The confirmation link is invalid or has expired.")
+        
+    except:
+        pass
+
+    user = QuerySelectUser(email)
+
+    if type(user).__name__ == "user":
+        input = request.values
+        inputPass = input.get('password')
+
+        if inputPass == "" or inputPass is None:
+            return on_error(20, "Password is required, please enter a password")
+        
+        user.changePassword(inputPass)
+    else:
+        return on_error(62, "Account is not valid")
+
+
 
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB
