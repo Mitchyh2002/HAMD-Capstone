@@ -16,6 +16,8 @@ from re import search
 from Program.DB.Models.mst.Module import Module, create_module
 from Program.DB.Models.mst.User import PasswordHash, User
 from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
+from Program.DB.Models.mst.ModuleSecurity import ModuleSecurity, JSONtomoduleAccess
+
 from Program.DB.Models.grp.userGroups import userGroup
 from Program.DB.Models.grp.Groups import Group
 from Program.DB.Models.grp.moduleGroups import mouduleGroups
@@ -200,6 +202,8 @@ def get_active_plugins():
     '''
     if request.method == "GET":
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        if user_bearer is None:
+            user_bearer = request.values.get('HTTP_AUTHORIZATION')
         user_data = bearer_decode(user_bearer)
         if user_data['Success'] == False:
             valid_modules = []
@@ -209,10 +213,13 @@ def get_active_plugins():
             #return user_data
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
-        if user_data['adminLvl'] == 2:
+        if user_data['adminLvl'] == 9:
             valid_modules = []
             for module in Module.query.filter(Module.status == True).all():
-                valid_modules.append(module.toJSON(True))
+                CurrModule = module.toJSON(True)
+                pages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=CurrModule['prefix']).all()]
+                CurrModule['pages'] = pages
+                valid_modules.append(CurrModule)
             return on_success(valid_modules)
         user = User.query.filter_by(email=user_data['email']).first()
         if user.is_active != True:
@@ -240,16 +247,40 @@ def get_all_plugins():
        Parameters:
            None
 
-       Returns:
+        Returns:
            A List containing all modules
-       '''
+    '''
     #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    #accessGranted = userFunctionAuthorisations(user_bearer, 5)
     accessGranted = True
     if accessGranted:
         return [Module.toJSON(True) for Module in Module.query.all()]
     return accessGranted
 
+@blueprint.route('getall_pages')
+def get_module_pages(modulePrefix=None):
+    '''
+       Get Request that returns all pages in a sepcified module
+
+       Parameters:
+           None
+
+       Returns:
+           A List containing all pages in a sepcified module
+       '''
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    if user_bearer == None:
+        user_bearer = request.values.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = True
+    if accessGranted:
+        if modulePrefix == None:
+            modulePrefix = request.values.get('modulePrefix')
+        selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
+        if selectedModule == None:
+            return on_error(10, "Selected Module Doesnt Exist")
+        return [ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
+    return accessGranted
 
 def check_files(temp_dir, module_prefix):
     '''
@@ -326,12 +357,39 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
 
             if pages_match:
                 pages_content = pages_match.group(1)
-                pages_content = pages_content.strip()
-
-                # Convert JavaScript object notation to Python dictionary
-                pages_dict = ast.literal_eval(pages_content)
-
-
+                pages_json = '.'.join(pages_content.split("{\n")[1:]).split('},')
+                for page in pages_json:
+                    pageName_pattern = '(?<=path: ").+(?=")'
+                    pageName = re.findall(pageName_pattern, page)
+                    page_code_pattern = '(?<=pageCode: ").+(?=")'
+                    pageCode = re.findall(page_code_pattern, page)
+                    description_pattern = '(?<=Desciption: ").+(?=")'
+                    descripton = re.findall(description_pattern, page)
+                    if descripton == []:
+                        descripton = ''
+                    else:
+                        descripton = descripton[0]#If not listed leave blank
+                    UAC_pattern = '(?<=userAccessLevel: )[0-9]'
+                    UAC_Level = re.findall(UAC_pattern, page)
+                    if len(pageName) == 0:
+                        return on_error(10, 'Page Name Not Specified Please confirm your routes have a valid PageName')
+                    if len(pageCode) == 0:
+                        return on_error(10, 'pageCode Not Specified Please confirm your routes have a valid pageCode')
+                    if len(UAC_Level) == 0:
+                        return on_error(10, 'User Access Level Not Specifed Please ensure each page has an assigned UAC')
+                    if len(pageName) > 1:
+                        return on_error(10, 'Page Name is Specified more than Once Please confirm your routes have a one PageName')
+                    if len(pageCode) > 1:
+                        return on_error(10, 'pageCode is Specified more than Once Please confirm your routes have a one pageCode')
+                    if len(UAC_Level) > 1:
+                        return on_error(10, 'User Access Level is Specified more than Once Please confirm your routes have a one UAC')
+                    pages.append({
+                        "modulePrefix": module_name,
+                        "pageName": pageName[0],
+                        "pageCode": pageCode[0],
+                        "description": descripton,
+                        "SecurityLevel": UAC_Level[0]
+                    })
     os.chdir("../")
     front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
     frontEnd_outdir = rf"{front_end_dir}\modules\{module_name}"
@@ -374,6 +432,8 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         if not update:
             if page_name != []:
                 page_name = page_name[0]
+            if 'import { ' + imports + ' } from "./modules/' + module_name + '/main.js";' in module_definitions:
+                return on_error(10, 'This Module Already Exists in System, please update module')
             module_definitions.insert(import_pos,
                                       'import { ' + imports + ' } from "./modules/' + module_name + '/main.js";')
             module_definitions[module_last_pos] = module_definitions[module_last_pos] + ","
@@ -401,7 +461,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
             file.writelines(line + '\n' for line in (module_definitions + new_content.splitlines()))
 
     os.chdir(master_dir)
-    return True
+    return pages
 
 
 def back_end_installation(API_Files, temp_dir, modulename, backend_outdir, update=False):
@@ -477,10 +537,10 @@ def get_module(prefix):
 
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
-    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 1)
-    if accessGranted == False:
-        return accessGranted
+    #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    #accessGranted = userFunctionAuthorisations(user_bearer, 1)
+    #if accessGranted == False:
+    #    return accessGranted
 
     userID = request.values.get("userID")
     modulePrefix = request.values.get("modulePrefix")
@@ -618,13 +678,12 @@ def upload_module():
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'OPTIONS']:
-        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        accessGranted = userFunctionAuthorisations(user_bearer, 2)
-        if accessGranted == False:
-            return accessGranted
-
-        # update = request.values.get('update') == True
-        userFunctionAuthorisations()
+    #    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    #    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    #    if accessGranted == False:
+    #        return accessGranted
+        update = request.values.get('update') == True
+        #userFunctionAuthorisations()
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
@@ -634,11 +693,11 @@ def upload_module():
         ModulePass = request.values.get('modulePass')
         ModulePass = PasswordHash.new(ModulePass)
 
-        if '' in [DisplayName, ModulePass]:
+        if '' in [DisplayName, ModulePass.hash]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
 
-        if module != [] and not update:
+        if module != None and not update:
             return on_error(1, f"Module {modulename}, Already Exists")
         elif update and module != []:
             if module.moduleKey.strip() != ModulePass:
@@ -683,7 +742,7 @@ def upload_module():
 
         front_end_success = front_end_installation(FrontEndDir, modulename, master_dir, update=update)
 
-        if front_end_success is not True:
+        if not isinstance(front_end_success, list):
             if os.path.exists(f"Program/Module/{modulename}") and not update:
                 shutil.rmtree(f"Program/Module/{modulename}")
             if os.path.exists(f"Program/DB/Models/{modulename}") and not update:
@@ -724,9 +783,12 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass, True, logo_path)
-        new_Module = create_module(str(modulename), DisplayName, ModulePass, True, logo_path)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
         QueryInsertModule(new_Module)
+        for page in front_end_success:
+            moduleAccess = JSONtomoduleAccess(page)
+            moduleAccess.insert()
+
         os.chdir(master_dir)
 
         shutil.rmtree(f"Program/Temp_Module")

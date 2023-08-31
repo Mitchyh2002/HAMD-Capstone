@@ -5,7 +5,7 @@ class Module(db.Model):
     __tablename__ = "modules"
     prefix = db.Column(db.String(3), primary_key=True)
     displayName = db.Column(db.String(200))
-    moduleKey = db.Column(db.CHAR(60))
+    moduleKey = db.Column(db.CHAR(63))
     status = db.Column(db.Boolean)
     logo = db.Column(db.String(20))
 
