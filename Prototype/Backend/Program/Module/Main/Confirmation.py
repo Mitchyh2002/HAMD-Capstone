@@ -55,14 +55,21 @@ def confirm_email(token):
     
 @blueprint.route('/resend')
 def resend_email():
-    if current_user.confirmed:
-        return on_error(61, "Account has already been confirmed. Please Login")
+    input = request.values
+    inputEmail = input.get('email')
+    user = QuerySelectUser(inputEmail)
+
+    if type(user).__name__ == "user":
+        if user.confirmed:
+            return on_error(61, "Account has already been confirmed. Please Login")
+        else:
+            token = generate_confirmation_token(user.email)
+            confirm_url = 'http://localhost:3000/Confirm/' + token
+            html = render_template('activate.html', confirm_url=confirm_url)
+            subject = "Please confirm your email"
+            send_email(user.email, subject, html)
     else:
-        token = generate_confirmation_token(current_user.email)
-        confirm_url = 'http://localhost:3000/Confirm/' + token
-        html = render_template('activate.html', confirm_url=confirm_url)
-        subject = "Please confirm your email"
-        send_email(current_user.email, subject, html)
+        return on_error(62, "Account is not valid")
 
 
 def send_email(to, subject, template):
