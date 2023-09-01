@@ -277,7 +277,40 @@ def get_all_plugins():
         return [Module.toJSON(True) for Module in Module.query.all()]
     return accessGranted
 
-@blueprint.route('getall_pages')
+@blueprint.route('updatePageLevel', methods=['POST'])
+def updatePageLevel():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    if user_bearer == None:
+        user_bearer = request.values.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    if accessGranted != True:
+        return accessGranted
+
+    modulePrefix = request.values.get('modulePrefix')
+    pageCode = request.values.get('pageCode')
+    securityLevel = request.values.get('securityLevel')
+
+    if modulePrefix == None:
+        return on_error(1, "Request is Missing ModulePrefix Key")
+    if pageCode == None:
+        return on_error(1, "Request is Missing pageID Key")
+    if securityLevel == None:
+        return on_error(1, "Request is Missing securityLevel Key")
+
+    selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
+    if selectedModule == None:
+        return on_error(2, "Specified Module Does Not Exist")
+    selectedPage = ModuleSecurity.query.filter_by(modulePrefix=modulePrefix, pageCode=pageCode).first()
+    if selectedModule == None:
+        return on_error(2, "Specified Page Does Not Exist")
+
+    selectedPage.SecurityLevel = securityLevel
+    db.session.commit()
+
+    return on_success(selectedPage.toJSON())
+
+
+@blueprint.route('getall_pages', methods=['GET'])
 def get_module_pages(modulePrefix=None):
     '''
        Get Request that returns all pages in a sepcified module
