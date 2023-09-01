@@ -545,15 +545,8 @@ def get_module(prefix):
     returns Module obj on success else None
     """
     Modules = Module.query.filter(Module.prefix == prefix).first()
+
     return Modules
-
-    # If Conn Exists Delete it
-    moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
-    created_moduleAccess = create_moduleAccess(modulePrefix, userID)
-    created_moduleAccess.insert()
-
-    return on_success(created_moduleAccess.toJSON())
-
 
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
@@ -563,6 +556,8 @@ def Module_Access_Control():
     #    return accessGranted
 
     userID = request.values.get("userID")
+    user = User.query.filter_by(userID=userID).first()
+
     modulePrefix = request.values.get("modulePrefix")
     if userID is None:
         return on_error(3, "UserID is not specified")
@@ -579,15 +574,16 @@ def Module_Access_Control():
 
     if request.method == 'POST':
         moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
-        return give_user_access(userID, modulePrefix)
+        return give_user_access(user, modulePrefix)
     else:
-        return remove_user_access(userID, modulePrefix)
+        return remove_user_access(user, modulePrefix)
 
 
-def give_user_access(userID, modulePrefix):
+def give_user_access(user, modulePrefix):
     '''
     Give A User access to view a specific module in the Database
 
+    Additional Logic - if a user cannot see any pages in a given module they cannot be added to the module.
     Inputs:
         userID (int) - Integer representation of the userID
         modulePrefix (str) - 3 Char string for a given module
@@ -595,14 +591,16 @@ def give_user_access(userID, modulePrefix):
     returns:
         ModuleAccess Object containing userID & Module info
     '''
-    created_module_access = create_moduleAccess(userID, modulePrefix)
+    pages = ModuleSecurity.query.filter_by(SecurityLevel=user.adminLevel, modulePrefix=modulePrefix).all()
+    return on_error(1, "User Doesn't Have a High enough Access Level to be Added to this Function")
+    created_module_access = create_moduleAccess(user.userID, modulePrefix)
     created_module_access.insert()
 
     return on_success(created_module_access.toJSON())
 
 
-def remove_user_access(userID, modulePrefix):
-    moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
+def remove_user_access(user, modulePrefix):
+    moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=user.userID).delete()
 
     return on_success([])
 
