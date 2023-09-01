@@ -1,9 +1,9 @@
 from Program import db
 from Program.ResponseHandler import on_error
 
-class mouduleGroups(db.Model):
-    __tablename__ = "grp_mouduleGroup"
-    mouduleGroupID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+class moduleGroups(db.Model):
+    __tablename__ = "grp_moduleGroups"
+    moduleGroupID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     module_prefix = db.Column(db.String(3), db.ForeignKey('modules.prefix'), nullable=False)
     groupID = db.Column(db.Integer, db.ForeignKey('grp_group.groupID'), nullable=False)
 
@@ -14,7 +14,7 @@ class mouduleGroups(db.Model):
         returns:
             Dict Representation of OBJ
         '''
-        return {"id": self.mouduleGroupID,
+        return {"id": self.moduleGroupID,
                 "module_prefix": self.module_prefix,
                 "groupID": self.groupID}
 
@@ -24,7 +24,7 @@ class mouduleGroups(db.Model):
 
 
 def create_moduleGroup(groupID, module_prefix):
-    created_moduleGroup = mouduleGroups()
+    created_moduleGroup = moduleGroups()
     created_moduleGroup.module_prefix = module_prefix
     created_moduleGroup.groupID = groupID
 
@@ -42,7 +42,7 @@ def JSONtoGroup(JSON):
     '''
 
     try:
-        created_moduleGroup = mouduleGroups()
+        created_moduleGroup = moduleGroups()
         created_moduleGroup.module_prefix = JSON["module_prefix"]
         created_moduleGroup.groupID = JSON["groupID"]
     except KeyError:

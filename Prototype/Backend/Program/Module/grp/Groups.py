@@ -8,7 +8,7 @@ from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.DB.Models.mst.Module import Module
 from Program.DB.Models.grp.userGroups import userGroup, create_userGroup
 from Program.DB.Models.grp.Groups import Group, create_group
-from Program.DB.Models.grp.moduleGroups import mouduleGroups, create_moduleGroup
+from Program.DB.Models.grp.moduleGroups import moduleGroups, create_moduleGroup
 from Program.ResponseHandler import on_error, on_success
 
 blueprint = Blueprint('grp_Group', __name__, url_prefix="/grp/group")
@@ -19,7 +19,8 @@ def get_all_groups():
     return on_success([group.toJSON() for group in Group.query.all()])
 
 
-@blueprint.route('/', methods=['GET', 'POST', 'DELETE'])
+
+@blueprint.route('/', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def base_route_handler():
     ''' Function to Route Requests for Group Information:
         IF Request is a GET Request - Get Group Information (see get_group function)
@@ -35,6 +36,30 @@ def base_route_handler():
         return new_group(request.values)
     elif request.method == 'DELETE':
         return remove_group(request.values)
+    elif request.method == 'PUT':
+        return update_group(request.values)
+
+def update_group(values):
+    groupID = request.values.get("groupID")
+    if groupID == None:
+        return on_error(3, "group ID value no Specified")
+    selected_group = Group.query.filter_by(groupID=groupID).first()
+    if selected_group is None:
+        return on_error(2, "Specified Group Does Not Exist")
+
+    groupName = values.get("groupName")
+    if groupName == None:
+        groupName = selected_group.displayName
+    securityLevel = values.get("securityLevel")
+    if securityLevel == None:
+        securityLevel = selected_group.securityLevel
+
+    selected_group.displayName = groupName
+    selected_group.securityLevel = securityLevel
+    db.session.commit()
+    return on_success(selected_group.toJSON())
+
+
 
 def get_group(groupID):
     ''' Return Group Details for a given group.
@@ -61,8 +86,8 @@ def new_group(inputs):
 
     users = inputs.get("users")
     modules = inputs.get("modules")
-
-    group_generated = create_group(groupName)
+    securityLevel = inputs.get("securityLevel")
+    group_generated = create_group(groupName,securityLevel)
     group_generated.insert()
     GroupID = group_generated.groupID
     if users != "" and users is not None:
@@ -73,12 +98,15 @@ def new_group(inputs):
     return on_success({"group":group_generated.toJSON(),
                        "users": users,
                        "modules": modules})
+
 def remove_group(inputs):
     groupID = inputs.get("groupID")
     if groupID is None:
         on_error(3, "Group ID is Not Specified")
-
-    Group.query.filter_by(groupID=groupID).delete()
+    selected_group = Group.query.filter_by(groupID=groupID)
+    if selected_group.first() is None:
+        return on_error(2, "Specified Group Does Not Exist")
+    selected_group.delete()
     db.session.commit()
     return on_success([])
 
@@ -121,7 +149,7 @@ def get_group_modules(groupID):
     if selected_group is None:
         return on_error(2, "Specified Group Does Not Exist")
 
-    modules = [module.module_prefix for module in mouduleGroups.query.filter_by(groupID=groupID).all()]
+    modules = [module.module_prefix for module in moduleGroups.query.filter_by(groupID=groupID).all()]
     return on_success([module.toJSON(True) for module in Module.query.filter(Module.prefix.in_(modules)).all()])
 
 def add_group_modules(groupID, module_prefix):
@@ -130,7 +158,7 @@ def add_group_modules(groupID, module_prefix):
         return on_error(2, "Specified Group Does Not Exist")
     selected_module = Module.query.filter_by(prefix=module_prefix).first()
     # If Conn Exists Remove it
-    mouduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
+    moduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
     if selected_module is None:
         return on_error(2, "Specified Module Does Not Exist")
 
@@ -148,7 +176,7 @@ def remove_group_modules(groupID, module_prefix):
     if selected_module is None:
         return on_error(2, "Specified Module Does Not Exist")
     # If Conn Exists Remove it
-    mouduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
+    moduleGroups.query.filter_by(groupID=groupID,module_prefix=module_prefix).delete()
     db.session.commit()
     return on_success([])
 

@@ -20,7 +20,7 @@ from Program.DB.Models.mst.ModuleSecurity import ModuleSecurity, JSONtomoduleAcc
 
 from Program.DB.Models.grp.userGroups import userGroup
 from Program.DB.Models.grp.Groups import Group
-from Program.DB.Models.grp.moduleGroups import mouduleGroups
+from Program.DB.Models.grp.moduleGroups import moduleGroups
 
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunctionAuthorisations
@@ -201,19 +201,17 @@ def get_active_plugins():
         Error Packet, Request.Method is not GET, code -1
     '''
     if request.method == "GET":
+        added_modules = {}
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
         if user_bearer is None:
             user_bearer = request.values.get('HTTP_AUTHORIZATION')
         user_data = bearer_decode(user_bearer)
         if user_data['Success'] == False:
-            valid_modules = []
-            for module in Module.query.filter(Module.status == True).all():
-                valid_modules.append(module.toJSON(True))
-            return on_success(valid_modules)
-            #return user_data
+            valid_modules = Module.query.filter(Module.status == True).all()
+            return on_success([x.toJSON(True) for x in valid_modules])
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
-        if user_data['adminLvl'] == 9:
+        if user_data['adminLevel'] ==  9:
             valid_modules = []
             for module in Module.query.filter(Module.status == True).all():
                 CurrModule = module.toJSON(True)
@@ -225,16 +223,38 @@ def get_active_plugins():
         if user.is_active != True:
             return on_success(None)
         userGroupsIDS = [x.groupID for x in userGroup.query.filter_by(userID=user.userID).all()]
-        group_modules = []
+        valid_modules = []
         if userGroupsIDS != None:
-            group_modules = [x.module_prefix for x
-                             in mouduleGroups.query.filter(mouduleGroups.groupID.in_(userGroupsIDS)).all()]
+            groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
+            for group in groups:
+                modules = moduleGroups.query.filter_by(groupID=group.groupID).all()
+                for module in modules:
+                    curr_module = Module.query.filter_by(prefix=module.module_prefix).first()
+                    pages = [page.toJSON() for page in ModuleSecurity.query.filter(ModuleSecurity.modulePrefix==curr_module.prefix,
+                                                                                   ModuleSecurity.SecurityLevel <= group.securityLevel).all()]
+                    added_modules[curr_module.prefix] = group.securityLevel
+                    curr_module = curr_module.toJSON(True)
+                    curr_module['pages'] = pages
+                    valid_modules.append(curr_module)
 
-        user_modules = [x.modulePrefix for x in
-                        moduleAccess.query.filter_by(userID=user.userID).all()]
-        modules = list(set(group_modules + user_modules))
-        valid_modules = Module.query.filter(Module.status == True, Module.prefix.in_(modules)).all()
-        return on_success([x.toJSON(True) for x in valid_modules])
+        user_modules = moduleAccess.query.filter_by(userID=user.userID).all()
+        for module in user_modules:
+            curr_module = Module.query.filter_by(prefix=module.modulePrefix).first()
+            pages = ModuleSecurity.query.filter(ModuleSecurity.modulePrefix == module.modulePrefix,
+                                                ModuleSecurity.SecurityLevel <= user.adminLevel).all()
+            # Return the Max User Access Levels.
+            moduleLevel = added_modules.get(curr_module.prefix)
+            if moduleLevel == None:
+                moduleLevel = -1
+            if moduleLevel > user.adminLevel:
+               for module in valid_modules:
+                   if module['prefix'] == curr_module.prefix:
+                       valid_modules.remove(module)
+            curr_module = curr_module.toJSON(True)
+            curr_module['pages'] = pages
+            valid_modules.append(curr_module)
+
+        return on_success(valid_modules)
 
     return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
 
@@ -251,7 +271,7 @@ def get_all_plugins():
            A List containing all modules
     '''
     #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    #accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     accessGranted = True
     if accessGranted:
         return [Module.toJSON(True) for Module in Module.query.all()]
@@ -271,7 +291,7 @@ def get_module_pages(modulePrefix=None):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     if user_bearer == None:
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5)
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     accessGranted = True
     if accessGranted:
         if modulePrefix == None:
@@ -538,7 +558,7 @@ def get_module(prefix):
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
     #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #accessGranted = userFunctionAuthorisations(user_bearer, 1)
+    #accessGranted = userFunctionAuthorisations(user_bearer, 1, 'mst')
     #if accessGranted == False:
     #    return accessGranted
 
@@ -597,7 +617,7 @@ def update_module_ref():
             Error Code 16 - Incorrect Password Given
     """
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
     if accessGranted == False:
         return accessGranted
     from Program import db
@@ -630,7 +650,7 @@ def update_module_ref():
 def activate_module():
     from Program import db
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
     if accessGranted == False:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -645,7 +665,7 @@ def activate_module():
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
     if accessGranted == False:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -679,7 +699,7 @@ def upload_module():
     '''
     if request.method in ['POST', 'OPTIONS']:
     #    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #    accessGranted = userFunctionAuthorisations(user_bearer, 2)
+    #    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
     #    if accessGranted == False:
     #        return accessGranted
         update = request.values.get('update') == True
@@ -767,12 +787,12 @@ def upload_module():
             tables = convert_to_imports(Table_outdir)
             if not update:
                 create_db(tables)
+            os.chdir("../../")
+        front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
+        frontEnd_outdir = rf"{front_end_dir}\modules\{modulename}"
         if update:
-            os.chdir("../")
-            front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
-            frontEnd_outdir = rf"{front_end_dir}\modules\{modulename}"
             shutil.rmtree(frontEnd_outdir)
-            shutil.move(rf"{master_dir}\Program\Temp_Module\{modulename}\Front End", frontEnd_outdir)
+        shutil.move(rf"{master_dir}\Program\Temp_Module\{modulename}\Front End", frontEnd_outdir)
         os.chdir(master_dir)
 
         # All Modules are Valid, now move to the correct directories, If they exist

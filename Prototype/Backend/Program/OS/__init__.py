@@ -1,6 +1,14 @@
 import os
 from Program import export_key
+
 from Program.ResponseHandler import on_error, on_success
+from Program.DB.Models.mst.User import User
+from Program.DB.Models.grp.Groups import Group
+from Program.DB.Models.grp.moduleGroups import moduleGroups
+from Program.DB.Models.mst.ModuleSecurity import ModuleSecurity, JSONtomoduleAccess
+from Program.DB.Models.grp.userGroups import userGroup
+from Program.DB.Models.mst.Module import Module, create_module
+
 import jwt
 
 def dir_tree(start_path, tableUpdate=False):
@@ -47,12 +55,23 @@ def convert_to_imports(dir_tree):
             imports.append(filename.replace("/", "."))
     return imports
 
-def userFunctionAuthorisations(Auth_Header, adminLvl=1, modulePrefix=None):
+def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
+    if Auth_Header == None:
+        return on_error(400, "Auth Header Not Provided")
     user = bearer_decode(Auth_Header)
     user_values = user['Values']
     if user['Success'] == False:
         return user
-    if user_values['adminLvl'] < adminLvl:
+    user = user['Values']
+    userGroupsIDS = [group.groupID for group in userGroup.query.filter_by(userID=user['userID']).all()]
+    if userGroupsIDS != None:
+        groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
+        for group in groups:
+            modules = moduleGroups.query.filter_by(groupID=group.groupID).all()
+            for module in modules:
+                if module.module_prefix == modulePrefix and group.securityLevel == adminLvl:
+                    return True
+    if user_values['adminLevel'] < adminLvl:
         return on_error(401, "You do not have access to the function")
     return True
 
@@ -70,8 +89,8 @@ def bearer_decode(Auth_Header, algorithms=["HS256"]):
                                   algorithms=algorithms)
     except jwt.ExpiredSignatureError:
         return on_error(403, "Invalid Token, This Token Has Expired")
-
-    return on_success(decoded_data)
+    user = User.query.filter_by(email=decoded_data.get('email')).first()
+    return on_success(user.toJSON())
 
 if __name__ == "__main__":
     ff = convert_to_imports(dir_tree(
