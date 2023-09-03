@@ -116,7 +116,7 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
     in_file.seek(0)
     keys = {}
     if os.path.exists(f'Program\Temp_Module\\{modulename}\keys.txt'):
-        with open(os.path.exists(f'Program\Temp_Module\\{modulename}\keys.txt')) as key_pairs:
+        with open((f'Program\Temp_Module\\{modulename}\keys.txt')) as key_pairs:
             lines = key_pairs.readlines()
             for line in lines:
                 line = line.split(":")
@@ -837,6 +837,9 @@ def upload_module():
         new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
         QueryInsertModule(new_Module)
         for page in front_end_success:
+            if update:
+                #Remove Old Pages & before adding new_ones
+                ModuleSecurity.query.filter_by(modulePrefix=modulename).delete()
             moduleAccess = JSONtomoduleAccess(page)
             moduleAccess.insert()
 

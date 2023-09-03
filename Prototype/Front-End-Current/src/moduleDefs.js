@@ -5,15 +5,15 @@ import { pages } from "./modules/mst/main.js";
 
 //Defintion of components, correlates the module id of the database to the component
 export const Modules = {
-    mst: mst_master,
-    df1:  []
-}
+    mst: mst_master
+   }
 
 export const Directory = {
   mst: []
 }
 
 //REGEX_END
+
 
 
 
