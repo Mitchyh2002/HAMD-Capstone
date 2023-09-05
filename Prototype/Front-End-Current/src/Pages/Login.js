@@ -40,63 +40,57 @@ function WelcomeMessage(props) {
 
 //Login Form
 function LoginForm() {
-
+    const [emailError, setEmailError] = useState();
+    const [passError, setPassError]  = useState();
     const [response, setResponse] = useState();
+
+    const validateForm = (formData) =>{
+        setEmailError(checkEmailValid(formData.get("email")));
+        setPassError(checkPass(formData.get("password")));
+
+        let valid = true;
+
+        if(emailError){
+            valid = false;
+        }
+
+        if(passError){
+            valid = false;
+        }
+
+        return(valid)
+
+    }
 
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
-        setResponse(await login(formData));
 
-        console.log(response)
-        //window.alert(await response);
-
-        /* Catch email errors 
-        const message = document.getElementById("email-error");
-        message.innerHTML = "";
-        let x = document.getElementById("emailInput").value;
-        try { 
-          if(x.trim() == "") throw "Email address required.";
+        const valid = validateForm(formData);
+        if(valid){
+            setResponse(await login(formData));
+            console.log(response);
+            //window.alert(await response);
         }
-        catch(err) {
-          message.innerHTML = err;
-        }*/
-
-        /* Catch password errors 
-        const message2 = document.getElementById("password-error");
-        message2.innerHTML = "";
-        let y = document.getElementById("passwordInput").value;
-        try { 
-          if(y.trim() == "") throw "Password required.";
-        }
-        catch(err) {
-          message2.innerHTML = err;
-        }*/
-
     }
 
     return (
         <>
             <form className="login-form" id="Login">
                 <div className="login-form-content">
-                    <div className="login-form-group">
-                        <input
-                            id="emailInput"
-                            type="email"
+                    <FormInput
+                            type="text"
                             name="email"
                             placeholder="Email Address"
+                            error = {emailError}
                         />
-                        <p id="email-error"></p>
-                    </div>
-                    <div className="login-form-group">
-                        <input
-                            id="passwordInput"
+                    <FormInput
                             type="password"
                             name="password"
+                            className="password"
                             placeholder="Password"
+                            error={passError}
                         />
-                        <p id="password-error"></p>
-                    </div>
                     <p>
                         <Link
                             to="#!"
@@ -281,7 +275,7 @@ function checkDOB(dob){
         if (!dob) {
             return "D.O.B is required.";
         } else if(dob > currentDate.getFullYear() - 13){
-            return "You need to be over 13";
+            return "You need to be over 13.";
         }
 }
 

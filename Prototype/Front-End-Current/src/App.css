@@ -1,39 +1,60 @@
+/*Setting Variables*/
+:root {
+  --font1: 'Merriweather', serif;
+  --font2: 'Lato', sans-serif;
+  --black: rgba(0, 0, 0);
+  --white: rgba(255, 255, 255);
+  --header: rgba(146, 180, 236);
+  --header70: rgba(146, 180, 236, 0.7);
+  --navbar: rgba(242, 143, 59);
+  --navbar70: rgba(242, 143, 59, 0.7);
+  --navbar50: rgba(242, 143, 59, 0.5);
+  --subnav: rgba(255, 230, 154);
+  --subnav40: rgba(255, 230, 154, 0.4);
+}
+
 /*Defaults*/
 body{
-  font-family: 'Merriweather', serif;
+  font-family: var(--font1);
 }
 
 h1{
-  font-family: 'Merriweather', serif;
+  font-family: var(--font1);
   font-size: 80px;
 }
 
 h2{
-  font-family: 'Merriweather', serif;
+  font-family: var(--font1);
   font-size: 60px;
 }
 
 h3{
-  font-family: 'Merriweather', serif;
+  font-family: var(--font1);
   font-size: 30px;
   font-weight: normal;
 }
 
 h4{
-  font-family: 'Merriweather', serif;
+  font-family: var(--font1);
   font-size: 25px;
   font-weight: bold;
 }
 
+h5{
+  font-family: var(--font1);
+  font-size: 18px;
+  font-weight: normal;
+}
+
 form{
   row-gap: 8px;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 16px;
   padding: 20px 0px;
 }
 
 label{
-  font-family: "Lato";
+  font-family: var(--font2);
   font-size: 18px;
 }
 
@@ -46,7 +67,7 @@ a{
 /*Input*/
 
 body{
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 16px;
 }
 
@@ -54,9 +75,9 @@ body{
 /*Header CSS*/
 .header{
   box-sizing: border-box;
-  background-color: #92B4EC;
+  background-color: var(--header);
   width: 100%;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 14px;
   box-shadow: 0 0 10px 0 grey;
 }
@@ -73,14 +94,14 @@ header * {
 }
 
 header li a {
-  color: #000000;
+  color: var(--black);
   text-decoration: none;
   transition: all 0.3s ease 0s;
   padding-right: 20px;
 }
 
 header li a:hover {
-  color: white;
+  color: var(--white);
 }
 
 /* Header Logo */
@@ -118,19 +139,19 @@ header li a:hover {
 }
 
 .breadcrumbs .crumb a{
-  color: black;
+  color: var(--black);
   text-decoration: none;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   transition: all 0.3s ease 0s;
 }
 
 .crumb a:hover{
-  color: white;
+  color: var(--white);
 }
 
 /*Main Nav Css*/
 .wrapperMainNav{
-  background-color: rgba(242, 143, 59, 0.5);
+  background-color: var(--navbar50);
   display: flex;
   align-content: center;
   border-radius: 0px 20px 0px 0px;
@@ -143,20 +164,20 @@ header li a:hover {
   background-color: rgba(242, 143, 59, 0.0);
   border: none;
   height: 110px;
-  font-family: "lato";
+  font-family: var(--font2);
   font-size: 20px;
 }
 
 .mainNavItem:hover{
-  background-color: #F28F3B;
+  background-color: var(--navbar);
   cursor: pointer;
 }
 
 .mainNavItemActive{
-  background-color: #F28F3B;
+  background-color: var(--navbar);
   border: none;
   height: 110px;
-  font-family: "lato";
+  font-family: var(--font2);
   font-size: 20px;
 }
 .mainNavItemActive:hover{
@@ -170,14 +191,14 @@ header li a:hover {
 }
 
 .subNavBar{
-  background-color: rgba(255,230,154, .4);
+  background-color: var(--subnav40);
   align-items: center;
   border-radius: 0px 20px 0px 0px;
   margin-top: 2px;
 }
 
 .subNav {
-  background-color: #FFE69A;
+  background-color: var(--subnav);
 }
 
 .navButtonContainer{
@@ -190,17 +211,16 @@ header li a:hover {
   height: 60px;
   font-size: 15px;
   border: none;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   display: "flex";
   align-content: center;
   justify-content: center;
   text-align: center;
   vertical-align:auto ;
   color: black;
-  background-color: rgba(255,230,154);
+  background-color: var(--subnav);
   cursor: pointer;
   text-decoration: none;
-  border-radius: 0px 20px 0px 0px;
 }
 
 .navButton{
@@ -208,21 +228,20 @@ header li a:hover {
   height: 60px;
   font-size: 15px;
   border: none;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   display: "flex";
   align-content: center;
   justify-content: center;
   text-align: center;
   vertical-align:auto ;
-  color: black;
+  color: var(--black);
   background-color: rgba(255,230,154, .1);
   cursor: pointer;
   text-decoration: none;
 }
 
 .navButton:hover{
-  background-color: rgba(255,230,154, 1);
-  border-radius: 0px 20px 0px 0px;
+  background-color: var(--subnav);
 }
 
 .menu-icon{
@@ -242,10 +261,10 @@ header li a:hover {
 .primaryButton{
   width: 250px;
   height: 50px;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 20px;
   border-radius: 20px;
-  background-color: rgba(242, 143, 59, .7);
+  background-color: var(--navbar70);
   cursor: pointer;
   border: 1px;
   text-shadow: 1.3px 1.3px #C0A080;
@@ -253,28 +272,28 @@ header li a:hover {
 }
 
 .primaryButton:hover{
-  background-color: rgba(242, 143, 59, 1);
+  background-color: var(--navbar)
 }
 
 .secondaryButton{
   width: 400px;
   height: 70px;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 30px;
   border-radius: 20px;
-  background-color: rgba(242, 143, 59, .5);
+  background-color: var(--navbar50);
   cursor: pointer;
   transition: all 0.3s ease 0s;
 }
 
 .formButton{
-  color: #000000;
+  color: var(--black);
   width: 150px;
   height: 35px;
-  font-family: 'Lato', sans-serif;
+  font-family: var(--font2);
   font-size: 16px;
   border-radius: 20px;
-  background-color: rgba(146, 180, 236, .7);
+  background-color: var(--header70);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -283,7 +302,7 @@ header li a:hover {
 }
 
 .formButton:hover{
-  background-color: rgba(146, 180, 236, 1);
+  background-color: var(--header);
 }
 
 /* Inputs */
@@ -291,8 +310,8 @@ input{
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 1px solid black;
-  font-family: "lato";
+  border-bottom: 1px solid var(--black);
+  font-family: var(--font2);
   outline: 0px;
   font-size: 20px;
   width: 100%;

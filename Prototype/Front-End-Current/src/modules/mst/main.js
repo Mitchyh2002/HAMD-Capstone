@@ -16,10 +16,11 @@ export const pages = [{
 },{
     path: "Users",
     element: Users,
-    loader: getUsers
-},{
-    path: "Add User",
-    element: AddUser
+    loader: getUsers,
+    children: [{
+        path: "Add User",
+        element: AddUser
+    }]
 }];
 
 export default function mst_master(){

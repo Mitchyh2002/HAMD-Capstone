@@ -29,7 +29,7 @@ table{
   }
   
 h4{
-    font-family: 'Merriweather', serif;
+    font-family: var(--font1);
     font-size: 25px;
     font-weight: bold;
   }
@@ -61,7 +61,7 @@ body.active-modal {
   }
   
 .btn-modal {
-    font-family: "lato";
+    font-family: var(--font2);
     border: none;
     background-color: transparent;
     font-size: 16px;
@@ -107,7 +107,7 @@ body.active-modal {
   }
   
 .modal-label{
-    font-family: "Lato";
+    font-family: var(--font2);
     position: relative;
     bottom: 50px;
     font-size: 14px;
@@ -151,7 +151,7 @@ body.active-modal {
 .buttons{
   border: none;
   border-radius: 10px;
-  font-family: "Lato";
+  font-family: var(--font2);
   padding: 10px 10px;
   width: 130px;
   height: 37px;

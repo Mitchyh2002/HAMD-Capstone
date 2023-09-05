@@ -7,7 +7,7 @@
 }
 
 .welcome-text{
-    color: white;
+    color: var(--white);
     position: relative;
 }
 
@@ -53,7 +53,7 @@
 /* Form CSS */
 
 .form-header{
-  background-color: #FFE69A;
+  background-color: var(--subnav);
   border-radius: 20px 20px 0px 0px;
   display: flex;
   justify-content: center;
@@ -80,12 +80,12 @@
 input::placeholder{
     opacity: 0.6;
     font-size: 16px;
-    font-family: "Lato", sans-serif;
+    font-family: var(--font2);
 }
 
 .forgot-password{
     text-decoration: none;
-    color: black;
+    color: var(--black);
     opacity: 0.9;
     font-size: 14px;
 }
@@ -108,7 +108,7 @@ input::placeholder{
 }
 
 .create-account-button{
-    background-color: rgba(242, 143, 59, 0.4);
+    background-color: var(--navbar50);
     margin-top: 10px;
 }
 
@@ -120,3 +120,25 @@ input::placeholder{
 #password-error{
     color: red;
 }
+
+/* 404 Page CSS */
+.error-page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--navbar50);
+    height: 93vh;
+}
+
+.error-title{
+    color: var(--navbar);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.home-button{
+    color: var(--black);
+    text-decoration: underline;
+    text-decoration-color: var(--navbar);
+}
+

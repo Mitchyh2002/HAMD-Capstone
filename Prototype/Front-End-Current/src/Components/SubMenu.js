@@ -41,6 +41,7 @@ export default function SubMenu(props) {
                     <div className="navButtonContainer">
                         {subComponents &&
                             <div className="flexBoxColumnGrow subNavBar" style={{ maxWidth: "160px" }}>
+                                <h5 style={{color: "var(--black)", margin: "5px", fontWeight: "normal"}}>Menu</h5>
                                 {subComponents.map(component => createNavLinks(component))}
                             </div>}
                     </div>}
