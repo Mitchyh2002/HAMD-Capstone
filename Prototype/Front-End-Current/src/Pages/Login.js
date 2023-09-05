@@ -39,35 +39,37 @@ function WelcomeMessage(props) {
 //Login Form
 function LoginForm() {
 
+    const [response, setResponse] = useState();
+
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
-        const response = login(formData)
+        setResponse(await login(formData));
+
         console.log(response)
         //window.alert(await response);
 
-        /* Catch email errors */
+        /* Catch email errors 
         const message = document.getElementById("email-error");
         message.innerHTML = "";
         let x = document.getElementById("emailInput").value;
         try { 
-          if(x.trim() == "") throw "Email address can't be empty.";
+          if(x.trim() == "") throw "Email address required.";
         }
         catch(err) {
           message.innerHTML = err;
-        }
+        }*/
 
-        /* Catch password errors */
+        /* Catch password errors 
         const message2 = document.getElementById("password-error");
         message2.innerHTML = "";
         let y = document.getElementById("passwordInput").value;
         try { 
-          if(y.trim() == "") throw "Password can't be empty.";
-          if(response == "error") throw "Invalid email or password. Please try again."
+          if(y.trim() == "") throw "Password required.";
         }
         catch(err) {
           message2.innerHTML = err;
-        }
+        }*/
 
     }
 
@@ -186,7 +188,7 @@ function RegisterForm() {
                             label="First Name"
                             type="text"
                             name="firstName"
-                            placeholder="Full Name"
+                            placeholder="First Name"
                             error = {nameError}
                         />
                     <FormInput
@@ -242,7 +244,7 @@ function checkEmailValid(email){
     const checkValid = new RegExp(regEx);
 
     if (email == "") {
-        return "Email can't be empty";
+        return "Email address is required.";
     } else if(!checkValid.exec(email)){
         return "Please check the email format";
     }
@@ -251,7 +253,7 @@ function checkEmailValid(email){
 function checkDOB(dob){
     const currentDate = new Date();
         if (!dob) {
-            return "D.O.B can't be empty";
+            return "D.O.B is required.";
         } else if(dob > currentDate.getFullYear() - 13){
             return "You need to be over 13";
         }
@@ -259,13 +261,13 @@ function checkDOB(dob){
 
 function checkName(name){
     if(!name){
-        return "Name can't be empty";
+        return "Name is required.";
     }
 }
 
 function checkPass(pass) {
     if(!pass){
-        return "Password can't be empty"
+        return "Password is required."
     }
 }
 
