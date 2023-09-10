@@ -41,7 +41,7 @@ def JSONtoConfig(json):
         new_setup.header = json["header"]
         new_setup.navbar = json["navbar"]
         new_setup.subnav = json["subnav"]
-    return new_setup
+        return new_setup
 
     except KeyError:
         return on_error(1, "JSON is missing configuration settings")
