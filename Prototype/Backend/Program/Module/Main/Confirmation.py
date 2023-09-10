@@ -55,6 +55,8 @@ def confirm_email(token):
     
 @blueprint.route('/resend')
 def resend_email():
+    input = request.values
+    inputEmail = input.get('email')
     if current_user.confirmed:
         return on_error(61, "Account has already been confirmed. Please Login")
     else:
