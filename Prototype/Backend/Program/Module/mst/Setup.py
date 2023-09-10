@@ -157,7 +157,16 @@ def update_config_settings(request):
     with open('Front-End-Current/src/App.css', "w") as Styling:
         Styling.write(content)
     if current_settings == None:
-        JSONtoConfig(configs)
-    update_db(db_url)
+        config = JSONtoConfig(configs)
+        if config != None:
+            return config
+        update_db(db_url)
+        config.insert()
+    else:
+        update_db(db_url)
+        success = current_settings.merge(configs)
+        if not success:
+            return success
 
-    return on_success()
+    new_settings = mst_Setup.query.first()
+    return on_success(new_settings.toJSON())
