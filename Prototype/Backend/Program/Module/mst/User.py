@@ -12,7 +12,6 @@ from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email
 from Program.ResponseHandler import on_error, on_success
-from Program.DB.Models.mst.Admin import refAdminRoles
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
 
@@ -43,6 +42,10 @@ def login():
             storedHash = user.passwordHash.hash[2:-1]
             storedHash = storedHash.encode('utf-8')
             if bcrypt.checkpw(inputBytes, storedHash):
+                
+                if user.adminLevel == 0:
+                    return on_error(30, "Account has been suspended")
+                
                 user.set_id()
                 login_user(user)
                 return on_success(user.get_id())
@@ -136,11 +139,6 @@ def phoneNumberIsValid(phoneNumber):
         return False
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
-    
-
-@blueprint.route('/getall', methods=["GET"])
-def getAllUser():
-    return [User.toJSON() for User in User.query.all()]
 
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB

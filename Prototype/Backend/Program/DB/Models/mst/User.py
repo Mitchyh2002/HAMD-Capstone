@@ -8,8 +8,6 @@ from flask_login import UserMixin
 
 from Program import db, export_key
 from Program.ResponseHandler import on_error
-from Program.DB.Models.mst.Admin import refAdminRoles
-from Program.DB.Models.mst.Admin import refAdminRoles
 
 class PasswordHash(object):
     def __init__(self, hash_):
@@ -105,7 +103,6 @@ class User(UserMixin, db.Model):
             return {
                     "email": self.email.strip(),
                     "adminLvl": self.adminLevel,
-                    #"membership": self.membership,
                     "name": self.firstName.strip()}
         if self.phoneNumber is None:
             return {
@@ -124,6 +121,11 @@ class User(UserMixin, db.Model):
             "dateOfBirth": self.dateOfBirth.strip(),
             "adminLevel": self.adminLevel
         }
+        
+    def changePassword(self, password):
+        self.passwordHash = PasswordHash.new(password)
+        db.session.add(self)
+        db.session.commit()
 
     def insert(self):
         db.session.add(self)
