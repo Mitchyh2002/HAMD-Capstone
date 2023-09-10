@@ -17,7 +17,7 @@ def sys_create():
     })
     client = app.test_client()
 
-    new_module = create_module("mst", "UploadModule", PasswordHash("Test234"), True, '')
+    new_module = create_module("mst", "UploadModule", "Test234", True, '')
     grp_module = create_module("grp", "Group management", "Test234", False, '')
     grp = create_group('Default')
     with app.app_context():

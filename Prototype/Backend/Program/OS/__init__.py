@@ -77,11 +77,12 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
 
 
 def bearer_decode(Auth_Header, algorithms=["HS256"]):
+    if Auth_Header in ['null','',None]:
+        return on_error(400, "Token Not Sent")
     if 'Bearer ' in Auth_Header:
         Auth_Header = Auth_Header.split('Bearer ')[1]
 
-    if Auth_Header in ['null','',None]:
-        return on_error(400, "Token Not Sent")
+
 
     try:
         decoded_data = jwt.decode(jwt=Auth_Header,
