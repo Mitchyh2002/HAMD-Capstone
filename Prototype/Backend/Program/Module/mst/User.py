@@ -18,6 +18,7 @@ blueprint = Blueprint('user', __name__, url_prefix="/user")
 
 TESTING = True
 
+
 @blueprint.route('/login', methods=['POST'])
 def login():
     # Fetching inputs

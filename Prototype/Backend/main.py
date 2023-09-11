@@ -8,5 +8,4 @@ def start():
            use_reloader=True, use_debugger=True, use_evalex=False)
 
 if __name__ == "__main__":
-    sys.executable = sys.executable.replace('\\App', '\\..\\..\\App')
     start()

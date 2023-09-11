@@ -15,7 +15,7 @@ class mst_Setup(db.Model):
 
     def toJSON(self):
         return {
-            "db_url": self.db_url,
+            "DatabaseURL": self.db_url,
             "font1": self.font1,
             "font2": self.font2,
             "black": self.black,
@@ -29,9 +29,11 @@ class mst_Setup(db.Model):
         db.session.commit()
 
     def mergeConfig(self, json):
-        updatedConfig = self.toJSON().update(json)
-        new_config = JSONtoConfig(updatedConfig)
-        if new_config != None:
+        new_config = self.toJSON()
+        for key in json:
+            new_config[key] = json[key]
+        new_config = JSONtoConfig(new_config)
+        if type(new_config) != mst_Setup:
             return new_config
         mst_Setup.query.delete()
         new_config.insert()
@@ -42,7 +44,7 @@ def JSONtoConfig(json):
     new_setup = mst_Setup()
     try:
         new_setup.setupID = 1
-        new_setup.db_url = json["db_url"]
+        new_setup.db_url = json["DatabaseURL"]
         new_setup.font1 = json["font1"]
         new_setup.font2 = json["font2"]
         new_setup.black = json["black"]

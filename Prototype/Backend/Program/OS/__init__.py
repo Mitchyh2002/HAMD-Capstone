@@ -59,19 +59,18 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
     if Auth_Header == None:
         return on_error(400, "Auth Header Not Provided")
     user = bearer_decode(Auth_Header)
-    user_values = user['Values']
     if user['Success'] == False:
         return user
     user = user['Values']
     userGroupsIDS = [group.groupID for group in userGroup.query.filter_by(userID=user['userID']).all()]
-    if userGroupsIDS != None:
+    if userGroupsIDS != []:
         groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
         for group in groups:
             modules = moduleGroups.query.filter_by(groupID=group.groupID).all()
             for module in modules:
                 if module.module_prefix == modulePrefix and group.securityLevel == adminLvl:
                     return True
-    if user_values['adminLevel'] < adminLvl:
+    if user['adminLevel'] < adminLvl:
         return on_error(401, "You do not have access to the function")
     return True
 

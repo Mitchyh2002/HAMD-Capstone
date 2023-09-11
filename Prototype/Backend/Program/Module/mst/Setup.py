@@ -17,13 +17,123 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 blueprint = Blueprint('setup', __name__, url_prefix="/mst/config")
 
 TESTING = True
+def check_hex_code(hex_code):
+    if hex_code is None:
+        return on_error(1, "Hex Code not Specified")
+    if len(hex_code) != 7:
+        return on_error(1, "Invalid Hex Code Specified")
+    if hex_code[0] != "#":
+        return on_error(1, "Invalid Hex Code Specified")
 
-@blueprint.route('/')
+    try:
+        code1 = hex_code[1:3]
+        code2 = hex_code[3:5]
+        code3 = hex_code[5:7]
+
+        code1 = int(code1, 16)
+        code2 = int(code2, 16)
+        code3 = int(code3, 16)
+    except ValueError:
+        return on_error(1, "Invalid Hex Code Specified")
+
+    if code1 > 255:
+        return on_error(2, "Hex Value Cannot be greater than 255")
+    if code2 > 255:
+        return on_error(2, "Hex Value Cannot be greater than 255")
+    if code3 > 255:
+        return on_error(2, "Hex Value Cannot be greater than 255")
+
+    return f"rgba({code1}, {code2}, {code3});"
+
+
+
+def update_config_settings(request):
+    configs = request.values
+    final_configs = {}
+    db_url = configs.get("DatabaseURL")
+    if db_url != None:
+        update_db = check_db_url(db_url)
+        if update_db is not None:
+            return update_db
+    final_configs["DatabaseURL"] = db_url
+    registration_email = configs.get("RegistrationEmail")
+
+    colours = ["black", "white", "header", "navbar", "subnav"]
+    font1 = request.values.get("font1")
+    font2 = request.values.get("font2")
+    mst_dir = os.getcwd()
+    os.chdir("../")
+    current_settings = mst_Setup.query.first()
+    with open(os.getcwd() + '/Front-End-Current/src/App.css', "r") as Styling:
+        content = Styling.read()
+        for colour in colours:
+            selected_colour = request.values.get(colour)
+            if selected_colour == None:
+                if current_settings == None:
+                    os.chdir(mst_dir)
+                    return on_error(2, f"Missing Setting for {colour}")
+                continue
+            rgb_colour = check_hex_code(selected_colour)
+            if 'rgb' not in rgb_colour:
+                os.chdir(mst_dir)
+                return rgb_colour
+
+            if colour == 'subnav':
+                pattern = f'--subnav40: rgba[\(0-9, .]+\);'
+                replace_str = f'--subnav40: {rgb_colour[:-2]}, 0.4);'
+                content = re.sub(pattern, replace_str, content)
+            if colour == 'navbar':
+                pattern = f'--navbar70: rgba[\(0-9, .]+\);'
+                replace_str = f'--navbar70: {rgb_colour[:-2]}, 0.7);'
+                content = re.sub(pattern, replace_str, content)
+                pattern = f'--navbar50: rgba[\(0-9, .]+\);'
+                replace_str = f'--navbar50: {rgb_colour[:-2]}, 0.5);'
+                content = re.sub(pattern, replace_str, content)
+            if colour == 'header':
+                pattern = f'--header70: rgba\([0-9, .]+\);'
+                replace_str = f'--header70: {rgb_colour[:-2]}, 0.7);'
+                content = re.sub(pattern, replace_str, content)
+
+            pattern = f'--{colour}: rgba[\(0-9, ]+\);'
+            replace_str = f'--{colour}: {rgb_colour}'
+            content = re.sub(pattern, replace_str, content)
+            final_configs[colour] = selected_colour
+
+        if font1 is not None:
+            pattern = f'--font1: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
+            replace_str = f"--font1: {font1}, serif;"
+            content = re.sub(pattern, replace_str, content)
+            final_configs["font1"] = font1
+        if font2 is not None:
+            pattern = f'--font2: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
+            replace_str = f"--font2: {font2}, sans-serif;"
+            content = re.sub(pattern, replace_str, content)
+            final_configs["font2"] = font1
+
+    with open('Front-End-Current/src/App.css', "w") as Styling:
+        Styling.write(content)
+    if current_settings == None:
+        final_configs = JSONtoConfig(final_configs)
+        if db_url is not None:
+            update_db(db_url)
+        final_configs.insert()
+    else:
+        if db_url is not None:
+            update_db(db_url)
+        success = current_settings.mergeConfig(final_configs)
+        if not success:
+            return success
+
+    new_settings = mst_Setup.query.first()
+    os.chdir(mst_dir)
+    return on_success(new_settings.toJSON())
+
+@blueprint.route('/', methods=["GET", "POST"])
 def setup_handler():
     if request.method == 'GET':
         return get_config_settings()
     elif request.method == 'POST':
-        return update_config_settings()
+        return update_config_settings(request)
     else:
         return on_error(405, "Invalid Method Request")
 def get_config_settings():
@@ -77,96 +187,3 @@ def update_db(db_conn_string):
 
     with open("Program/DB/Builder.py", "w") as db_file_write:
         db_file_write.writelines(content)
-
-def check_hex_code(hex_code):
-    if hex_code is None:
-        return on_error(1, "Hex Code not Specified")
-    if len(hex_code) != 7:
-        return on_error(1, "Invalid Hex Code Specified")
-    if hex_code[0] != "#":
-        return on_error(1, "Invalid Hex Code Specified")
-
-    try:
-        code1 = hex_code[1:3]
-        code2 = hex_code[3:5]
-        code3 = hex_code[5:7]
-
-        code1 = int(code1, 16)
-        code2 = int(code2, 16)
-        code3 = int(code3, 16)
-    except ValueError:
-        return on_error(1, "Invalid Hex Code Specified")
-
-    if code1 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
-    if code2 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
-    if code3 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
-
-    return f"rgba({code1}, {code2}, {code3});"
-
-
-
-def update_config_settings(request):
-    configs = request.method.values
-    configs = {}
-
-    db_url = configs["DatabaseURL"]
-    if db_url != '':
-        update_db = check_db_url(db_url)
-        if update_db is not None:
-            return update_db
-    configs["DatabaseURL"] = db_url
-    registration_email = configs["RegistrationEmail"]
-    configs.pop("DatabaseURL")
-    configs.pop("RegistrationEmail")
-
-    colours = ["font1", "font2", "black", "white", "header", "navbar", "subnav"]
-    font1 = request.values.get("font1")
-    font2 = request.values.get("font2")
-    mst_dir = os.getcwd()
-    os.chdir("../../../")
-    current_settings = mst_Setup.query.first()
-    with open('Front-End-Current/src/App.css', "r") as Styling:
-        content = Styling.readlines()
-        for colour in colours:
-            selected_colour = request.values.get(colour)
-            if selected_colour == None:
-                if current_settings == None:
-                    return on_error(2, f"Missing Setting for {colour}")
-                continue
-            rgb_colour = check_hex_code(colour)
-            if 'rgb' not in rgb_colour:
-                return rgb_colour
-            pattern = f'--{colour}: rgba[\(0-9, ]+\);'
-            replace_str = f'--{colour}: {rgb_colour}'
-            re.sub(pattern, replace_str, content)
-            configs[colour] = selected_colour
-        if font1 is not None:
-            pattern = f'--font1: rgba[\(0-9, ]+\);'
-            replace_str = f"--font1: {font1}, serif;"
-            re.sub(pattern, replace_str, content)
-            configs["font1"] = font1
-        if font2 is not None:
-            pattern = f'--font2: rgba[\(0-9, ]+\);'
-            replace_str = f"--font2: {font2}, sans-serif;"
-            re.sub(pattern, replace_str, content)
-            configs["font2"] = font1
-
-    with open('Front-End-Current/src/App.css', "w") as Styling:
-        Styling.write(content)
-    if current_settings == None:
-        config = JSONtoConfig(configs)
-        if config != None:
-            return config
-        update_db(db_url)
-        config.insert()
-    else:
-        update_db(db_url)
-        success = current_settings.merge(configs)
-        if not success:
-            return success
-
-    new_settings = mst_Setup.query.first()
-    return on_success(new_settings.toJSON())
