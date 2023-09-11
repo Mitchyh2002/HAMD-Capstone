@@ -15,12 +15,12 @@ export default function Login(props) {
                 <WelcomeMessage />
                 <div className="thirddiv">
                     <div className="form-header">
-                    <img className="bee-image" src="/bee3.png" alt="small-bee-image" />
+                        <img className="bee-image" alt="small-bee-image" />
                         <h3>{register ? "Create Account" : "Sign In"}</h3>
                     </div>
-                    {email? <EmailConfirmation email={email}/> : 
-                    register ?
-                        <RegisterForm setEmail={setEmail}/> : <LoginForm />}
+                    {email ? <EmailConfirmation email={email} /> :
+                        register ?
+                            <RegisterForm setEmail={setEmail} /> : <LoginForm />}
                 </div>
             </div>
         </>
@@ -32,8 +32,8 @@ export default function Login(props) {
 function WelcomeMessage(props) {
     return (
         <div className="seconddiv">
-            <div><img className="login-image" src="/login-image.jpg" alt="bee-on-flower" /></div>
-            <h2 className="welcome-text">Welcome to<br /> Bee Aware</h2>
+            <div><img className="login-image" alt="login-image" /></div>
+            <h2 className="welcome-text">Welcome to <br />Bee Aware</h2>
         </div>
     )
 }
@@ -41,24 +41,24 @@ function WelcomeMessage(props) {
 //Login Form
 function LoginForm() {
     const [emailError, setEmailError] = useState();
-    const [passError, setPassError]  = useState();
+    const [passError, setPassError] = useState();
     const [response, setResponse] = useState();
 
-    const validateForm = (formData) =>{
+    const validateForm = (formData) => {
         setEmailError(checkEmailValid(formData.get("email")));
         setPassError(checkPass(formData.get("password")));
 
         let valid = true;
 
-        if(emailError){
+        if (emailError) {
             valid = false;
         }
 
-        if(passError){
+        if (passError) {
             valid = false;
         }
 
-        return(valid)
+        return (valid)
 
     }
 
@@ -67,7 +67,7 @@ function LoginForm() {
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
-        if(valid){
+        if (valid) {
             setResponse(await login(formData));
             console.log(response);
             //window.alert(await response);
@@ -79,18 +79,18 @@ function LoginForm() {
             <form className="login-form" id="Login">
                 <div className="login-form-content">
                     <FormInput
-                            type="text"
-                            name="email"
-                            placeholder="Email Address"
-                            error = {emailError}
-                        />
+                        type="text"
+                        name="email"
+                        placeholder="Email Address"
+                        error={emailError}
+                    />
                     <FormInput
-                            type="password"
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                            error={passError}
-                        />
+                        type="password"
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                        error={passError}
+                    />
                     <p>
                         <Link
                             to="#!"
@@ -108,7 +108,7 @@ function LoginForm() {
                 </Link>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                <p style={{fontSize: "14px"}}>Don't have an account?</p>
+                <p style={{ fontSize: "14px" }}>Don't have an account?</p>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
                 <Link
@@ -125,10 +125,10 @@ function RegisterForm(props) {
     const [nameError, setNameError] = useState();
     const [emailError, setEmailError] = useState();
     const [dobError, setDobError] = useState();
-    const [passError, setPassError]  = useState();
+    const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
 
-    const validateFrom = (formData) =>{
+    const validateFrom = (formData) => {
         setNameError(checkName(formData.get("firstName")));
         setEmailError(checkEmailValid(formData.get("email")));
         setDobError(checkDOB(formData.get("dateOfBirth")));
@@ -140,19 +140,19 @@ function RegisterForm(props) {
             valid = false;
         }
 
-        if(emailError){
+        if (emailError) {
             valid = false;
         }
 
-        if(dobError){
+        if (dobError) {
             valid = false;
         }
 
-        if(passError){
+        if (passError) {
             valid = false;
         }
 
-        return(valid)
+        return (valid)
 
     }
 
@@ -163,7 +163,7 @@ function RegisterForm(props) {
         const formData = new FormData(form);
 
         const valid = validateFrom(formData);
-        if(valid){
+        if (valid) {
             fetch("http://localhost:5000/user/register", {
                 method: "POST",
                 body: formData,
@@ -171,7 +171,7 @@ function RegisterForm(props) {
             )).then((response) => {
                 if (response.Success == true) {
                     props.setEmail(formData.get("email"));
-                }else{
+                } else {
                     console.log(response);
                     window.alert(response.error)
                 }
@@ -181,7 +181,7 @@ function RegisterForm(props) {
                 console.log(error);
                 setLoading(false);
             })
-        }else{
+        } else {
             setLoading(false);
         }
     }
@@ -190,37 +190,37 @@ function RegisterForm(props) {
             <form className="login-form" id="Register">
                 <div className="login-form-content">
                     <FormInput
-                            label="First Name"
-                            type="text"
-                            name="firstName"
-                            placeholder="First Name"
-                            error = {nameError}
-                        />
+                        label="First Name"
+                        type="text"
+                        name="firstName"
+                        placeholder="First Name"
+                        error={nameError}
+                    />
                     <FormInput
-                            label="D.O.B"
-                            error={dobError}
-                            type="number"
-                            min="1910"
-                            max="2099"
-                            name="dateOfBirth"
-                            placeholder="Birth Month"
-                        />
+                        label="D.O.B"
+                        error={dobError}
+                        type="number"
+                        min="1910"
+                        max="2099"
+                        name="dateOfBirth"
+                        placeholder="Birth Month"
+                    />
                     <FormInput
-                            label="Email"
-                            error={emailError}
-                            type="email"
-                            name="email"
-                            className="emailAddress"
-                            placeholder="Email Address"
-                        />
+                        label="Email"
+                        error={emailError}
+                        type="email"
+                        name="email"
+                        className="emailAddress"
+                        placeholder="Email Address"
+                    />
                     <FormInput
-                            label="Password"
-                            error={passError}
-                            type="password"
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                        />
+                        label="Password"
+                        error={passError}
+                        type="password"
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                    />
                 </div>
             </form>
 
@@ -228,8 +228,8 @@ function RegisterForm(props) {
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
                 <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
             </div>
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px"}}>
-                <p style={{fontSize: "14px"}}>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                <p style={{ fontSize: "14px" }}>
                     Already have an account?
                 </p>
             </div>
@@ -244,14 +244,16 @@ function RegisterForm(props) {
 }
 
 function EmailConfirmation(props) {
-    function handleResend(){
+    function handleResend() {
         //resend props.email to endpoint
     }
-    return(
-    <div>
-        <p>Just one more step to finalise your account. We need to validate your email address and have sent you a confirmation email.
-        </p>
-    </div>)
+    return (
+        <div>
+            <p>
+                Thank you for signing up. Please confirm your email address to get started.
+            </p>
+        </div>
+    )
 }
 
 /*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
@@ -259,51 +261,54 @@ function EmailConfirmation(props) {
 </div>*/
 
 //Validation Functions
-function checkEmailValid(email){
+export function checkEmailValid(email) {
     const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const checkValid = new RegExp(regEx);
 
     if (email == "") {
         return "Email address is required.";
-    } else if(!checkValid.exec(email)){
+    } else if (!checkValid.exec(email)) {
         return "Please check the email format";
     }
 }
 
-function checkDOB(dob){
+export function checkDOB(dob) {
     const currentDate = new Date();
-        if (!dob) {
-            return "D.O.B is required.";
-        } else if(dob > currentDate.getFullYear() - 13){
-            return "You need to be over 13.";
-        }
+    if (!dob) {
+        return "DOB is required.";
+    } else if (dob > currentDate.getFullYear() - 13) {
+        return "You need to be over 13.";
+    }
+    else if (dob < currentDate.getFullYear() - 110) {
+        return "Incorrect year. Please re-enter correct DOB."
+    }
 }
 
-function checkName(name){
-    if(!name){
+export function checkName(name) {
+    if (!name) {
         return "Name is required.";
     }
 }
 
-function checkPass(pass) {
-    if(!pass){
+export function checkPass(pass) {
+    if (!pass) {
         return "Password is required."
     }
 }
 
-function FormInput(props){
-    return(
+function FormInput(props) {
+    return (
         <div className="form-group">
-        <label>{props.label}</label>
-        <div>
-            <input
-                type={props.type}
-                name={props.name}
-                className={props.class}
-                placeholder={props.placeholder}
-            />
-            <p style={{color: "red"}}>{props.error}</p>
+            <label>{props.label}</label>
+            <div>
+                <input
+                    type={props.type}
+                    name={props.name}
+                    className={props.class}
+                    placeholder={props.placeholder}
+                />
+                <p style={{ color: "red" }}>{props.error}</p>
+            </div>
         </div>
-    </div>
     )
 }

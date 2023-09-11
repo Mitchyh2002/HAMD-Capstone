@@ -11,6 +11,10 @@
   --navbar50: rgba(242, 143, 59, 0.5);
   --subnav: rgba(255, 230, 154);
   --subnav40: rgba(255, 230, 154, 0.4);
+  --logo: url("../public/bee2.png");
+  --loginImage: url("../public/login-image.jpg");
+  --bee: url("../public/bee3.png");
+  --welcomeText: "Welcome to Bee Aware";
 }
 
 /*Defaults*/
@@ -106,6 +110,7 @@ header li a:hover {
 
 /* Header Logo */
 .bee-logo{
+  content: var(--logo);
   padding-left: 10px;
   width: 45px;
   object-fit: contain;

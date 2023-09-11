@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 export default function NoMatchingPage() {
     return(
         <>
-        <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>}/>
         <div className="flexBoxColumnGrow error-page">
         <h1 className="error-title">Sorry, 404 Error</h1>
         <h3>The page you are looking for cannot be found.</h3>

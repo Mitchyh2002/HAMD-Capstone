@@ -79,6 +79,10 @@ export default function Users() {
                                             <button onClick={toggleModal} className="btn-modal">
                                                 Edit
                                             </button>
+                                            |
+                                            <button onClick={toggleModal} className="btn-modal delete-btn">
+                                                Remove
+                                            </button>
                                         </td>
                                     </tr>
                                 )

@@ -73,6 +73,10 @@ export default function PluginList() {
                                             <button onClick={toggleModal} className="btn-modal">
                                                 Edit
                                             </button>
+                                            |
+                                            <button className="btn-modal delete-btn">
+                                                Deactivate
+                                            </button>
                                         </td>
                                     </tr>
                                 )
