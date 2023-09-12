@@ -151,6 +151,20 @@ body.active-modal {
     min-width: 300px;
     min-height: 520px;
 }
+
+/* Message Modal */
+
+.message-modal-heading{
+  position: relative;
+  margin: auto;
+  padding: 20px 0px;
+}
+
+.modal-text-message{
+  position: relative;
+  margin: auto;
+  padding-bottom: 50px;
+}
   
 /* Modal Buttons CSS */
 .buttons{
@@ -209,13 +223,21 @@ bottom: 78px;
 left: 190px;
 }
 
+.okay-button{
+  background-color: rgba(242, 143, 59, 1);
+  position: absolute; 
+  bottom: 20px;
+  left: 110px;
+}
+
 .remove-user-button,
 .user-cancel-button,
 .user-confirm-button,
 .confirm-button:hover,
 .cancel-button:hover,
 .close-modal:hover,
-.add-user-button:hover {
+.add-user-button:hover,
+.okay-button:hover {
     cursor: pointer;
 }
 
