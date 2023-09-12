@@ -62,3 +62,9 @@ def JSONtomoduleAccess(JSON):
         return on_error(1, "JSON Missing Import Keys, Please confirm that all values are correct")
 
     return created_securityLevel
+
+def init_masterPages():
+    page1 = create_moduleAccess(1,'mst','1','Plugins',5, "Show All Modules")
+    page2 = create_moduleAccess(1,'mst','2','Add Plugin',7, "Add Plugin To System")
+    page3 = create_moduleAccess(1, 'mst','3','Users',5, "Show All Users")
+    page4 = create_moduleAccess(1, 'mst', '3.1', 'Add User', 5, "Add User to System")

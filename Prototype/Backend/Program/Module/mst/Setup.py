@@ -1,5 +1,7 @@
 import os.path
 import subprocess
+from os.path import splitext
+
 from sqlalchemy import create_engine
 import sqlalchemy.exc
 import re
@@ -17,6 +19,8 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 blueprint = Blueprint('setup', __name__, url_prefix="/mst/config")
 
 TESTING = True
+
+
 def check_hex_code(hex_code):
     if hex_code is None:
         return on_error(1, "Hex Code not Specified")
@@ -46,9 +50,24 @@ def check_hex_code(hex_code):
     return f"rgba({code1}, {code2}, {code3});"
 
 
+def check_image(file, fileName,  settings_exist=True):
+    if file is None:
+        if settings_exist:
+            return True
+        else:
+            return on_error(1, "Image not Specified for inital startup")
+    if splitext(file.filename)[1] != 'png':
+        return on_error(2, 'Image Uploaded must be a png file')
+
+    if file.filename != fileName:
+        return on_error(3, f"File {file.filename} must be named FileName")
+    return True
+
 
 def update_config_settings(request):
     configs = request.values
+    current_settings = mst_Setup.query.first()
+
     final_configs = {}
     db_url = configs.get("DatabaseURL")
     if db_url != None:
@@ -57,19 +76,20 @@ def update_config_settings(request):
             return update_db
     final_configs["DatabaseURL"] = db_url
     registration_email = configs.get("RegistrationEmail")
+    welcomeText = request.values.get("welcomeTest")
 
     colours = ["black", "white", "header", "navbar", "subnav"]
     font1 = request.values.get("font1")
     font2 = request.values.get("font2")
     mst_dir = os.getcwd()
     os.chdir("../")
-    current_settings = mst_Setup.query.first()
+
     with open(os.getcwd() + '/Front-End-Current/src/App.css', "r") as Styling:
         content = Styling.read()
         for colour in colours:
             selected_colour = request.values.get(colour)
-            if selected_colour == None:
-                if current_settings == None:
+            if selected_colour is None:
+                if current_settings is None:
                     os.chdir(mst_dir)
                     return on_error(2, f"Missing Setting for {colour}")
                 continue
@@ -99,27 +119,80 @@ def update_config_settings(request):
             content = re.sub(pattern, replace_str, content)
             final_configs[colour] = selected_colour
 
-        if font1 is not None:
+
+        if font1 is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Setting for font1")
+        else:
             pattern = f'--font1: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
             replace_str = f"--font1: {font1}, serif;"
             content = re.sub(pattern, replace_str, content)
             final_configs["font1"] = font1
-        if font2 is not None:
+        if font2 is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Setting for font2")
+        else:
             pattern = f'--font2: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
             replace_str = f"--font2: {font2}, sans-serif;"
             content = re.sub(pattern, replace_str, content)
             final_configs["font2"] = font1
+
+        if welcomeText is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Setting for font1")
+        else:
+            pattern = '--welcomeText: ".+";'
+            replace_str = f'--welcomeText: "{welcomeText};'
+            content = re.sub(pattern, replace_str, content)
+            final_configs["welcomeText"] = font1
+
+        logo = request.files.get("logo")
+        loginImage = request.files.get("loginImage")
+        bee = request.files.get("loginImage")
+
+        if logo is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Logo Image")
+            else:
+                logo_success = check_image(logo)
+                if not logo_success: return logo_success
+
+        if loginImage is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Login Image")
+        else:
+            loginImage_success = check_image(loginImage)
+            if not loginImage_success: return loginImage_success
+
+        if bee is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Miscellaneous Image")
+        else:
+            bee_success = check_image(bee)
+            if not bee_success: return bee_success
+
+
 
     with open('Front-End-Current/src/App.css', "w") as Styling:
         Styling.write(content)
     if current_settings == None:
         final_configs = JSONtoConfig(final_configs)
         if db_url is not None:
-            update_db(db_url)
+            success = update_db(db_url)
+            if success is not None:
+                return success
+
         final_configs.insert()
     else:
         if db_url is not None:
-            update_db(db_url)
+            success = update_db(db_url)
+            if success is not None:
+                return success
         success = current_settings.mergeConfig(final_configs)
         if not success:
             return success
@@ -127,6 +200,7 @@ def update_config_settings(request):
     new_settings = mst_Setup.query.first()
     os.chdir(mst_dir)
     return on_success(new_settings.toJSON())
+
 
 @blueprint.route('/', methods=["GET", "POST"])
 def setup_handler():
@@ -136,6 +210,8 @@ def setup_handler():
         return update_config_settings(request)
     else:
         return on_error(405, "Invalid Method Request")
+
+
 def get_config_settings():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     if user_bearer is None:
@@ -148,6 +224,7 @@ def get_config_settings():
         return on_success(None)
     else:
         return on_success(config_info.toJSON())
+
 
 def check_db_url(db_conn_string):
     """
@@ -167,6 +244,7 @@ def check_db_url(db_conn_string):
 
     except sqlalchemy.exc.OperationalError:
         return on_error(2, f"Unable to Connect to Database from URL {db_conn_string}, please try Again")
+
 
 def update_db(db_conn_string):
     """

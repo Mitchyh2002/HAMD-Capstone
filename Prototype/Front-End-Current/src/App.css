@@ -6,11 +6,15 @@
   --white: rgba(254, 254, 254);
   --header: rgba(254, 254, 254);
   --header70: rgba(254, 254, 254, 0.7);
-  --navbar: rgba(254, 254, 254);
+  --navbar: rgba(254, 200, 254);
   --navbar70: rgba(254, 254, 254, 0.7);
-  --navbar50: rgba(254, 254, 254, 0.5);
+  --navbar50: rgba(254, 200, 254, 0.5);
   --subnav: rgba(254, 254, 254);
   --subnav40: rgba(254, 254, 254, 0.4);
+  --logo: url("../public/bee4.png");
+  --loginImage: url("../public/login-image.jpg");
+  --bee: url("../public/bee4.png");
+  --welcomeText: "Welcome to BeeAware";
 }
 
 /*Defaults*/
