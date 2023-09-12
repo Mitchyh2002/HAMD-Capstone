@@ -152,45 +152,50 @@ def update_config_settings(request):
         loginImage = request.files.get("loginImage")
         bee = request.files.get("loginImage")
 
-        if logo is None:
-            if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Logo Image")
-            else:
-                logo_success = check_image(logo,'png')
-                if not logo_success: return logo_success
-                logo_dir = f'Front-End-Current/public/{logo_success.filename}'
-                pattern = '--logo: url\("..\/public\/.*.png"\);'
-                replace_str = f'--logo: url("{logo_dir}");'
-                content = re.sub(pattern, replace_str, content)
-                logo_success.save(logo_dir)
-                final_configs["logo"] = logo_dir
+        final_configs["logo"] = ''
+        final_configs["loginImage"] = ''
+        final_configs["MiscImage"] = ''
 
-        if loginImage is None:
-            if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Login Image")
-        else:
-            loginImage_success = check_image(loginImage,'jpg')
-            if not loginImage_success: return loginImage_success
-            login_dir = f'Front-End-Current/public/{loginImage_success.filename}'
-            pattern = '--loginImage: url\("..\/public\/.*"\);'
-            replace_str = f'--loginImage: url("{login_dir}");'
-            content = re.sub(pattern, replace_str, content)
-            loginImage_success.save(login_dir)
-            final_configs["loginImage"] = login_dir
-        if bee is None:
-            os.chdir(mst_dir)
-            return on_error(2, f"Missing Miscellaneous Image")
-        else:
-            bee_success = check_image(bee)
-            if not bee_success: return bee_success
-            bee_dir = f'Front-End-Current/public/{bee_success.filename}'
-            pattern = '--bee: url\("..\/public\/.*"\);'
-            replace_str = f'--bee: url("{bee_dir}");'
-            content = re.sub(pattern, replace_str, content)
-            bee_success.save(bee_dir)
-            final_configs["MiscImage"] = bee_dir
+        #TODO: Uncomment Once front end is Built
+        # if logo is None:
+        #     if current_settings is None:
+        #         os.chdir(mst_dir)
+        #         return on_error(2, f"Missing Logo Image")
+        #     else:
+        #         logo_success = check_image(logo,'png')
+        #         if not logo_success: return logo_success
+        #         logo_dir = f'Front-End-Current/public/{logo_success.filename}'
+        #         pattern = '--logo: url\("..\/public\/.*.png"\);'
+        #         replace_str = f'--logo: url("{logo_dir}");'
+        #         content = re.sub(pattern, replace_str, content)
+        #         logo_success.save(logo_dir)
+        #         final_configs["logo"] = logo_dir
+        #
+        # if loginImage is None:
+        #     if current_settings is None:
+        #         os.chdir(mst_dir)
+        #         return on_error(2, f"Missing Login Image")
+        # else:
+        #     loginImage_success = check_image(loginImage,'jpg')
+        #     if not loginImage_success: return loginImage_success
+        #     login_dir = f'Front-End-Current/public/{loginImage_success.filename}'
+        #     pattern = '--loginImage: url\("..\/public\/.*"\);'
+        #     replace_str = f'--loginImage: url("{login_dir}");'
+        #     content = re.sub(pattern, replace_str, content)
+        #     loginImage_success.save(login_dir)
+        #     final_configs["loginImage"] = login_dir
+        # if bee is None:
+        #     os.chdir(mst_dir)
+        #     return on_error(2, f"Missing Miscellaneous Image")
+        # else:
+        #     bee_success = check_image(bee)
+        #     if not bee_success: return bee_success
+        #     bee_dir = f'Front-End-Current/public/{bee_success.filename}'
+        #     pattern = '--bee: url\("..\/public\/.*"\);'
+        #     replace_str = f'--bee: url("{bee_dir}");'
+        #     content = re.sub(pattern, replace_str, content)
+        #     bee_success.save(bee_dir)
+        #     final_configs["MiscImage"] = bee_dir
 
     with open('Front-End-Current/src/App.css', "w") as Styling:
         Styling.write(content)

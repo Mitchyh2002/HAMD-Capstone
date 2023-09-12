@@ -62,7 +62,7 @@ def JSONtoConfig(json):
         new_setup.subnav = json["subnav"]
         new_setup.welcomeText = json["welcomeText"]
         new_setup.logo = json["logo"]
-        new_setup.MiscImage = json["miscImage"]
+        new_setup.MiscImage = json["MiscImage"]
         new_setup.loginImage = json["loginImage"]
 
         return new_setup
