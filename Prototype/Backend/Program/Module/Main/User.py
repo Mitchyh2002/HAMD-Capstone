@@ -40,6 +40,9 @@ def login():
             storedHash = user.passwordHash.hash[2:-1]
             storedHash = storedHash.encode('utf-8')
             if bcrypt.checkpw(inputBytes, storedHash):
+                if not user.confirmed:
+                    return on_error(30, "Please confirm your account")
+                
                 user.set_id()
                 login_user(user)
                 return on_success(user.get_id())
