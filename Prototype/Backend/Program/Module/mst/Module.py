@@ -211,7 +211,7 @@ def get_active_plugins():
             return on_success([x.toJSON(True) for x in valid_modules])
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
-        if user_data['adminLevel'] ==  9:
+        if user_data['adminLevel'] == 7:
             valid_modules = []
             for module in Module.query.filter(Module.status == True).all():
                 CurrModule = module.toJSON(True)

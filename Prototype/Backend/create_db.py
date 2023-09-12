@@ -19,15 +19,16 @@ def sys_create():
 
     new_module = create_module("mst", "UploadModule", PasswordHash.new("M_STER@aaa").hash, True, '')
     grp_module = create_module("grp", "Group management", PasswordHash.new("GroupMDL").hash, False, '')
-    user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', PasswordHash.new("@SySadmin!").hash, '2023-09-07', None, 7)
+    user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 7)
 
     grp = create_group('Default')
     with app.app_context():
         initRefTable()
-        init_masterPages()
         new_module.insert()
         grp_module.insert()
         grp.insert()
+        user.insert()
+        init_masterPages()
 
 if __name__ == "__main__":
     sys_create()

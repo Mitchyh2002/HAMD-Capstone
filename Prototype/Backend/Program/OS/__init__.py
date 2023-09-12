@@ -90,6 +90,8 @@ def bearer_decode(Auth_Header, algorithms=["HS256"]):
     except jwt.ExpiredSignatureError:
         return on_error(403, "Invalid Token, This Token Has Expired")
     user = User.query.filter_by(email=decoded_data.get('email')).first()
+    if user is None:
+        return on_error(400, "User Does Not Exist")
     return on_success(user.toJSON())
 
 if __name__ == "__main__":

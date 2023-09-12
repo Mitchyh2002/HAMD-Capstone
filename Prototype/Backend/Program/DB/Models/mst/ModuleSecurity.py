@@ -22,7 +22,8 @@ class ModuleSecurity(db.Model):
         '''
         return {"pageName": self.pageName,
                 "pageCode": self.pageCode,
-                "SecurityLevel": self.SecurityLevel}
+                "securityLevel": self.SecurityLevel,
+                "description": self.description}
 
     def insert(self):
         db.session.add(self)
@@ -68,3 +69,7 @@ def init_masterPages():
     page2 = create_moduleAccess(1,'mst','2','Add Plugin',7, "Add Plugin To System")
     page3 = create_moduleAccess(1, 'mst','3','Users',5, "Show All Users")
     page4 = create_moduleAccess(1, 'mst', '3.1', 'Add User', 5, "Add User to System")
+    page1.insert()
+    page2.insert()
+    page3.insert()
+    page4.insert()
