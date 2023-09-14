@@ -157,7 +157,7 @@ def forgotPassword():
     else:
         return on_error(62, "Account is not valid")
     
-@blueprint.route('/resetPassword')
+@blueprint.route('/resetPassword/<token>')
 def resetPassword(token):
     email = confirm_token(token)
     try:
