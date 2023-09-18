@@ -186,17 +186,17 @@ function RegisterForm() {
                             label="First Name"
                             type="text"
                             name="firstName"
-                            placeholder="Full Name"
+                            placeholder="First Name"
                             error = {nameError}
                         />
                     <FormInput
-                            label="D.O.B"
+                            label="Year of Birth"
                             error={dobError}
                             type="number"
                             min="1910"
                             max="2099"
                             name="dateOfBirth"
-                            placeholder="Birth Month"
+                            placeholder="Birth Year"
                         />
                     <FormInput
                             label="Email"
@@ -251,7 +251,7 @@ function checkEmailValid(email){
 function checkDOB(dob){
     const currentDate = new Date();
         if (!dob) {
-            return "D.O.B can't be empty";
+            return "Year of Birth can't be empty";
         } else if(dob > currentDate.getFullYear() - 13){
             return "You need to be over 13";
         }
