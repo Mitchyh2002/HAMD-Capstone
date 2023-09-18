@@ -12,13 +12,30 @@ from Program import db
 from Program.DB.Models.master.User import User, JSONtoUser
 from Program.Module.Main.Confirmation import generate_confirmation_token, send_email, confirm_token
 from Program.ResponseHandler import on_error, on_success
-from Program.DB.Models.mst.Admin import refAdminRoles
+from Program.OS import bearer_decode
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
 
 TESTING = True
 
 
+@blueprint.route('/changePassword/', methods=['POST'])
+def changePassword():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    user = bearer_decode(user_bearer)
+    user = Select(User).where(UserID = user['userID']).first()
+
+    oldPassword = input.get('currentPassword')
+    inputBytes = oldPassword.encode('utf-8')
+
+    storedHash = user.passwordHash.hash[2:-1]
+    storedHash = storedHash.encode('utf-8')
+    
+    if bcrypt.checkpw(inputBytes, storedHash):
+        newPassword = input.get('newPassword')
+        user.changePassword(newPassword)
+        return on_success("password successfully changed")
+    
 @blueprint.route('/login', methods=['POST'])
 def login():
     # Fetching inputs
@@ -44,8 +61,14 @@ def login():
             storedHash = user.passwordHash.hash[2:-1]
             storedHash = storedHash.encode('utf-8')
             if bcrypt.checkpw(inputBytes, storedHash):
+
+                
+                if user.adminLevel == 0:
+                    return on_error(30, "Account has been suspended")
+
                 if not user.confirmed:
                     return on_error(30, "Please confirm your account")
+
                 
                 user.set_id()
                 login_user(user)
@@ -140,11 +163,6 @@ def phoneNumberIsValid(phoneNumber):
         return False
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
-    
-
-@blueprint.route('/getall', methods=["GET"])
-def getAllUser():
-    return [User.toJSON() for User in User.query.all()]
 
 @blueprint.route('/forgotPassword')
 def forgotPassword():

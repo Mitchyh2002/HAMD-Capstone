@@ -190,21 +190,22 @@ function RegisterForm(props) {
             <form className="login-form" id="Register">
                 <div className="login-form-content">
                     <FormInput
-                        label="First Name"
-                        type="text"
-                        name="firstName"
-                        placeholder="First Name"
-                        error={nameError}
-                    />
+                            label="First Name"
+                            type="text"
+                            name="firstName"
+                            placeholder="First Name"
+                            error = {nameError}
+                        />
                     <FormInput
-                        label="D.O.B"
-                        error={dobError}
-                        type="number"
-                        min="1910"
-                        max="2099"
-                        name="dateOfBirth"
-                        placeholder="Birth Month"
-                    />
+                            label="Year of Birth"
+                            error={dobError}
+                            type="number"
+                            min="1910"
+                            max="2099"
+                            name="dateOfBirth"
+                            placeholder="Birth Year"
+                        />
+
                     <FormInput
                         label="Email"
                         error={emailError}
@@ -274,14 +275,12 @@ export function checkEmailValid(email) {
 
 export function checkDOB(dob) {
     const currentDate = new Date();
-    if (!dob) {
-        return "DOB is required.";
-    } else if (dob > currentDate.getFullYear() - 13) {
-        return "You need to be over 13.";
-    }
-    else if (dob < currentDate.getFullYear() - 110) {
-        return "Incorrect year. Please re-enter correct DOB."
-    }
+        if (!dob) {
+            return "Year of Birth can't be empty";
+        } else if(dob > currentDate.getFullYear() - 13){
+            return "You need to be over 13";
+        }
+
 }
 
 export function checkName(name) {
