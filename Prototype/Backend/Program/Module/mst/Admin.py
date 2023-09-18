@@ -9,7 +9,7 @@ from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.ResponseHandler import on_error, on_success
 
-blueprint = Blueprint('admin', __name__, url_prefix="/admin")
+blueprint = Blueprint('admin', __name__, url_prefix="/mst/admin")
 
 TESTING = True
 

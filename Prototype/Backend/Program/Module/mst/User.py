@@ -14,7 +14,7 @@ from Program.Module.mst.Confirmation import generate_confirmation_token, send_em
 from Program.ResponseHandler import on_error, on_success
 from Program.DB.Models.mst.Admin import refAdminRoles
 
-blueprint = Blueprint('user', __name__, url_prefix="/user")
+blueprint = Blueprint('user', __name__, url_prefix="/mst/config")
 
 TESTING = True
 
