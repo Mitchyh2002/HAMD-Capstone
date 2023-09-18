@@ -125,6 +125,11 @@ class User(UserMixin, db.Model):
             "adminLevel": self.adminLevel
         }
 
+    def changePassword(self, password):
+        self.passwordHash = PasswordHash.new(password)
+        db.session.add(self)
+        db.session.commit()
+
     def insert(self):
         db.session.add(self)
         db.session.commit()

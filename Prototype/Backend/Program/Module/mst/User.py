@@ -9,8 +9,8 @@ except ImportError:
     from sqlalchemy import select as Select
 
 from Program import db
-from Program.DB.Models.mst.User import User, JSONtoUser
-from Program.Module.mst.Confirmation import generate_confirmation_token, send_email
+from Program.DB.Models.master.User import User, JSONtoUser
+from Program.Module.Main.Confirmation import generate_confirmation_token, send_email, confirm_token
 from Program.ResponseHandler import on_error, on_success
 from Program.DB.Models.mst.Admin import refAdminRoles
 
@@ -44,6 +44,9 @@ def login():
             storedHash = user.passwordHash.hash[2:-1]
             storedHash = storedHash.encode('utf-8')
             if bcrypt.checkpw(inputBytes, storedHash):
+                if not user.confirmed:
+                    return on_error(30, "Please confirm your account")
+                
                 user.set_id()
                 login_user(user)
                 return on_success(user.get_id())
@@ -102,11 +105,11 @@ def register():
 
     
     token = generate_confirmation_token(user.email)
-    confirm_url = url_for('confirmation.confirm_email', token= token, _external=True)
+    confirm_url = 'http://localhost:3000/Confirm/' + token
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
-    return on_success(token)
+    return on_success("Potentially email for resend endpoint but security")
 
 
 def emailIsValid(email):
@@ -142,6 +145,46 @@ def phoneNumberIsValid(phoneNumber):
 @blueprint.route('/getall', methods=["GET"])
 def getAllUser():
     return [User.toJSON() for User in User.query.all()]
+
+@blueprint.route('/forgotPassword')
+def forgotPassword():
+    input = request.values
+    inputEmail = input.get('email')
+    user = QuerySelectUser(inputEmail)
+
+    if type(user).__name__ == "user":
+        token = generate_confirmation_token(user.email)
+        forgot_url = 'http://localhost:3000/resetPassword/' + token
+        html = render_template('reset.html', forgot_url=forgot_url)
+        subject = "BeeAware Password Reset"
+        send_email(user.email, subject, html)
+    else:
+        return on_error(62, "Account is not valid")
+    
+@blueprint.route('/resetPassword/<token>')
+def resetPassword(token):
+    email = confirm_token(token)
+    try:
+        if not email:
+            return on_error(60, "The confirmation link is invalid or has expired.")
+        
+    except:
+        pass
+
+    user = QuerySelectUser(email)
+
+    if type(user).__name__ == "user":
+        input = request.values
+        inputPass = input.get('password')
+
+        if inputPass == "" or inputPass is None:
+            return on_error(20, "Password is required, please enter a password")
+        
+        user.changePassword(inputPass)
+    else:
+        return on_error(62, "Account is not valid")
+
+
 
 def QueryInsertUser(new_user: User):
     """ Function to Import User into DB
