@@ -37,10 +37,10 @@ function renderHeader(responseCode) {
 function renderBody(responseCode){
     switch (responseCode) {
         case -1:
-            return <p>Looks like some thing wen wrong while we were processing you request. Try refreshing the page and checking you internet connection</p>
+            return <p>Looks like some thing went wrong while we were processing you request. Try refreshing the page and checking your internet connection.</p>
         case 60:
-            return <p>Looks like the token is either invalid or has expired, try sending another one</p>
+            return <p>Looks like the token is either invalid or has expired, try sending another one.</p>
         case 200:
-            return <p>All finished up, your email has been validated and your registrationis now finished! Click the button below to return to the login screen</p>
+            return <p>All finished up, your email has been validated and your registrationis now finished! Click the button below to return to the login screen.</p>
     }
 }

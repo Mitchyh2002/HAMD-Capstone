@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Directory } from "moduleDefs";
 import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
 import "../App.css"
@@ -11,16 +11,16 @@ import Breadcrumbs from "Components/Breadcrumbs.js";
     SubMenu with working links
 */
 
-export default function SubMenu(props){
+export default function SubMenu(props) {
     //Extract sub components from directory
     const subComponents = Directory[props.prefix];
 
     //Creates the navlinks objects
     //Input: function
     //Output: Button with onClick call to input
-    function createNavLinks(component){
-        return(
-            <div style={{display: "flex", alignItems: "center"}}>
+    function createNavLinks(component) {
+        return (
+            <div style={{ display: "flex", alignItems: "center" }}>
                 <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
             </div>
         )
@@ -29,10 +29,10 @@ export default function SubMenu(props){
     //Set state for toggle button to hide sub nav bar
     const [show, setShow] = useState(true);
 
-    return(
+    return (
         <>
             <div className="subNavContainer">
-            <div>
+                <div>
                     <button type="button" onClick={() => setShow(!show)} className="toggle-button">
                         <img className="menu-icon" src="/menu.png" alt="menu" />
                     </button>
@@ -41,8 +41,9 @@ export default function SubMenu(props){
                     <div className="navButtonContainer">
                         {subComponents &&
                             <div className="flexBoxColumnGrow subNavBar" style={{ maxWidth: "160px" }}>
+                                <h5 style={{color: "var(--black)", margin: "5px", fontWeight: "normal"}}>Menu</h5>
                                 {subComponents.map(component => createNavLinks(component))}
-                                </div>}
+                            </div>}
                     </div>}
             </div>
         </>
@@ -72,8 +73,8 @@ function SubNavButton(props) {
         navigate(props.to);
     }
 
-    return(
-        <button onClick={handleClick} className={(active)? props.activeClass: props.passiveClass}>{props.name}</button>
+    return (
+        <button onClick={handleClick} className={(active) ? props.activeClass : props.passiveClass}>{props.name}</button>
     )
 
 }

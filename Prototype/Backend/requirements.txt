@@ -7,5 +7,7 @@ flask_login
 flask_mail
 psycopg2
 bcrypt
-pyjwt
-itsdangerous
+PyJWT
+flask_security
+pytz
+email_validator

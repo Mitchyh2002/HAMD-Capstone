@@ -12,7 +12,9 @@ function App() {
   useEffect(() => {
     fetch("http://localhost:5000/module/getactive", {
       method: "GET",
-      Authorisation: "Bearer" +  getToken()
+      headers: {
+	'Authorization': "Bearer " + getToken(),
+	}
     })
     .then( response => {
         return response.json();

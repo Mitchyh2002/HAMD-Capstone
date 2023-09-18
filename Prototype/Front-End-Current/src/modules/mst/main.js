@@ -16,7 +16,7 @@ export const pages = [{
 },{
     path: "Users",
     element: Users,
-    loader: getUsers
+    loader: getUsers,
 },{
     path: "Add User",
     element: AddUser
