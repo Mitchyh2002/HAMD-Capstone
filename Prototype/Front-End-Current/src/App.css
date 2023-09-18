@@ -1,20 +1,20 @@
 /*Setting Variables*/
 :root {
-  --font1: comic-sans, serif;
-  --font2: comic-sans, sans-serif;
-  --black: rgba(250, 250, 250);
-  --white: rgba(254, 254, 254);
-  --header: rgba(254, 254, 254);
-  --header70: rgba(254, 254, 254, 0.7);
-  --navbar: rgba(254, 200, 254);
-  --navbar70: rgba(254, 254, 254, 0.7);
-  --navbar50: rgba(254, 200, 254, 0.5);
-  --subnav: rgba(254, 254, 254);
-  --subnav40: rgba(254, 254, 254, 0.4);
-  --logo: url("../public/bee4.png");
+  --font1: 'Merriweather', serif;
+  --font2: 'Lato', sans-serif;
+  --black: rgba(0, 0, 0);
+  --white: rgba(255, 255, 255);
+  --header: rgba(146, 180, 236);
+  --header70: rgba(146, 180, 236, 0.7);
+  --navbar: rgba(242, 143, 59);
+  --navbar70: rgba(242, 143, 59, 0.7);
+  --navbar50: rgba(242, 143, 59, 0.5);
+  --subnav: rgba(255, 230, 154);
+  --subnav40: rgba(255, 230, 154, 0.4);
+  --logo: url("../public/bee2.png");
   --loginImage: url("../public/login-image.jpg");
-  --bee: url("../public/bee4.png");
-  --welcomeText: "Welcome to BeeAware";
+  --bee: url("../public/bee3.png");
+  --welcomeText: "Welcome to Bee Aware";
 }
 
 /*Defaults*/
@@ -110,6 +110,7 @@ header li a:hover {
 
 /* Header Logo */
 .bee-logo{
+  content: var(--logo);
   padding-left: 10px;
   width: 45px;
   object-fit: contain;

@@ -29,7 +29,7 @@ class mst_Setup(db.Model):
             "subnav": self.subnav,
             "welcomeText": self.welcomeText,
             "logo": self.logo,
-            "MiscImage": self.miscImage,
+            "MiscImage": self.MiscImage,
             "loginImage": self.loginImage
         }
     def insert(self):

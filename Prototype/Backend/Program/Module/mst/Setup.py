@@ -163,7 +163,9 @@ def update_config_settings(request):
         #         return on_error(2, f"Missing Logo Image")
         #     else:
         #         logo_success = check_image(logo,'png')
-        #         if not logo_success: return logo_success
+        #         if not logo_success:
+        #           os.chdir(mst_dir)
+        #           return logo_success
         #         logo_dir = f'Front-End-Current/public/{logo_success.filename}'
         #         pattern = '--logo: url\("..\/public\/.*.png"\);'
         #         replace_str = f'--logo: url("{logo_dir}");'
@@ -177,7 +179,9 @@ def update_config_settings(request):
         #         return on_error(2, f"Missing Login Image")
         # else:
         #     loginImage_success = check_image(loginImage,'jpg')
-        #     if not loginImage_success: return loginImage_success
+        #     if not loginImage_success:
+        #     os.chdir(mst_dir)
+        #     return loginImage_success
         #     login_dir = f'Front-End-Current/public/{loginImage_success.filename}'
         #     pattern = '--loginImage: url\("..\/public\/.*"\);'
         #     replace_str = f'--loginImage: url("{login_dir}");'
@@ -189,7 +193,9 @@ def update_config_settings(request):
         #     return on_error(2, f"Missing Miscellaneous Image")
         # else:
         #     bee_success = check_image(bee)
-        #     if not bee_success: return bee_success
+        #     if not bee_success:
+        #     os.chdir(mst_dir)
+        #     return bee_success
         #     bee_dir = f'Front-End-Current/public/{bee_success.filename}'
         #     pattern = '--bee: url\("..\/public\/.*"\);'
         #     replace_str = f'--bee: url("{bee_dir}");'
@@ -204,6 +210,7 @@ def update_config_settings(request):
         if db_url is not None:
             success = update_db(db_url)
             if success is not None:
+                os.chdir(mst_dir)
                 return success
 
         final_configs.insert()
@@ -211,9 +218,11 @@ def update_config_settings(request):
         if db_url is not None:
             success = update_db(db_url)
             if success is not None:
+                os.chdir(mst_dir)
                 return success
         success = current_settings.mergeConfig(final_configs)
         if not success:
+            os.chdir(mst_dir)
             return success
 
     new_settings = mst_Setup.query.first()
