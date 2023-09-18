@@ -118,7 +118,7 @@ header li a:hover {
   margin-right: auto;
 }
 
-/* Breadcrumb Nav CSS */
+/* Breadcrumb Nav CSS */ 
 .breadcrumbs{
   margin-right: auto;
   justify-content: center;
@@ -211,7 +211,7 @@ header li a:hover {
   flex: 1;
 }
 
-.subNavHighlight {
+.subNavHighlight {  
   width: 160px;
   height: 60px;
   font-size: 15px;

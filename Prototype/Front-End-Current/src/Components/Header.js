@@ -9,7 +9,7 @@ export default function Header (props) {
         <div className="header">
             <header>
             <div className="breadcrumbs breadcrumbs1">
-                    <img className="bee-logo" src="/bee2.png" alt="logo" />
+                    <img className="bee-logo" alt="logo" />
                     {props.breadcrumbs}
                 </div>
                 <nav>
