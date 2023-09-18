@@ -12,11 +12,31 @@ from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email
 from Program.ResponseHandler import on_error, on_success
+from Program.OS import bearer_decode
 
 blueprint = Blueprint('user', __name__, url_prefix="/user")
 
 TESTING = True
 
+@blueprint.route('/changePassword/', methods=['POST'])
+def changePassword():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    user = bearer_decode(user_bearer)
+    user = Select(User).where(UserID = user['userID']).first()
+
+    oldPassword = input.get('currentPassword')
+    inputBytes = oldPassword.encode('utf-8')
+
+    storedHash = user.passwordHash.hash[2:-1]
+    storedHash = storedHash.encode('utf-8')
+    
+    if bcrypt.checkpw(inputBytes, storedHash):
+        newPassword = input.get('newPassword')
+        user.changePassword(newPassword)
+        return on_success("password successfully changed")
+    
+
+    
 @blueprint.route('/login', methods=['POST'])
 def login():
     # Fetching inputs
