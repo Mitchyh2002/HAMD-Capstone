@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from flask import Blueprint, request, Flask
+from flask import Blueprint, request, render_template, url_for
 from flask_mail import Message
 from flask_login import current_user, login_required
 try:
@@ -16,20 +16,24 @@ from Program.ResponseHandler import on_error, on_success
 blueprint = Blueprint('confirmation', __name__, url_prefix="/mst/confirm")
 
 TESTING = True
+email_salt = export_salt()
 
 def generate_confirmation_token(email):
    serializer = URLSafeTimedSerializer(export_key())
-   return serializer.dumps(email, salt=export_salt())
+   return serializer.dumps(email, salt=email_salt)
 
 def confirm_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(export_key())
     try:
+        print(export_key())
+        print(export_salt())
         email = serializer.loads(
             token,
-            salt=export_salt(),
+            salt=email_salt,
             max_age=expiration
         )
     except:
+        print("exception")
         return False
     return email
 
@@ -53,6 +57,25 @@ def confirm_email(token):
         db.session.commit()
         return on_success("You have successfully confirmed your account") 
     
+@blueprint.route('/resend')
+def resend_email():
+    input = request.values
+    inputEmail = input.get('email')
+    user = QuerySelectUser(inputEmail)
+
+    if type(user).__name__ == "user":
+        if user.confirmed:
+            return on_error(61, "Account has already been confirmed. Please Login")
+        else:
+            token = generate_confirmation_token(user.email)
+            confirm_url = 'http://localhost:3000/Confirm/' + token
+            html = render_template('activate.html', confirm_url=confirm_url)
+            subject = "Please confirm your email"
+            send_email(user.email, subject, html)
+    else:
+        return on_error(62, "Account is not valid")
+
+
 def send_email(to, subject, template):
     msg = Message(
         subject,

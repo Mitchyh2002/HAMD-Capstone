@@ -21,7 +21,7 @@ export function updateName(form) {
 }
 
 export async function getUsers() {
-    return fetch("http://localhost:5000/user/getall")
+    return fetch("http://localhost:5000/admin/getallusers")
         .then(res => res.json())
         .then(res => {
             return res;

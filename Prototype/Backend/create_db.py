@@ -17,10 +17,11 @@ def sys_create():
     })
     client = app.test_client()
 
-    new_module = create_module("mst", "UploadModule", PasswordHash.new("M_STER@aaa").hash, True, '')
+
+    new_module = create_module("mst", "Master Module", PasswordHash.new("M_STER@aaa").hash, True, '')
     grp_module = create_module("grp", "Group management", PasswordHash.new("GroupMDL").hash, False, '')
     user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 7)
-
+    
     grp = create_group('Default')
     with app.app_context():
         initRefTable()
