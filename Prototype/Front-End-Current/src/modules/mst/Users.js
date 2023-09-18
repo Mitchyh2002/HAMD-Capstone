@@ -45,7 +45,7 @@ export default function Users() {
                 <div className='user-top-page'>
                 <h2>Users</h2>
                 <Link
-                    to="/Home/mst/Add%20User">
+                    to="/Home/mst/Users/Add%20User">
                     <button className="buttons add-user-button">Add New User</button>
                 </Link>
                 </div>
@@ -78,6 +78,10 @@ export default function Users() {
                                         <td>
                                             <button onClick={toggleModal} className="btn-modal">
                                                 Edit
+                                            </button>
+                                            |
+                                            <button onClick={toggleModal} className="btn-modal delete-btn">
+                                                Remove
                                             </button>
                                         </td>
                                     </tr>

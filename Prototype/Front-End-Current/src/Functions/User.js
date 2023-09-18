@@ -13,11 +13,8 @@ export async function login(formData){
         if (response.Success == true) {
                 console.log(response)
                 localStorage.setItem(token, response.Values);
-                return("Success");
-            } else {
-                return("error");
             }
-
+            return response;
         }
     ).catch(function (error) {
          console.log(error);

@@ -26,10 +26,11 @@ table{
     margin-left: 20px;
     margin-right: 20px;
     box-shadow: 0px 5px 5px #ccc;
+    width: 95%;
   }
   
 h4{
-    font-family: 'Merriweather', serif;
+    font-family: var(--font1);
     font-size: 25px;
     font-weight: bold;
   }
@@ -61,11 +62,15 @@ body.active-modal {
   }
   
 .btn-modal {
-    font-family: "lato";
+    font-family: var(--font2);
     border: none;
     background-color: transparent;
     font-size: 16px;
     color: #083898;
+  }
+
+  .delete-btn{
+    color: red;
   }
   
 .btn-modal:hover {
@@ -107,7 +112,7 @@ body.active-modal {
   }
   
 .modal-label{
-    font-family: "Lato";
+    font-family: var(--font2);
     position: relative;
     bottom: 50px;
     font-size: 14px;
@@ -146,12 +151,26 @@ body.active-modal {
     min-width: 300px;
     min-height: 520px;
 }
+
+/* Message Modal */
+
+.message-modal-heading{
+  position: relative;
+  margin: auto;
+  padding: 20px 0px;
+}
+
+.modal-text-message{
+  position: relative;
+  margin: auto;
+  padding-bottom: 50px;
+}
   
 /* Modal Buttons CSS */
 .buttons{
   border: none;
   border-radius: 10px;
-  font-family: "Lato";
+  font-family: var(--font2);
   padding: 10px 10px;
   width: 130px;
   height: 37px;
@@ -204,13 +223,21 @@ bottom: 78px;
 left: 190px;
 }
 
+.okay-button{
+  background-color: rgba(242, 143, 59, 1);
+  position: absolute; 
+  bottom: 20px;
+  left: 110px;
+}
+
 .remove-user-button,
 .user-cancel-button,
 .user-confirm-button,
 .confirm-button:hover,
 .cancel-button:hover,
 .close-modal:hover,
-.add-user-button:hover {
+.add-user-button:hover,
+.okay-button:hover {
     cursor: pointer;
 }
 

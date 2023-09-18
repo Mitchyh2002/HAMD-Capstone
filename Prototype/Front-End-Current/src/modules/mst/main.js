@@ -8,32 +8,18 @@ import { getPlugins, getUsers } from "./loaderFunctions";
 //Define Pages to pass to Sub Navigations
 export const pages = [{
     path: "Plugins",
-    pageCode: "1",
-    Description: "Show All Modules",
-    userAccessLevel: 5,
     element: PluginList,
-    loader: getPlugins,
+    loader: getPlugins
 },{
     path: "Add Plugin",
-    pageCode: "2",
-    Description: "Add Plugin To System",
-    userAccessLevel: 7,
     element: Upload
 },{
     path: "Users",
-    pageCode: "3",
-    Description: "Show All Users",
-    userAccessLevel: 5,
     element: Users,
     loader: getUsers,
-    userAccessLevel: 5
 },{
     path: "Add User",
-    pageCode: "3.1",
-    Description: "Add User to System",
-    userAccessLevel: 5,
-    element: AddUser,
-    userAccessLevel: 5
+    element: AddUser
 }];
 
 export default function mst_master(){

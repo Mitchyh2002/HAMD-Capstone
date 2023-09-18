@@ -32,10 +32,10 @@ def import_blueprint(app, moduleName, ModuleFile):
 
     """
     for file in ModuleFile:
-        imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
+        imp_str = "Program.Module." + str(moduleName) + "." + str(file.replace('.py', ''))
         try:
             new_blueprint = __import__(imp_str)
-            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
+            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.replace('.py', '')) + ".blueprint"
             app.register_blueprint(eval(bp_str))
         except AttributeError:
             print("Module Doesn't have Blueprint Variable")

@@ -127,6 +127,11 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def changePassword(self, password):
+        self.passwordHash = PasswordHash.new(password)
+        db.session.add(self)
+        db.session.commit()
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
@@ -140,14 +145,14 @@ class User(UserMixin, db.Model):
     def setIsAnonymous(self, bool):
         self._is_anonymous = bool
 
-def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None):
+def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None, adminLevel=1):
     created_user = User()
     created_user.email = email
     created_user.firstName = firstName
     created_user.passwordHash = passwordHash
     created_user.dateOfBirth = dateOfBirth
     created_user.phoneNumber = phoneNumber
-    created_user.adminLevel = 1
+    created_user.adminLevel = adminLevel
     created_user.registeredDate = date.today()
     created_user.confirmed = False
     created_user.setIsAuthenticated(True)
