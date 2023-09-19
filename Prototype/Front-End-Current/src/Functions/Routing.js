@@ -52,11 +52,11 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch("http://localhost:5000/confirm/"+params.id);
+                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
                 const json = await response.json();
                 return json;
             }catch{
-                return({Message: "Local error/network error encounterded", StatusCode: -1, Success: false});
+                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
             }
         }
     },{

@@ -14,7 +14,7 @@ from Program.Module.Main.Confirmation import generate_confirmation_token, send_e
 from Program.ResponseHandler import on_error, on_success
 from Program.OS import bearer_decode
 
-blueprint = Blueprint('user', __name__, url_prefix="/user")
+blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
 

@@ -1,7 +1,7 @@
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {
-    return fetch("http://localhost:5000/module/getall")
+    return fetch("http://localhost:5000/mst/module/getall")
         .then(res => res.json())
         .then(res => {
             return res;
@@ -11,7 +11,7 @@ export async function getPlugins() {
 }
 
 export function updateName(form) {
-    return fetch("http://localhost:5000/module/updatereference",
+    return fetch("http://localhost:5000/mst/module/updatereference",
         {
             method: "POST",
             body: form
@@ -21,7 +21,7 @@ export function updateName(form) {
 }
 
 export async function getUsers() {
-    return fetch("http://localhost:5000/admin/getallusers")
+    return fetch("http://localhost:5000/mst/admin/getallusers")
         .then(res => res.json())
         .then(res => {
             return res;

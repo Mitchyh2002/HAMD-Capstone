@@ -12,7 +12,7 @@ from Program.ResponseHandler import on_error, on_success
 from Program.OS import userFunctionAuthorisations, bearer_decode
 from Program.Module.mst.User import emailIsValid, firstNameIsValid, dateOfBirthIsValid, phoneNumberIsValid, QuerySelectUser
 
-blueprint = Blueprint('admin', __name__, url_prefix="/admin")
+blueprint = Blueprint('admin', __name__, url_prefix="/mst/admin")
 
 TESTING = True
 

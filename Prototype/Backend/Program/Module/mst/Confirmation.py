@@ -13,7 +13,7 @@ from Program import db, export_key, export_mail, export_mail_sender
 from Program.DB.Models.mst.User import export_salt, User
 from Program.ResponseHandler import on_error, on_success
 
-blueprint = Blueprint('confirmation', __name__, url_prefix="/confirm")
+blueprint = Blueprint('confirmation', __name__, url_prefix="/mst/confirm")
 
 TESTING = True
 email_salt = export_salt()

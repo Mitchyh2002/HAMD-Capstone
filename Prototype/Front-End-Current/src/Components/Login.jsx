@@ -7,7 +7,7 @@ export default function Login(props) {
         const form = document.getElementById("inputs");
         const formData = new FormData(form);
 
-        fetch("http://localhost:5000/user/login", {
+        fetch("http://localhost:5000/mst/user/login", {
             method: "POST",
             body: formData,
         }).then(response => (response.json()
@@ -26,7 +26,7 @@ export default function Login(props) {
         const form = document.getElementById("inputs");
         const formData = new FormData(form);
         
-        fetch("http://localhost:5000/user/register", {
+        fetch("http://localhost:5000/mst/user/register", {
             method: "POST",
             body: formData,
         }).then(response => (response.json()
