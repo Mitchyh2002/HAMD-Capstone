@@ -10,7 +10,7 @@ function App() {
 
   //Get all active modules from the server and store in state
   useEffect(() => {
-    fetch("http://localhost:5000//mst/module/getactive", {
+    fetch("http://localhost:5000/mst/module/getactive", {
       method: "GET",
       headers: {
 	'Authorization': "Bearer " + getToken(),

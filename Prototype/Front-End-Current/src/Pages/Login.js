@@ -197,7 +197,7 @@ function RegisterForm(props) {
                             error = {nameError}
                         />
                     <FormInput
-                            label="Year of Birth"
+                            label="Birth Year"
                             error={dobError}
                             type="number"
                             min="1910"
