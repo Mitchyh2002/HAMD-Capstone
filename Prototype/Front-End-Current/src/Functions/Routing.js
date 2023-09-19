@@ -29,6 +29,11 @@ export function CreateAllPaths(Components) {
     console.log(Components);
     //Create Route Directory
     const Routes = [{
+        path: "/",
+        loader: async ()  => {
+            return redirect("/Home")
+        }
+    },{
         path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
