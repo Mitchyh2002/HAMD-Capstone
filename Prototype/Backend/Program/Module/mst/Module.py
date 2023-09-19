@@ -28,7 +28,7 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
-
+blueprint = Blueprint('module', __name__, url_prefix="/module")
 
 TESTING = True
 
