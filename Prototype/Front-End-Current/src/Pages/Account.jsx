@@ -1,7 +1,7 @@
 import Header from "Components/Header"
 import { useLoaderData } from "react-router-dom"
 
-export function Account() {
+export default function Account() {
 
     const response = useLoaderData();
 

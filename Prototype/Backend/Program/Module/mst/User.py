@@ -17,7 +17,8 @@ from Program.OS import bearer_decode
 blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
-@blueprint.router('/getAccount/', methods=['GET'])
+
+@blueprint.route('/getAccount/', methods=['GET'])
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     user = bearer_decode(user_bearer)
