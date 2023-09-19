@@ -28,7 +28,7 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
-blueprint = Blueprint('module', __name__, url_prefix="/mst/module")
+blueprint = Blueprint('module', __name__, url_prefix="/module")
 
 TESTING = True
 
@@ -211,7 +211,7 @@ def get_active_plugins():
             return on_success([x.toJSON(True) for x in valid_modules])
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
-        if user_data['adminLevel'] == 7:
+        if user_data['adminLevel'] == 9:
             valid_modules = []
             for module in Module.query.filter(Module.status == True).all():
                 CurrModule = module.toJSON(True)
