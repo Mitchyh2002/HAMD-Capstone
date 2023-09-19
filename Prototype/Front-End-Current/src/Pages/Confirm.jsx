@@ -41,6 +41,6 @@ function renderBody(responseCode){
         case 60:
             return <p>Looks like the token is either invalid or has expired, try sending another one.</p>
         case 200:
-            return <p>All finished up, your email has been validated and your registrationis now finished! Click the button below to return to the login screen.</p>
+            return <p>All finished up, your email has been validated and your registration is now finished! Click the button below to return to the login screen.</p>
     }
 }

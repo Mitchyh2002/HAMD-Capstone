@@ -17,7 +17,12 @@ from Program.OS import bearer_decode
 blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
-
+@blueprint.router('/getAccount/', methods=['GET'])
+def getAccount():
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    user = bearer_decode(user_bearer)
+    del user['userID'], user['adminLevel']
+    return on_success(user)
 
 @blueprint.route('/changePassword/', methods=['POST'])
 def changePassword():
@@ -201,6 +206,7 @@ def resetPassword(token):
         user.changePassword(inputPass)
     else:
         return on_error(62, "Account is not valid")
+
 
 
 

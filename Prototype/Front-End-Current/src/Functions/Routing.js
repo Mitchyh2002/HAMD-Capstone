@@ -7,6 +7,7 @@ import Login from "Pages/Login";
 import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
 import { ConfirmEmail } from "Pages/Confirm";
+import Account from "Pages/Account";
 
 
 /*All Routes
@@ -57,6 +58,18 @@ export function CreateAllPaths(Components) {
                 return json;
             }catch{
                 return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
+            }
+        }
+    },{
+        path:"/Account",
+        element: <Account />,
+        loader: async () => {
+            try{
+                const response = await fetch("http://localhost:5000/mst/user/getAccount");
+                const json = await response.json();
+                return json;
+            }catch{
+                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
             }
         }
     },{
