@@ -3,7 +3,6 @@ from Program.DB.Models.grp.Groups import create_group
 from Program import init_app
 from Program.DB.Models.mst.Module import Module, create_module
 from Program.Module.mst.Module import QueryInsertModule
-from Program.DB.Models.mst.Admin import initRefTable
 from Program.DB.Models.mst.User import PasswordHash, create_user
 from Program.DB.Models.mst.ModuleSecurity import init_masterPages
 from werkzeug.serving import run_simple
@@ -24,7 +23,6 @@ def sys_create():
     
     grp = create_group('Default')
     with app.app_context():
-        initRefTable()
         new_module.insert()
         grp_module.insert()
         grp.insert()
