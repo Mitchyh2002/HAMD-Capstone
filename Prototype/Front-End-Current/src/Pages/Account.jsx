@@ -13,8 +13,14 @@ export default function Account() {
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "left", alignItems: "center", height: "70px" }}>
                     <h1>{renderHeader(response.StatusCode)}</h1>
                 </div>
-                <div style={{ justifyContent: "left" }}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
                     {renderBody(response.StatusCode, response.Values)}
+                </div>
+                <div style={{display: "flex", justifyContent: "center", gap:'10px'}}>
+                    <Link
+                        to="/ChangePassword">
+                        <button className="formButton change-password-button">Change Password</button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -41,32 +47,26 @@ function renderBody(responseCode, responseValues){
         case 200:
             return(<>
                 <p>Hello, {responseValues.firstName}</p>
-                <h4>Personal Details</h4>
-                <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h5>Name:</h5>
+                <h3>Personal Details</h3>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <h4>Name:</h4>
                     <p>{responseValues.firstName}</p>
                 </div>
-                <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h5>Email:</h5>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <h4>Email:</h4>
                     <p>{responseValues.email}</p>
                 </div>
                 {responseValues.phoneNumber && ( // Conditionally render the phone number section
-                    <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h5>Phone Number:</h5>
+                    <div style={{display: "flex", alignItems: "center"}}>
+                    <h4>Phone Number:</h4>
                     <p>{responseValues.phoneNumber}</p>
                     </div>
                 )}
-                <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h5>Birth Year:</h5>
+                <div style={{display: "flex", alignItems: "center"}}>
+                    <h4>Birth Year:</h4>
                     <p>{responseValues.dateOfBirth}</p>
                 </div>
-                <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h5>Password:</h5>
-                    <Link
-                        to="/ChangePassword">
-                        <button className="secondaryButton change-password-button">Change Password</button>
-                    </Link>
-                </div>
+                
             </>)
     }
 }
