@@ -207,8 +207,10 @@ def get_active_plugins():
             user_bearer = request.values.get('HTTP_AUTHORIZATION')
         user_data = bearer_decode(user_bearer)
         if user_data['Success'] == False:
+            if user_data['StatusCode'] == 403:
+                return user_data
             valid_modules = Module.query.filter(Module.status == True).all()
-            return on_success([x.toJSON(True) for x in valid_modules])
+            return on_success()
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
         if user_data['adminLevel'] == 9:
@@ -592,6 +594,7 @@ def Module_Access_Control():
     user = User.query.filter_by(userID=userID).first()
 
     modulePrefix = request.values.get("modulePrefix")
+
     if userID is None:
         return on_error(3, "UserID is not specified")
     if modulePrefix is None:
@@ -625,7 +628,8 @@ def give_user_access(user, modulePrefix):
         ModuleAccess Object containing userID & Module info
     '''
     pages = ModuleSecurity.query.filter_by(SecurityLevel=user.adminLevel, modulePrefix=modulePrefix).all()
-    return on_error(1, "User Doesn't Have a High enough Access Level to be Added to this Function")
+    if pages == []:
+        return on_error(1, "User Doesn't Have a High enough Access Level to be Added to this Function")
     created_module_access = create_moduleAccess(user.userID, modulePrefix)
     created_module_access.insert()
 
@@ -743,6 +747,9 @@ def upload_module():
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
         ModulePass = PasswordHash.new(ModulePass)
+        moduleLevel = request.values.get("securityLevel")
+        if moduleLevel is None:
+            moduleLevel = 1
 
         if '' in [DisplayName, ModulePass.hash]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
@@ -834,7 +841,7 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path, moduleLevel)
         QueryInsertModule(new_Module)
         for page in front_end_success:
             if update:
