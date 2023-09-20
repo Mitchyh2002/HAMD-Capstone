@@ -70,9 +70,7 @@ export function CreateAllPaths(Components) {
         element: <Account />,
         loader: async () => {
             try{
-
                 const response = await fetch("http://localhost:5000/mst/user/getAccount",{
-                    mode: 'no-cors',
                     method: 'GET',
                     headers: {
                         'Authorization': "Bearer " + getToken(),
