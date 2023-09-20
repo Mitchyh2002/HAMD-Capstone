@@ -1,5 +1,5 @@
 import Header from "Components/Header"
-import { useLoaderData } from "react-router-dom"
+import { Link, useLoaderData } from "react-router-dom"
 
 export default function Account() {
 
@@ -41,28 +41,31 @@ function renderBody(responseCode, responseValues){
         case 200:
             return(<>
                 <p>Hello, {responseValues.firstName}</p>
-                <h3>Personal Details</h3>
+                <h4>Personal Details</h4>
                 <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h4>Name:</h4>
+                    <h5>Name:</h5>
                     <p>{responseValues.firstName}</p>
                 </div>
                 <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h4>Email:</h4>
+                    <h5>Email:</h5>
                     <p>{responseValues.email}</p>
                 </div>
                 {responseValues.phoneNumber && ( // Conditionally render the phone number section
                     <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h4>Phone Number:</h4>
+                    <h5>Phone Number:</h5>
                     <p>{responseValues.phoneNumber}</p>
                     </div>
                 )}
                 <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h4>Birth Year:</h4>
+                    <h5>Birth Year:</h5>
                     <p>{responseValues.dateOfBirth}</p>
                 </div>
                 <div style={{display: "flex", alignItems: "center", gap:'10px'}}>
-                    <h4>Birth Year:</h4>
-                    <p>{responseValues.dateOfBirth}</p>
+                    <h5>Password:</h5>
+                    <Link
+                        to="/ChangePassword">
+                        <button className="secondaryButton change-password-button">Change Password</button>
+                    </Link>
                 </div>
             </>)
     }

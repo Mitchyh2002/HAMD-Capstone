@@ -21,8 +21,9 @@ TESTING = True
 @blueprint.route('/getAccount/', methods=['GET'])
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    print(user_bearer)
     user = bearer_decode(user_bearer)
-    del user['userID'], user['adminLevel']
+    print(user)
     return on_success(user)
 
 @blueprint.route('/changePassword/', methods=['POST'])
@@ -58,6 +59,7 @@ def login():
     elif inputPass == "" or inputPass is None:
         return on_error(20, "Password is required, please enter a password")
     else:
+        print(inputEmail)
         # Finding User in database
         user = QuerySelectUser(inputEmail)        
         if user is None:
