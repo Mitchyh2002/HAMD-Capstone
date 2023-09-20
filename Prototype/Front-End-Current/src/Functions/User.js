@@ -5,7 +5,7 @@ const token = "BAtoken";
 
 //Log User In
 export async function login(formData){
-    return fetch("http://localhost:5000/user/login", {
+    return fetch("http://localhost:5000/mst/user/login", {
         method: "POST",
         body: formData,
     }).then(response => (response.json()

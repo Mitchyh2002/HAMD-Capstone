@@ -164,7 +164,7 @@ function RegisterForm(props) {
 
         const valid = validateFrom(formData);
         if (valid) {
-            fetch("http://localhost:5000/user/register", {
+            fetch("http://localhost:5000/mst/user/register", {
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()
