@@ -1,3 +1,4 @@
+import { getToken } from 'Functions/User';
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {
