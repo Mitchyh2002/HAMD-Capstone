@@ -1,7 +1,7 @@
 import Header from "Components/Header"
 import { Link, useLoaderData } from "react-router-dom"
 
-export default function Account() {
+export default function UserAccount() {
 
     const response = useLoaderData();
 
@@ -50,20 +50,32 @@ function renderBody(responseCode, responseValues){
                 <div style={{display: "flex", alignItems: "center"}}>
                     <h4>Name:</h4>
                     <p>{responseValues.firstName}</p>
+                    <div style={{textAlign: "right"}}>
+                        <button className="edit-button"> Edit</button>
+                    </div>
                 </div>
                 <div style={{display: "flex", alignItems: "center"}}>
                     <h4>Email:</h4>
                     <p>{responseValues.email}</p>
+                    <div style={{textAlign: "right"}}>
+                        <button className="edit-button"> Edit</button>
+                    </div>
                 </div>
                 {responseValues.phoneNumber && ( // Conditionally render the phone number section
                     <div style={{display: "flex", alignItems: "center"}}>
                     <h4>Phone Number:</h4>
                     <p>{responseValues.phoneNumber}</p>
+                    <div style={{textAlign: "right"}}>
+                        <button className="edit-button"> Edit</button>
+                    </div>
                     </div>
                 )}
                 <div style={{display: "flex", alignItems: "center"}}>
                     <h4>Birth Year:</h4>
                     <p>{responseValues.dateOfBirth}</p>
+                    <div style={{textAlign: "right"}}>
+                        <button className="edit-button"> Edit</button>
+                    </div>
                 </div>
                 
             </>)

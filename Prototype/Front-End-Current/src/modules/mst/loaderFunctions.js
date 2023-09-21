@@ -29,3 +29,18 @@ export async function getUsers() {
             return error;
         })
 }
+
+export async function getUser({params}) {
+    return fetch("http://localhost:5000/mst/admin/getUser/"+params.id,{
+        method: 'GET',
+        headers: {
+            'Authorization': "Bearer " + getToken(),
+        }
+    })
+    .then(res => res.json())
+        .then(res => {
+            return res;
+        }).catch(error => {
+            return error;
+        })
+}
