@@ -14,8 +14,8 @@ class moduleAccess(db.Model):
         returns:
             Dict Representation of OBJ
         '''
-        return {"id": self.moduleAccessID,
-                "groupID": self.modulePrefix,
+        return {
+                "modulePrefix": self.modulePrefix,
                 "userID": self.userID}
 
     def insert(self):

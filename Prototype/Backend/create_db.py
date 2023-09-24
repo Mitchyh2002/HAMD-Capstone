@@ -20,15 +20,20 @@ def sys_create():
 
     new_module = create_module("mst", "Platform Administration", PasswordHash.new("M_STER@aaa").hash, True, '')
     grp_module = create_module("grp", "Group management", PasswordHash.new("GroupMDL").hash, False, '')
-    user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 9)
-    user.confirmed = True
-    userAccess = create_moduleAccess(user.userID, 'mst')
-    grp = create_group('Default')
+    masterUser = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 9)
+    testUser = create_user('test@test.com', 'testUser', 'testUser', '2000', None, 1)
+    testUser.confirmed = True
+    masterUser.confirmed = True
+    userAccess = create_moduleAccess(masterUser.userID, 'mst')
+    grp1 = create_group('Default')
+    grp2 = create_group('Test Group')
     with app.app_context():
         new_module.insert()
         grp_module.insert()
-        grp.insert()
-        user.insert()
+        grp1.insert()
+        grp2.insert()
+        masterUser.insert()
+        testUser.insert()
         init_masterPages()
         userAccess.insert()
 

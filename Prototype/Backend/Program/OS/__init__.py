@@ -56,9 +56,12 @@ def convert_to_imports(dir_tree):
     return imports
 
 def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
-    if Auth_Header == None:
+    if Auth_Header == None or 'null' in Auth_Header:
         return on_error(400, "Auth Header Not Provided")
-    user = bearer_decode(Auth_Header)
+    try:
+        user = bearer_decode(Auth_Header)
+    except Exception as e:
+        return on_error(400, str(e))
     if user['Success'] == False:
         return user
     user = user['Values']
@@ -76,6 +79,8 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
 
 
 def bearer_decode(Auth_Header, algorithms=["HS256"]):
+    if Auth_Header is None:
+        return on_error(400, "Token Not Sent")
     if 'null' in Auth_Header:
         return on_error(400, "Token Not Sent")
     if 'Bearer ' in Auth_Header:
@@ -89,6 +94,10 @@ def bearer_decode(Auth_Header, algorithms=["HS256"]):
                                   algorithms=algorithms)
     except jwt.ExpiredSignatureError:
         return on_error(403, "Invalid Token, This Token Has Expired")
+    except ValueError:
+        return on_error(403, "Invalid Token, Not Enough Segments")
+    except jwt.exceptions.DecodeError:
+        return on_error(403, "Invalid Token, Not Enough Segments")
     user = User.query.filter_by(email=decoded_data.get('email')).first()
     if user is None:
         return on_error(400, "User Does Not Exist")
