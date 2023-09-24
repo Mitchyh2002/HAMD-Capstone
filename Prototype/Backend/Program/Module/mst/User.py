@@ -18,15 +18,19 @@ blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
 
+@blueprint.route('/getAccount/', methods=['OPTIONS'])
+def handle_options():
+    return on_success("Pre-flight Accepted")
+
 @blueprint.route('/getAccount/', methods=['GET'])
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     print(user_bearer)
-    user = bearer_decode(user_bearer)
+    user = bearer_decode(user_bearer)['Values']
     print(user)
     return on_success(user)
 
-@blueprint.route('/changePassword/', methods=['POST'])
+@blueprint.route('/changePassword', methods=['POST'])
 def changePassword():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     user = bearer_decode(user_bearer)
