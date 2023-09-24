@@ -20,6 +20,7 @@ TESTING = True
 
 @blueprint.route('/getAccount/', methods=['OPTIONS'])
 def handle_options():
+    #print("Handling OPTIONS request")
     return on_success("Pre-flight Accepted")
 
 @blueprint.route('/getAccount/', methods=['GET'])

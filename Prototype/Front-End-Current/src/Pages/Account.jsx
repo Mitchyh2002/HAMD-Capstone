@@ -7,21 +7,19 @@ export default function Account() {
 
     return(<>
         <Header />
-        <div className="mainContainerCentre" style={{flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px"}}>
-            <div className="flexBoxGrow" style={{maxWidth: "65%"}}>
-                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "left", alignItems: "center", height: "70px" }}>
+        <div className="flexBoxColumnGrow">
+                <div>
                     <h1>{renderHeader(response.StatusCode)}</h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
                     {renderBody(response.StatusCode, response.Values)}
                 </div>
-                <div style={{display: "flex", justifyContent: "center", gap:'10px'}}>
+                <div style={{display: "flex", justifyContent: "left", marginLeft: '20px'}}>
                     <Link
                         to="/ChangePassword">
                         <button className="formButton change-password-button">Change Password</button>
                     </Link>
                 </div>
-            </div>
         </div>
     </>)
 
@@ -45,27 +43,26 @@ function renderBody(responseCode, responseValues){
             return <p>Looks like some thing went wrong while we were processing you request. Try refreshing the page and checking your internet connection.</p>
         case 200:
             return(<>
-                <p>Hello, {responseValues.firstName}</p>
-                <h3>Personal Details</h3>
-                <div style={{display: "flex", alignItems: "center"}}>
-                    <h4>Name:</h4>
-                    <p>{responseValues.firstName}</p>
+                <h4>Hello, {responseValues.firstName}</h4>
+                <h3-bolder>Personal Details</h3-bolder>
+                <div className="accountContainer">
+                    <h3-bold>Name:</h3-bold>
+                    <h3>{responseValues.firstName}</h3>
                 </div>
-                <div style={{display: "flex", alignItems: "center"}}>
-                    <h4>Email:</h4>
-                    <p>{responseValues.email}</p>
+                <div className="accountContainer">
+                    <h3-bold>Email:</h3-bold>
+                    <h3>{responseValues.email}</h3>
                 </div>
                 {responseValues.phoneNumber && ( // Conditionally render the phone number section
-                    <div style={{display: "flex", alignItems: "center"}}>
-                    <h4>Phone Number:</h4>
-                    <p>{responseValues.phoneNumber}</p>
+                    <div className="accountContainer">
+                    <h3-bold>Phone Number:</h3-bold>
+                    <h3>{responseValues.phoneNumber}</h3>
                     </div>
                 )}
-                <div style={{display: "flex", alignItems: "center"}}>
-                    <h4>Birth Year:</h4>
-                    <p>{responseValues.dateOfBirth}</p>
+                <div className="accountContainer">
+                    <h3-bold>Birth Year:</h3-bold>
+                    <h3>{responseValues.dateOfBirth}</h3>
                 </div>
-                
             </>)
     }
 }
