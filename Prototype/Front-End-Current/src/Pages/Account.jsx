@@ -45,6 +45,10 @@ function renderBody(responseCode, responseValues){
         case 200:
             return(<>
                 <h4>Hello, {responseValues.firstName}</h4>
+                <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                    <h3-bold>Karma:</h3-bold>
+                    <h3>{responseValues.totalKarma}</h3>
+                </div>
                 <h3-bolder>Personal Details</h3-bolder>
                 <div className="accountContainer">
                     <h3-bold>Name:</h3-bold>

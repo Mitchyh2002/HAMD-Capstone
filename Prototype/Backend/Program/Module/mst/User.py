@@ -27,6 +27,8 @@ def handle_options():
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     user = bearer_decode(user_bearer)['Values']
+    selectedUser = User.query.filter_by(userID=user['userID']).first()
+    user['totalKarma'] = selectedUser.totalKarma
     return on_success(user)
 
 @blueprint.route('/changePassword', methods=['POST'])
