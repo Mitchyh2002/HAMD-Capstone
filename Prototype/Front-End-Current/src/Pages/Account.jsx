@@ -8,7 +8,7 @@ export default function Account() {
     const logoutButton = "Logout";
 
     return(<>
-        <Header  accountButton={accountButton} logoutButton={logoutButton}/>
+        <Header accountButton={accountButton} logoutButton={logoutButton}/>
         <div className="flexBoxColumnGrow">
                 <div>
                     <h1>{renderHeader(response.StatusCode)}</h1>
