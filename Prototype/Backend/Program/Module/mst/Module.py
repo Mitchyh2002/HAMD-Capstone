@@ -9,7 +9,7 @@ import zipfile
 import shutil
 import re
 import ast
-from Program.ResponseHandler import on_error, on_success
+from Program.ResponseHandler import on_error, on_success, not_configured
 from os.path import splitext
 from os import mkdir
 from re import search
@@ -205,7 +205,7 @@ def get_active_plugins():
 
     configurations = mst_Setup.query.all()
     if configurations is None:
-        return on_success("System Not Configured")
+        return not_configured()
 
     added_modules = {}
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
