@@ -34,7 +34,10 @@ function renderHeader(responseCode) {
             return "Error"
         
         case 200:
-            return "My Details"
+            return "User Details"
+
+        case 402:
+            return "Unauthorised Access"
     }
 }
 
@@ -45,7 +48,7 @@ function renderBody(responseCode, responseValues){
             return <p>Looks like some thing went wrong while we were processing you request. Try refreshing the page and checking your internet connection.</p>
         case 200:
             return(<>
-                <h4>Hello, {responseValues.firstName}</h4>
+                <h4>{responseValues.firstName}'s Account</h4>
                 <h3-bolder>Personal Details</h3-bolder>
                 <div className="accountContainer">
                     <h3-bold>Name:</h3-bold>
@@ -66,5 +69,7 @@ function renderBody(responseCode, responseValues){
                     <h3>{responseValues.dateOfBirth}</h3>
                 </div>
             </>)
+        case 402:
+            return <p>If you believe you are seeing this page by error, contact your nearest admin.</p>
     }
 }
