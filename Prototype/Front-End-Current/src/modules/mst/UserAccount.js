@@ -4,9 +4,11 @@ import { Link, useLoaderData } from "react-router-dom"
 export default function UserAccount() {
 
     const response = useLoaderData();
+    const accountButton = <Link to="/Account">Account</Link>;
+    const logoutButton = "Logout";
 
     return(<>
-        <Header />
+        <Header accountButton={accountButton} logoutButton={logoutButton}/>
         <div className="flexBoxColumnGrow">
                 <div>
                     <h1>{renderHeader(response.StatusCode)}</h1>
