@@ -26,9 +26,7 @@ def handle_options():
 @blueprint.route('/getAccount/', methods=['GET'])
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    print(user_bearer)
     user = bearer_decode(user_bearer)['Values']
-    print(user)
     return on_success(user)
 
 @blueprint.route('/changePassword', methods=['POST'])
@@ -46,7 +44,9 @@ def changePassword():
     if bcrypt.checkpw(inputBytes, storedHash):
         newPassword = input.get('newPassword')
         user.changePassword(newPassword)
-        return on_success("password successfully changed")
+        user.set_id()
+        login_user(user)
+        return on_success(user.get_id())
     
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -77,7 +77,7 @@ def login():
 
                 
                 if user.adminLevel == 0:
-                    return on_error(30, "Account has been suspended")
+                    return on_error(1, "Account has been suspended")
 
                 if not user.confirmed:
                     return on_error(30, "Please confirm your account")

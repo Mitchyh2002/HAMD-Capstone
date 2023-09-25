@@ -24,7 +24,6 @@ export default function Account() {
                 </div>
         </div>
     </>)
-
 }
 
 //Determine which header to display based on the status code
