@@ -22,7 +22,7 @@ export const pages = [{
     path: "Add User",
     element: AddUser
 },{
-    path: "User Account",
+    path: "User Account/:id",
     element: UserAccount,
     loader: getUser
 }];

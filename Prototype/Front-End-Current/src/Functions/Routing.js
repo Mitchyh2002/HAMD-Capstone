@@ -37,7 +37,7 @@ export function CreateAllPaths(Components) {
         path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
-        children: Components.map(e => createComponentRoutes(e)),
+        children: createHomeRoutes(Components),
         loader: async ()  => {
             const token = getToken();
             console.log(token);
@@ -66,25 +66,6 @@ export function CreateAllPaths(Components) {
             }
         }
     },{
-        path:"/Account",
-        element: <Account />,
-        loader: async () => {
-            try{
-                console.log(getToken())
-                const response = await fetch("http://localhost:5000/mst/user/getAccount/",{
-                    method: "GET",
-                    headers: {
-                        'Authorization': "Bearer " + getToken(),
-                    }
-                });
-
-                const json = await response.json();
-                return json;
-            }catch{
-                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
-            }
-        }
-    },{
         path:'*',
         element:<NoMatchingPage />
     }];
@@ -104,18 +85,19 @@ export function createComponentRoutes(module) {
         path: module.prefix,
         //Element function from main.js of the module
         element: <CreateParentOutlet module = {module} />,
+    }
 
-        //Create child path for each directory
-        children: Directory[module.prefix].map(e => {
+    if(Directory[module.prefix]){
+        Root.children = 
+        Directory[module.prefix].map(e => {
             console.log(e.children)
             return({
             path: e.path,
             ...e.loader&& {loader: e.loader},
             ...e.children&& {children: e.children},
-            element: React.createElement(e.element)})
-        }),
-        //Create sub directories from pages
+            element: React.createElement(e.element)})})
     }
+    console.log(Root)
 
     return Root;
 }
@@ -134,5 +116,35 @@ export function CreateParentOutlet (props) {
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )
+
+}
+
+function createHomeRoutes(modules){
+    //generate child modules
+    const children = modules.map(e => createComponentRoutes(e));
+    children.push(
+        {
+            path:"Account",
+            element: <Account />,
+            loader: async () => {
+                try{
+                    console.log(getToken())
+                    const response = await fetch("http://localhost:5000/mst/user/getAccount/",{
+                        method: "GET",
+                        headers: {
+                            'Authorization': "Bearer " + getToken(),
+                        }
+                    });
+    
+                    const json = await response.json();
+                    return json;
+                }catch{
+                    return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
+                }
+            }
+        }
+    )
+
+    return children
 
 }

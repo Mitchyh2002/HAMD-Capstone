@@ -1,14 +1,10 @@
-import Header from "Components/Header"
 import { Link, useLoaderData } from "react-router-dom"
 
 export default function Account() {
 
     const response = useLoaderData();
-    const accountButton = <Link to="/Account">Account</Link>;
-    const logoutButton = "Logout";
 
     return(<>
-        <Header accountButton={accountButton} logoutButton={logoutButton}/>
         <div className="flexBoxColumnGrow">
                 <div>
                     <h1>{renderHeader(response.StatusCode)}</h1>
