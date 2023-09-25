@@ -11,3 +11,10 @@ def on_success(data):
         "StatusCode": 200,
         "Values": data
     }
+
+def not_configured():
+    return {
+        "Success": True,
+        "StatusCode": 1001,
+        "Values": "System Not Configured"
+    }

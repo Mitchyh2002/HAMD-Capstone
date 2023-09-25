@@ -202,10 +202,10 @@ def get_active_plugins():
         Success JSON, containing the Module Prefix & Display Name of all active modules.
         Error Packet, Request.Method is not GET, code -1
     '''
-    if request.method == "OPTIONS":
-        configurations = mst_Setup.query.all()
-        if configurations is None:
-            return on_success("System Not Configured")
+
+    configurations = mst_Setup.query.all()
+    if configurations is None:
+        return on_success("System Not Configured")
 
     added_modules = {}
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
@@ -279,7 +279,7 @@ def get_all_plugins():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted == True:
-        return [Module.toJSON(True) for Module in Module.query.all()]
+        return [Module.toJSON(True, True) for Module in Module.query.all()]
     return accessGranted
 
 @blueprint.route('updatePage', methods=['POST'])
