@@ -4,20 +4,20 @@ export default function Account() {
 
     const response = useLoaderData();
 
-    return(<>
+    return (<>
         <div className="flexBoxColumnGrow">
-                <div>
-                    <h1>{renderHeader(response.StatusCode)}</h1>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
-                    {renderBody(response.StatusCode, response.Values)}
-                </div>
-                <div style={{display: "flex", justifyContent: "left", marginLeft: '20px'}}>
-                    <Link
-                        to="/Home/ChangePassword">
-                        <button className="formButton change-password-button">Change Password</button>
-                    </Link>
-                </div>
+            <div>
+                <h1>{renderHeader(response.StatusCode)}</h1>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
+                {renderBody(response.StatusCode, response.Values)}
+            </div>
+            <div style={{ display: "flex", justifyContent: "left", marginLeft: '20px' }}>
+                <Link
+                    to="/Home/ChangePassword">
+                    <button className="formButton change-password-button">Change Password</button>
+                </Link>
+            </div>
         </div>
     </>)
 }
@@ -27,21 +27,21 @@ function renderHeader(responseCode) {
     switch (responseCode) {
         case -1:
             return "Error"
-        
+
         case 200:
             return "My Details"
     }
 }
 
 //Determine which element to return for the body based on the status code
-function renderBody(responseCode, responseValues){
+function renderBody(responseCode, responseValues) {
     switch (responseCode) {
         case -1:
             return <p>Looks like some thing went wrong while we were processing you request. Try refreshing the page and checking your internet connection.</p>
         case 200:
-            return(<>
+            return (<>
                 <h4>Hello, {responseValues.firstName}</h4>
-                <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
                     <h3-bold>Karma:</h3-bold>
                     <h3>{responseValues.totalKarma}</h3>
                 </div>
@@ -56,8 +56,8 @@ function renderBody(responseCode, responseValues){
                 </div>
                 {responseValues.phoneNumber && ( // Conditionally render the phone number section
                     <div className="accountContainer">
-                    <h3-bold>Phone Number:</h3-bold>
-                    <h3>{responseValues.phoneNumber}</h3>
+                        <h3-bold>Phone Number:</h3-bold>
+                        <h3>{responseValues.phoneNumber}</h3>
                     </div>
                 )}
                 <div className="accountContainer">

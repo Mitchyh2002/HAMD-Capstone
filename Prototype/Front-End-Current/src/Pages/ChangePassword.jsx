@@ -8,23 +8,23 @@ import { getToken } from "Functions/User";
 export default function ChangePassword(props) {
     const [changed, setChanged] = useState(props.changed);
 
-    return(<>
-        <div className="mainContainerCentre" style={{flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px"}}>
-            <div className="flexBoxGrow" style={{maxWidth: "65%"}}>
+    return (<>
+        <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
+            <div className="flexBoxGrow" style={{ maxWidth: "65%" }}>
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center"}}>
+                <div style={{ justifyContent: "center" }}>
                     {changed ? (
                         <div>
-                        <p>You have successfully changed your password! Please click below to navigate to home</p>
-                        <Link
-                            to="/Home">
-                            <button className="formButton home-button">Home</button>
-                        </Link>
+                            <p>You have successfully changed your password! Please click below to navigate to home</p>
+                            <Link
+                                to="/Home">
+                                <button className="formButton home-button">Home</button>
+                            </Link>
                         </div>
                     ) : (
-                        <ChangePasswordForm setChanged={setChanged}/>
+                        <ChangePasswordForm setChanged={setChanged} />
                     )}
                 </div>
             </div>
@@ -44,7 +44,7 @@ function ChangePasswordForm(props) {
         setNew1PassError(checkPass(formData.get("newPassword")))
         setNew2PassError(checkPass(formData.get("confPassword")))
         setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")))
-    
+
         let valid = true;
 
         if (currentPassError || new1PassError || new2PassError || confPassError) {
@@ -52,7 +52,7 @@ function ChangePasswordForm(props) {
         }
 
         if (new2PassError && confPassError) {
-           setConfPassError(null); // Clear the second error
+            setConfPassError(null); // Clear the second error
         }
 
         return (valid)
@@ -89,40 +89,39 @@ function ChangePasswordForm(props) {
             setLoading(false);
         }
     }
-    return (
-        <>
-            <form className="password-form" id="Change Password">
-                <div className="password-form-content">
-                    <FormInput
-                        label="Current Password"
-                        error={currentPassError}
-                        type="password"
-                        name="currentPassword"
-                        placeholder="Current Password"
-                    />
-                    <FormInput
-                        label="New Password"
-                        error={new1PassError}
-                        type="password"
-                        name="newPassword"
-                        placeholder="New Password"
-                    />
-                    <FormInput
-                        label="Re-enter New Password"
-                        error={[new2PassError, confPassError]}
-                        type="password"
-                        name="confPassword"
-                        placeholder="Confirm New Password"
-                    />
-                </div>
-            </form>
+    return (<>
+        <form className="password-form" id="Change Password">
+            <div className="password-form-content">
+                <FormInput
+                    label="Current Password"
+                    error={currentPassError}
+                    type="password"
+                    name="currentPassword"
+                    placeholder="Current Password"
+                />
+                <FormInput
+                    label="New Password"
+                    error={new1PassError}
+                    type="password"
+                    name="newPassword"
+                    placeholder="New Password"
+                />
+                <FormInput
+                    label="Re-enter New Password"
+                    error={[new2PassError, confPassError]}
+                    type="password"
+                    name="confPassword"
+                    placeholder="Confirm New Password"
+                />
+            </div>
+        </form>
 
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
-                </div>
-        </>
-    )
+        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+            <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
+        </div>
+    </>)
 }
+
 export function comparePass(newPass1, newPass2) {
     try {
         if (newPass1 !== newPass2) {

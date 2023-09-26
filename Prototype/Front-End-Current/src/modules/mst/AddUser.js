@@ -121,65 +121,63 @@ function AddUserForm() {
         setLoading(false);
     }
 
-    return (
-        <>
+    return (<>
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
             <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>Add User</h3>
                 </div>
-                    <form className="add-user-form" id="addUser">
-                        <div className="login-form-content" style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
-                            <FormInput
-                                label="First Name"
-                                type="text"
-                                name="firstName"
-                                placeholder="First Name"
-                                error={nameError}
-                            />
-                            <FormInput
-                                label="Birth Year"
-                                error={dobError}
-                                type="number"
-                                min="1910"
-                                max="2099"
-                                name="dateOfBirth"
-                                placeholder="Birth Year"
-                            />
+                <form className="add-user-form" id="addUser">
+                    <div className="login-form-content" style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
+                        <FormInput
+                            label="First Name"
+                            type="text"
+                            name="firstName"
+                            placeholder="First Name"
+                            error={nameError}
+                        />
+                        <FormInput
+                            label="Birth Year"
+                            error={dobError}
+                            type="number"
+                            min="1910"
+                            max="2099"
+                            name="dateOfBirth"
+                            placeholder="Birth Year"
+                        />
 
-                            <FormInput
-                                label="Email"
-                                error={emailError}
-                                type="email"
-                                name="email"
-                                className="emailAddress"
-                                placeholder="Email Address"
-                            />
-                            <FormInput
-                                label="Password"
-                                error={passError}
-                                type="password"
-                                name="password"
-                                className="password"
-                                placeholder="Password"
-                            />
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                {registered ? (
-                    <div>
-                        <p>User successfully added</p>
-                        <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
+                        <FormInput
+                            label="Email"
+                            error={emailError}
+                            type="email"
+                            name="email"
+                            className="emailAddress"
+                            placeholder="Email Address"
+                        />
+                        <FormInput
+                            label="Password"
+                            error={passError}
+                            type="password"
+                            name="password"
+                            className="password"
+                            placeholder="Password"
+                        />
                     </div>
-                ) : (
-                    <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
-                )}
+                </form>
             </div>
-        </>
-    )
+        </div>
+
+        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+            {registered ? (
+                <div>
+                    <p>User successfully added</p>
+                    <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
+                </div>
+            ) : (
+                <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
+            )}
+        </div>
+    </>)
 }
 
 function FormInput(props) {
