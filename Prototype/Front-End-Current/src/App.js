@@ -7,9 +7,11 @@ import { getToken } from 'Functions/User';
 function App() {
   const [modules, setModules] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  const [pages, setPages] = useState([]);
 
   //Get all active modules from the server and store in state
   useEffect(() => {
+    // Get active modules
     fetch("http://localhost:5000/module/getactive", {
       method: "GET",
       headers: {
@@ -23,13 +25,12 @@ function App() {
       console.log("Modules")
       setModules(data.Values)
     }).then(() => {
-      setLoaded(true);
     })
   }, []);
 
   return (
     <>
-      <RouterProvider router={createBrowserRouter(allRoutes(modules))} />
+      <RouterProvider router={createBrowserRouter(allRoutes(modules, pages))} />
     </>
   );
 }

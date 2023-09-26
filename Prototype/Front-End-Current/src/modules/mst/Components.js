@@ -15,9 +15,11 @@ export default function Modal(props) {
     const updatePlugin = () => {
         const form = document.getElementById("modalForm");
         const formData = new FormData(form);
-        const response = updateName(formData);
-        console.log(response);
-        window.alert("hello")
+        formData.append('modulePrefix', props.prefix)
+        const response = updateName(formData).then(res =>{
+            console.log(res);
+            window.alert(res.Message);
+        });
     }
 
     return (
@@ -32,9 +34,19 @@ export default function Modal(props) {
                         <h4 className='modal-heading'>Edit</h4>
                         <form id="modalForm">
                             <label className='modal-label'>{props.label1}
-                                <input className='modal-input' type="text" />
+                                <input className='modal-input' type="text" name="displayName"/>
+                            </label>                            
+                            <label className='modal-label'>Module Key
+                                <input className='modal-input' type="text" name="modulePass"/>
+                            </label>                            
+                            <label className='modal-label'>Prefix
+                                <input disabled className='modal-input' type="text" name="modulePrefix" value={props.prefix}/>
                             </label>
                         </form>
+                        <br></br>
+                        <br></br>
+                        <br></br>
+                        <br></br>
                         <br></br>
                         <br></br>
                         <button className='buttons confirm-button' onClick={updatePlugin}>

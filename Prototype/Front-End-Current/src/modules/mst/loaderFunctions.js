@@ -29,3 +29,13 @@ export async function getUsers() {
             return error;
         })
 }
+
+export function deactivateModule(prefix){
+    return fetch("http://localhost:5000/module/deactivate",
+    {
+        method: "POST",
+        body: JSON.stringify({"modulePrefix" : prefix})
+    })
+    .then(res => res.json())
+    .then(res => { return res })
+}

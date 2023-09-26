@@ -102,7 +102,7 @@ body.active-modal {
     border-radius: 15px;
     max-width: 300px;
     min-width: 300px;
-    max-height: 230px;
+    max-height: 400px;
   }
   
 .modal-heading{

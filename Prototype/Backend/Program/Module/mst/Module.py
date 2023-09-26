@@ -207,8 +207,13 @@ def get_active_plugins():
             user_bearer = request.values.get('HTTP_AUTHORIZATION')
         user_data = bearer_decode(user_bearer)
         if user_data['Success'] == False:
-            valid_modules = Module.query.filter(Module.status == True).all()
-            return on_success([x.toJSON(True) for x in valid_modules])
+            valid_modules = []
+            for module in Module.query.filter(Module.status == True).all():
+                CurrModule = module.toJSON(True)
+                pages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=CurrModule['prefix']).all()]
+                CurrModule['pages'] = pages
+                valid_modules.append(CurrModule)
+            return on_success(valid_modules)
         user_data = user_data['Values']
         #If Breakglass Show All Active Modules
         if user_data['adminLevel'] == 9:

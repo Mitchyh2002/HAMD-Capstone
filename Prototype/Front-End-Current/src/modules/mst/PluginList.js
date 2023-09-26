@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData } from 'react-router-dom';
-import { updateName } from "./loaderFunctions";
+import { deactivateModule, updateName } from "./loaderFunctions";
 import Modal from './Components.js';
 import "./admin.css";
 
@@ -27,16 +27,10 @@ export default function PluginList() {
 
     /* Setting the state for the modal */
     const [modal, setModal] = useState(false);
-    const toggleModal = () => {
+    const [prefix, setPrefix] = useState();
+    const toggleModal = (prefix) => {
+        setPrefix(prefix)
         setModal(!modal);
-    }
-
-    const updatePlugin = () => {
-        const form = document.getElementById("modalForm");
-        const formData = new FormData(form);
-        const response = updateName(formData);
-        console.log(response);
-        window.alert("hello")
     }
 
     return (
@@ -70,11 +64,11 @@ export default function PluginList() {
                                             </td>
                                         ))}
                                         <td>
-                                            <button onClick={toggleModal} className="btn-modal">
+                                            <button onClick={() => {toggleModal(row.values.prefix)}} className="btn-modal">
                                                 Edit
                                             </button>
                                             |
-                                            <button className="btn-modal delete-btn">
+                                            <button className="btn-modal delete-btn" onClick={() => {deactivateModule(row.values.prefix)}}>
                                                 Deactivate
                                             </button>
                                         </td>
@@ -86,7 +80,7 @@ export default function PluginList() {
                 </div>
             </div>
             {modal && (
-                <Modal label1="Change Display Name:" show={modal} change={setModal} />
+                <Modal label1="Change Display Name:" show={modal} change={setModal} prefix={prefix}/>
             )}
         </>
     )

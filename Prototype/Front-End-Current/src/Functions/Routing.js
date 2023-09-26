@@ -74,6 +74,7 @@ export function CreateAllPaths(Components) {
 
 */
 export function createComponentRoutes(module) {
+    console.log(module.pages)
     const Root = {
         //Create Index as Display Name
         path: module.prefix,
@@ -83,11 +84,13 @@ export function createComponentRoutes(module) {
         //Create child path for each directory
         children: Directory[module.prefix].map(e => {
             console.log(e.children)
-            return({
-            path: e.path,
-            ...e.loader&& {loader: e.loader},
-            ...e.children&& {children: e.children},
-            element: React.createElement(e.element)})
+            if (module.pages.some(obj => obj.pageCode == e.pageCode)){
+                return({
+                path: e.path,
+                ...e.loader&& {loader: e.loader},
+                ...e.children&& {children: e.children},
+                element: React.createElement(e.element)})
+            }
         }),
         //Create sub directories from pages
     }

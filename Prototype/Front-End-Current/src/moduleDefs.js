@@ -9,7 +9,7 @@ export const Modules = {
    }
 
 export const Directory = {
-  mst: []
+  mst: pages
 }
 
 //REGEX_END
