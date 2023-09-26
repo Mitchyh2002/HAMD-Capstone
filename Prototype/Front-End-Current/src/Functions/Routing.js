@@ -8,6 +8,8 @@ import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
 import { ConfirmEmail } from "Pages/Confirm";
 import Account from "Pages/Account";
+import { baseUrl } from "config";
+import ChangePassword from "Pages/ChangePassword";
 
 
 /*All Routes
@@ -58,7 +60,7 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
+                const response = await fetch(baseUrl + "/mst/confirm/"+params.id);
                 const json = await response.json();
                 return json;
             }catch{
@@ -128,8 +130,7 @@ function createHomeRoutes(modules){
             element: <Account />,
             loader: async () => {
                 try{
-                    console.log(getToken())
-                    const response = await fetch("http://localhost:5000/mst/user/getAccount/",{
+                    const response = await fetch(baseUrl + "/mst/user/getAccount/",{
                         method: "GET",
                         headers: {
                             'Authorization': "Bearer " + getToken(),
@@ -142,6 +143,10 @@ function createHomeRoutes(modules){
                     return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
                 }
             }
+        },
+        {
+            path:"ChangePassword",
+            element: <ChangePassword />
         }
     )
 

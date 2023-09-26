@@ -16,7 +16,7 @@ export default function Header (props) {
                 </div>
                 <nav>
                     <ul>
-                        <li><Link to="/account">{props.accountButton}</Link></li>
+                        <li><Link to="/home/account">{props.accountButton}</Link></li>
                         <li><Link to='/login' onClick={logout}>{props.logoutButton}</Link></li>
                     </ul>
                 </nav>

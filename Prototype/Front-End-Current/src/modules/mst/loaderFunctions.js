@@ -2,7 +2,7 @@ import { getToken } from 'Functions/User';
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {
-    return fetch("http://localhost:5000/mst/module/getall")
+    return fetch(baseUrl + "/mst/module/getall")
         .then(res => res.json())
         .then(res => {
             return res;
@@ -12,7 +12,7 @@ export async function getPlugins() {
 }
 
 export function updateName(form) {
-    return fetch("http://localhost:5000/mst/module/updatereference",
+    return fetch(baseUrl + "/mst/module/updatereference",
         {
             method: "POST",
             body: form
@@ -22,7 +22,7 @@ export function updateName(form) {
 }
 
 export async function getUsers() {
-    return fetch("http://localhost:5000/mst/admin/getallusers")
+    return fetch(baseUrl + "/mst/admin/getallusers")
         .then(res => res.json())
         .then(res => {
             return res;
@@ -32,7 +32,7 @@ export async function getUsers() {
 }
 
 export async function getUser({params}) {
-    return fetch("http://localhost:5000/mst/admin/getUser/"+params.id,{
+    return fetch(baseUrl + "/mst/admin/getUser/"+params.id,{
         method: 'GET',
         headers: {
             'Authorization': "Bearer " + getToken(),

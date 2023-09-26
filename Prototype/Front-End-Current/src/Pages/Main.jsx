@@ -4,7 +4,7 @@ import Content from "Content"
 import { Link, Outlet } from "react-router-dom"
 
 export default function Main(props) {
-    const accountButton = <Link to="/Account">Account</Link>;
+    const accountButton = "Account";
     const logoutButton = "Logout"
 
     return(

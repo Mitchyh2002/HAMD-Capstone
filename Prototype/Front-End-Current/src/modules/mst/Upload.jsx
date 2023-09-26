@@ -25,7 +25,7 @@ export default function Upload(props){
         const formData = new FormData(form);
         const method = (document.getElementById("update").checked? "UPDATE" : "POST")
 
-        fetch("http://localhost:5000/mst/module/upload", {
+        fetch(baseUrl + "/mst/module/upload", {
             method: method,
             body: formData,
         }).then(response => (response.json()

@@ -61,7 +61,7 @@ const handleChange = (e) => {
 
     const valid = validateForm(formData);
     if (valid) {
-        fetch("http://localhost:5000/mst/user/changePassword", {
+        fetch(baseUrl + "/mst/user/changePassword", {
             method: "POST",
             body: formData,
         }).then(response => (response.json()
