@@ -30,7 +30,7 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
-blueprint = Blueprint('module', __name__, url_prefix="/module")
+blueprint = Blueprint('module', __name__, url_prefix="/mst/module")
 
 TESTING = True
 
@@ -192,10 +192,6 @@ def QueryInsertModule(new_module: Module):
 
 @blueprint.route('/getModule', methods=['POST'])
 def getModule():
-    configurations = mst_Setup.query.all()
-    if configurations is None:
-        return not_configured()
-
     added_modules = {}
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     if user_bearer is None:
@@ -203,16 +199,22 @@ def getModule():
     user_data = bearer_decode(user_bearer)
     if user_data['Success'] == False:
         return user_data
-    modulePrefix = request.method.get('modulePrefix')
+    modulePrefix = request.values.get('modulePrefix')
     if modulePrefix is None:
         return on_error(2, "ModulePrefix is not Specified")
 
-    getPages = request.method.get('includePages')
+    getPages = request.values.get('includePages')
+    if getPages in ['True', True]:
+        getPages = True
+    elif getPages in ['False', False]:
+        getPages = False
+    elif getPages is not None:
+        return on_error(4, "Non-Boolean Value for getPages specified")
 
-    selectedModule = Module.query.filter_by(prefix=modulePrefix)
-    selectedModule = selectedModule.toJSON(True)
+    selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
     if selectedModule is None:
         return on_error(3, "Specified Module Does Not exist")
+    selectedModule = selectedModule.toJSON(True)
 
     if getPages is True:
         modulePages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
