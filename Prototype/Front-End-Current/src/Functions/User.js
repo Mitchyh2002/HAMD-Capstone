@@ -1,3 +1,5 @@
+import { baseUrl } from "config";
+
 //Storage keys
 const token = "BAtoken";
 

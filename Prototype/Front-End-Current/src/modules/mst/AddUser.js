@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "./admin.css";
 import { checkEmailValid, checkDOB, checkName, checkPass } from "../../Pages/Login.js";
+import { baseUrl } from "config";
 
 export default function AddUser(){
     const [nameError, setNameError] = useState();

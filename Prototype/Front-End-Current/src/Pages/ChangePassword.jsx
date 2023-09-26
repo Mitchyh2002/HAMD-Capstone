@@ -2,6 +2,7 @@ import Header from "Components/Header"
 import { Link } from "react-router-dom"
 import { useState } from "react";
 import { checkPass } from "./Login";
+import { baseUrl } from "config";
 
 export default function ChangePassword() {
     const accountButton = <Link to="/Account">Account</Link>;

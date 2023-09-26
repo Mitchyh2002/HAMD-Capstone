@@ -1,4 +1,5 @@
 import { getToken } from 'Functions/User';
+import { baseUrl } from "config";
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {

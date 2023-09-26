@@ -1,6 +1,7 @@
 import react, {useRef, useState} from "react";
 import axios from "axios";
 import "./admin.css";
+import { baseUrl } from "config";
 
 
 export default function Upload(props){

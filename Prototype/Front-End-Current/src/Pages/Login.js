@@ -3,6 +3,7 @@ import './Login.css';
 import { login } from "Functions/User";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { baseUrl } from "config";
 
 export default function Login(props) {
     const register = props.register;
