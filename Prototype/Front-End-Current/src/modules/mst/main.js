@@ -4,7 +4,7 @@ import Users from "./Users"
 import AddUser from "./AddUser";
 import UserAccount from "./UserAccount";
 import { Outlet } from "react-router-dom";
-import { getPlugins, getUser, getUsers } from "./loaderFunctions";
+import { adminCheck, getPlugins, getUser, getUsers } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
 export const pages = [{
@@ -20,7 +20,8 @@ export const pages = [{
     loader: getUsers
 },{
     path: "Add User",
-    element: AddUser
+    element: AddUser,
+    loader: adminCheck
 },{
     path: "User Account/:id",
     element: UserAccount,

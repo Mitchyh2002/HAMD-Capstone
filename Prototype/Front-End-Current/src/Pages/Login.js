@@ -129,7 +129,7 @@ function RegisterForm(props) {
     const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
 
-    const validateFrom = (formData) => {
+    const validateForm = (formData) => {
         setNameError(checkName(formData.get("firstName")));
         setEmailError(checkEmailValid(formData.get("email")));
         setDobError(checkDOB(formData.get("dateOfBirth")));
@@ -163,7 +163,7 @@ function RegisterForm(props) {
         const form = document.getElementById("Register");
         const formData = new FormData(form);
 
-        const valid = validateFrom(formData);
+        const valid = validateForm(formData);
         if (valid) {
             fetch(baseUrl + "/mst/user/register", {
                 method: "POST",

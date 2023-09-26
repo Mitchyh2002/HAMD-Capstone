@@ -51,6 +51,10 @@ function ChangePasswordForm(props) {
             valid = false;
         }
 
+        if (new2PassError && confPassError) {
+           setConfPassError(null); // Clear the second error
+        }
+
         return (valid)
     }
 

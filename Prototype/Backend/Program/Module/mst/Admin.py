@@ -139,11 +139,24 @@ def resetUserPassword(ID):
     else:
         return on_error(62, "Account is not valid")    
 
+@blueprint.route('/adminCheckForRoutes')
+def adminCheck():
+    if request.method == 'OPTIONS':
+        return on_success("pre-flight request")
+    
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    auth = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    if (auth):
+        return on_success("Admin level satisfied")
+    else:
+        return auth
+
+
 def adminReturn(auth_header, targetUser=0):
     user = bearer_decode(auth_header)
     user = user['Values']
 
-    if targetUser == 0:
+    if targetUser != 0:
         level_required = adminLevelRequired(targetUser)
         if user['adminLevel'] < level_required:
             return on_error(401, "You do not have access to the function")
