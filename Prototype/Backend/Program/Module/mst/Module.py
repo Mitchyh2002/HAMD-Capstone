@@ -190,7 +190,36 @@ def QueryInsertModule(new_module: Module):
     db.session.commit()
 
 
-@blueprint.route('/getactive', methods=['GET', "OPTIONS"])
+@blueprint.route('/getModule', methods='POST')
+def getModule():
+    configurations = mst_Setup.query.all()
+    if configurations is None:
+        return not_configured()
+
+    added_modules = {}
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    if user_bearer is None:
+        user_bearer = request.values.get('HTTP_AUTHORIZATION')
+    user_data = bearer_decode(user_bearer)
+    if user_data['Success'] == False:
+        return user_data
+    modulePrefix = request.method.get('modulePrefix')
+    if modulePrefix is None:
+        return on_error(2, "ModulePrefix is not Specified")
+
+    getPages = request.method.get('includePages')
+
+    selectedModule = Module.query.filter_by(prefix=modulePrefix)
+    selectedModule = selectedModule.toJSON(True)
+    if selectedModule is None:
+        return on_error(3, "Specified Module Does Not exist")
+
+    if getPages is True:
+        modulePages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
+        selectedModule['Pages'] = modulePages
+
+    return selectedModule
+@blueprint.route('/getactive', methods=['GET'])
 def get_active_plugins():
     '''
     Get Request that returns all active modules.
@@ -329,7 +358,7 @@ def updatePageLevel():
     return on_success(selectedPage.toJSON())
 
 
-@blueprint.route('getall_pages', methods=['GET'])
+@blueprint.route('getall_pages', methods=['POST'])
 def get_module_pages(modulePrefix=None):
     '''
        Get Request that returns all pages in a sepcified module
