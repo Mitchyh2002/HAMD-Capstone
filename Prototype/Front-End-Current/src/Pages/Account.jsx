@@ -14,7 +14,7 @@ export default function Account() {
                 </div>
                 <div style={{display: "flex", justifyContent: "left", marginLeft: '20px'}}>
                     <Link
-                        to="/ChangePassword">
+                        to="/Home/ChangePassword">
                         <button className="formButton change-password-button">Change Password</button>
                     </Link>
                 </div>

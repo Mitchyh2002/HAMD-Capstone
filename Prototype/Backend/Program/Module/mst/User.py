@@ -31,24 +31,28 @@ def getAccount():
     user['totalKarma'] = selectedUser.totalKarma
     return on_success(user)
 
-@blueprint.route('/changePassword', methods=['POST'])
+@blueprint.route('/changePassword', methods=['POST', 'OPTIONS'])
 def changePassword():
-    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    user = bearer_decode(user_bearer)
-    user = Select(User).where(UserID = user['userID']).first()
+    if request.method == 'OPTIONS':
+        return handle_options()
+    else:
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        user = bearer_decode(user_bearer)['Values']
+        user = User.query.filter_by(userID=user['userID']).first()
 
-    oldPassword = input.get('currentPassword')
-    inputBytes = oldPassword.encode('utf-8')
+        input = request.values
+        oldPassword = input.get('currentPassword')
+        inputBytes = oldPassword.encode('utf-8')
 
-    storedHash = user.passwordHash.hash[2:-1]
-    storedHash = storedHash.encode('utf-8')
-    
-    if bcrypt.checkpw(inputBytes, storedHash):
-        newPassword = input.get('newPassword')
-        user.changePassword(newPassword)
-        user.set_id()
-        login_user(user)
-        return on_success(user.get_id())
+        storedHash = user.passwordHash.hash[2:-1]
+        storedHash = storedHash.encode('utf-8')
+        
+        if bcrypt.checkpw(inputBytes, storedHash):
+            newPassword = input.get('newPassword')
+            user.changePassword(newPassword)
+            user.set_id()
+            login_user(user)
+            return on_success(user.get_id())
     
 @blueprint.route('/login', methods=['POST'])
 def login():

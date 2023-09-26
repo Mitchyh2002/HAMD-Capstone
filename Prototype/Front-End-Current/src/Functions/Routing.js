@@ -146,7 +146,7 @@ function createHomeRoutes(modules){
         },
         {
             path:"ChangePassword",
-            element: <ChangePassword />
+            element: <ChangePassword changed={false}/>
         }
     )
 
