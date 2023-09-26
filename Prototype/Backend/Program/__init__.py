@@ -150,3 +150,4 @@ def export_mail():
     return application.app.mail
 
 application = AppReloader(init_app)
+

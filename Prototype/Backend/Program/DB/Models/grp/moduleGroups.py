@@ -14,7 +14,7 @@ class moduleGroups(db.Model):
         returns:
             Dict Representation of OBJ
         '''
-        return {"id": self.moduleGroupID,
+        return {
                 "module_prefix": self.module_prefix,
                 "groupID": self.groupID}
 

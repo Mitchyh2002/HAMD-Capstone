@@ -9,7 +9,7 @@ class Module(db.Model):
     status = db.Column(db.Boolean)
     logo = db.Column(db.String(20))
 
-    def toJSON(self, is_query=False):
+    def toJSON(self, is_query=False, isall=False):
         '''
         QOL function to convert OBJ to a valid JSON file. If is for query only return prefix & display name.
 
@@ -20,8 +20,12 @@ class Module(db.Model):
             Dict Representation of OBJ
         '''
         if is_query:
-            return {"prefix": self.prefix,
+            json =  {"prefix": self.prefix,
                     "displayName": self.displayName.strip()}
+            if isall:
+                json['status'] = self.status
+            return json
+
         return {
             "prefix": self.prefix,
             "displayName": self.displayName.strip(),

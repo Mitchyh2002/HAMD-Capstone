@@ -1,6 +1,7 @@
 import os.path
 import subprocess
 
+import bcrypt
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from flask_login import login_required
 import time
@@ -8,7 +9,7 @@ import zipfile
 import shutil
 import re
 import ast
-from Program.ResponseHandler import on_error, on_success
+from Program.ResponseHandler import on_error, on_success, not_configured
 from os.path import splitext
 from os import mkdir
 from re import search
@@ -17,6 +18,7 @@ from Program.DB.Models.mst.Module import Module, create_module
 from Program.DB.Models.mst.User import PasswordHash, User
 from Program.DB.Models.mst.moduleAccess import moduleAccess, create_moduleAccess
 from Program.DB.Models.mst.ModuleSecurity import ModuleSecurity, JSONtomoduleAccess
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
 
 from Program.DB.Models.grp.userGroups import userGroup
 from Program.DB.Models.grp.Groups import Group
@@ -28,7 +30,7 @@ from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunction
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session
 
-blueprint = Blueprint('module', __name__, url_prefix="/module")
+blueprint = Blueprint('module', __name__, url_prefix="/mst/module")
 
 TESTING = True
 
@@ -188,7 +190,38 @@ def QueryInsertModule(new_module: Module):
     db.session.commit()
 
 
-@blueprint.route('/getactive')
+@blueprint.route('/getModule', methods=['POST'])
+def getModule():
+    added_modules = {}
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    if user_bearer is None:
+        user_bearer = request.values.get('HTTP_AUTHORIZATION')
+    user_data = bearer_decode(user_bearer)
+    if user_data['Success'] == False:
+        return user_data
+    modulePrefix = request.values.get('modulePrefix')
+    if modulePrefix is None:
+        return on_error(2, "ModulePrefix is not Specified")
+
+    getPages = request.values.get('includePages')
+    if getPages in ['True', True]:
+        getPages = True
+    elif getPages in ['False', False]:
+        getPages = False
+    elif getPages is not None:
+        return on_error(4, "Non-Boolean Value for getPages specified")
+
+    selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
+    if selectedModule is None:
+        return on_error(3, "Specified Module Does Not exist")
+    selectedModule = selectedModule.toJSON(True)
+
+    if getPages is True:
+        modulePages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
+        selectedModule['Pages'] = modulePages
+
+    return selectedModule
+@blueprint.route('/getactive', methods=['GET'])
 def get_active_plugins():
     '''
     Get Request that returns all active modules.
@@ -200,68 +233,67 @@ def get_active_plugins():
         Success JSON, containing the Module Prefix & Display Name of all active modules.
         Error Packet, Request.Method is not GET, code -1
     '''
-    if request.method == "GET":
-        added_modules = {}
-        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        if user_bearer is None:
-            user_bearer = request.values.get('HTTP_AUTHORIZATION')
-        user_data = bearer_decode(user_bearer)
-        if user_data['Success'] == False:
-            valid_modules = []
-            for module in Module.query.filter(Module.status == True).all():
-                CurrModule = module.toJSON(True)
-                pages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=CurrModule['prefix']).all()]
-                CurrModule['pages'] = pages
-                valid_modules.append(CurrModule)
-            return on_success(valid_modules)
-        user_data = user_data['Values']
-        #If Breakglass Show All Active Modules
-        if user_data['adminLevel'] == 9:
-            valid_modules = []
-            for module in Module.query.filter(Module.status == True).all():
-                CurrModule = module.toJSON(True)
-                pages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=CurrModule['prefix']).all()]
-                CurrModule['pages'] = pages
-                valid_modules.append(CurrModule)
-            return on_success(valid_modules)
-        user = User.query.filter_by(email=user_data['email']).first()
-        if user.is_active != True:
-            return on_success(None)
-        userGroupsIDS = [x.groupID for x in userGroup.query.filter_by(userID=user.userID).all()]
+
+    configurations = mst_Setup.query.all()
+    if configurations is None:
+        return not_configured()
+
+    added_modules = {}
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    if user_bearer is None:
+        user_bearer = request.values.get('HTTP_AUTHORIZATION')
+    user_data = bearer_decode(user_bearer)
+    if user_data['Success'] == False:
+        if user_data['StatusCode'] == 403:
+            return user_data
+        valid_modules = Module.query.filter(Module.status == True).all()
+        return on_success([x.toJSON(True) for x in valid_modules])
+    user_data = user_data['Values']
+    #If Breakglass Show All Active Modules
+    if user_data['adminLevel'] == 9:
         valid_modules = []
-        if userGroupsIDS != None:
-            groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
-            for group in groups:
-                modules = moduleGroups.query.filter_by(groupID=group.groupID).all()
-                for module in modules:
-                    curr_module = Module.query.filter_by(prefix=module.module_prefix).first()
-                    pages = [page.toJSON() for page in ModuleSecurity.query.filter(ModuleSecurity.modulePrefix==curr_module.prefix,
-                                                                                   ModuleSecurity.SecurityLevel <= group.securityLevel).all()]
-                    added_modules[curr_module.prefix] = group.securityLevel
-                    curr_module = curr_module.toJSON(True)
-                    curr_module['pages'] = pages
-                    valid_modules.append(curr_module)
-
-        user_modules = moduleAccess.query.filter_by(userID=user.userID).all()
-        for module in user_modules:
-            curr_module = Module.query.filter_by(prefix=module.modulePrefix).first()
-            pages = ModuleSecurity.query.filter(ModuleSecurity.modulePrefix == module.modulePrefix,
-                                                ModuleSecurity.SecurityLevel <= user.adminLevel).all()
-            # Return the Max User Access Levels.
-            moduleLevel = added_modules.get(curr_module.prefix)
-            if moduleLevel == None:
-                moduleLevel = -1
-            if moduleLevel > user.adminLevel:
-               for module in valid_modules:
-                   if module['prefix'] == curr_module.prefix:
-                       valid_modules.remove(module)
-            curr_module = curr_module.toJSON(True)
-            curr_module['pages'] = pages
-            valid_modules.append(curr_module)
-
+        for module in Module.query.filter(Module.status == True).all():
+            CurrModule = module.toJSON(True)
+            pages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=CurrModule['prefix']).all()]
+            CurrModule['pages'] = pages
+            valid_modules.append(CurrModule)
         return on_success(valid_modules)
+    user = User.query.filter_by(email=user_data['email']).first()
+    if user.is_active != True:
+        return on_success(None)
+    userGroupsIDS = [x.groupID for x in userGroup.query.filter_by(userID=user.userID).all()]
+    valid_modules = []
+    if userGroupsIDS != None:
+        groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
+        for group in groups:
+            modules = moduleGroups.query.filter_by(groupID=group.groupID).all()
+            for module in modules:
+                curr_module = Module.query.filter_by(prefix=module.module_prefix).first()
+                pages = [page.toJSON() for page in ModuleSecurity.query.filter(ModuleSecurity.modulePrefix==curr_module.prefix,
+                                                                               ModuleSecurity.SecurityLevel <= group.securityLevel).all()]
+                added_modules[curr_module.prefix] = group.securityLevel
+                curr_module = curr_module.toJSON(True)
+                curr_module['pages'] = pages
+                valid_modules.append(curr_module)
 
-    return on_error(-1, "Incorrect RequestType Please make a POST REQUEST")
+    user_modules = moduleAccess.query.filter_by(userID=user.userID).all()
+    for module in user_modules:
+        curr_module = Module.query.filter_by(prefix=module.modulePrefix).first()
+        pages = ModuleSecurity.query.filter(ModuleSecurity.modulePrefix == module.modulePrefix,
+                                            ModuleSecurity.SecurityLevel <= user.adminLevel).all()
+        # Return the Max User Access Levels.
+        moduleLevel = added_modules.get(curr_module.prefix)
+        if moduleLevel == None:
+            moduleLevel = -1
+        if moduleLevel > user.adminLevel:
+           for module in valid_modules:
+               if module['prefix'] == curr_module.prefix:
+                   valid_modules.remove(module)
+        curr_module = curr_module.toJSON(True)
+        curr_module['pages'] = pages
+        valid_modules.append(curr_module)
+
+    return on_success(valid_modules)
 
 
 @blueprint.route('getall')
@@ -275,47 +307,60 @@ def get_all_plugins():
         Returns:
            A List containing all modules
     '''
-    #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
-    accessGranted = True
-    if accessGranted:
-        return [Module.toJSON(True) for Module in Module.query.all()]
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    if accessGranted == True:
+        return [Module.toJSON(True, True) for Module in Module.query.all()]
     return accessGranted
 
-@blueprint.route('updatePageLevel', methods=['POST'])
+@blueprint.route('updatePage', methods=['POST'])
 def updatePageLevel():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     if user_bearer == None:
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 7, 'mst')
     if accessGranted != True:
         return accessGranted
 
     modulePrefix = request.values.get('modulePrefix')
     pageCode = request.values.get('pageCode')
     securityLevel = request.values.get('securityLevel')
+    if securityLevel is None:
+        securityLevel = 1
+    try:
+        int(securityLevel)
+    except:
+        return (on_error(5, "securityLevel is Not a Valid Number"))
 
+    pageName = request.values.get('pageName')
+    pageDesc = request.values.get('pageDescription')
     if modulePrefix == None:
         return on_error(1, "Request is Missing ModulePrefix Key")
     if pageCode == None:
         return on_error(1, "Request is Missing pageID Key")
-    if securityLevel == None:
-        return on_error(1, "Request is Missing securityLevel Key")
 
     selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
     if selectedModule == None:
         return on_error(2, "Specified Module Does Not Exist")
+
     selectedPage = ModuleSecurity.query.filter_by(modulePrefix=modulePrefix, pageCode=pageCode).first()
     if selectedModule == None:
         return on_error(2, "Specified Page Does Not Exist")
-
     selectedPage.SecurityLevel = securityLevel
+    if pageName is not None:
+        if len(pageName) > 100:
+            return on_error(4, "Page name is greater than 100 charachters")
+        selectedPage.pageName = pageName
+    if pageDesc is not None:
+        if len (pageDesc) > 255:
+            return on_error(5, "Page Description is greater than 255 charachters")
+        selectedPage.description = pageDesc
     db.session.commit()
 
     return on_success(selectedPage.toJSON())
 
 
-@blueprint.route('getall_pages', methods=['GET'])
+@blueprint.route('getall_pages', methods=['POST'])
 def get_module_pages(modulePrefix=None):
     '''
        Get Request that returns all pages in a sepcified module
@@ -330,13 +375,16 @@ def get_module_pages(modulePrefix=None):
     if user_bearer == None:
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
-    accessGranted = True
-    if accessGranted:
+    if accessGranted == True:
         if modulePrefix == None:
             modulePrefix = request.values.get('modulePrefix')
+            if modulePrefix == None:
+                modulePrefix = request.form.get('modulePrefix')
+                if modulePrefix == None:
+                    return on_error(1, "modulePrefix is not specified")
         selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
         if selectedModule == None:
-            return on_error(10, "Selected Module Doesnt Exist")
+            return on_error(2, "Selected Module Doesnt Exist")
         return [ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
     return accessGranted
 
@@ -588,27 +636,28 @@ def get_module(prefix):
 
 @blueprint.route('ModuleAccess', methods=['POST', 'DELETE'])
 def Module_Access_Control():
-    #user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #accessGranted = userFunctionAuthorisations(user_bearer, 1, 'mst')
-    #if accessGranted == False:
-    #    return accessGranted
+    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    if accessGranted != True:
+        return accessGranted
 
     userID = request.values.get("userID")
     user = User.query.filter_by(userID=userID).first()
 
     modulePrefix = request.values.get("modulePrefix")
+
     if userID is None:
-        return on_error(3, "UserID is not specified")
+        return on_error(1, "UserID is not specified")
     if modulePrefix is None:
-        return on_error(3, "modulePrefix is not specified")
+        return on_error(1, "modulePrefix is not specified")
     elif len(modulePrefix) > 3:
-        return on_error(3, "ModulePrefix Cannot be more than 3 charachters")
+        return on_error(2, "ModulePrefix Cannot be more than 3 charachters")
     selected_user = User.query.filter_by(userID=userID).first()
     selected_module = Module.query.filter_by(prefix=modulePrefix).first()
     if selected_module == None:
-        return on_error(2, "Specified Module does Not Exist")
+        return on_error(3, "Specified Module does Not Exist")
     if selected_user == None:
-        return on_error(2, "Specified User does Not Exist")
+        return on_error(4, "Specified User does Not Exist")
 
     if request.method == 'POST':
         moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=userID).delete()
@@ -629,8 +678,14 @@ def give_user_access(user, modulePrefix):
     returns:
         ModuleAccess Object containing userID & Module info
     '''
-    pages = ModuleSecurity.query.filter_by(SecurityLevel=user.adminLevel, modulePrefix=modulePrefix).all()
-    return on_error(1, "User Doesn't Have a High enough Access Level to be Added to this Function")
+    pages = ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()
+    accessGranted = False
+    for page in pages:
+        if page.SecurityLevel <= user.adminLevel:
+            accessGranted = True
+            break
+    if not accessGranted:
+        return on_error(5, "User Doesn't Have a High enough Access Level to be Added to this Function")
     created_module_access = create_moduleAccess(user.userID, modulePrefix)
     created_module_access.insert()
 
@@ -639,7 +694,6 @@ def give_user_access(user, modulePrefix):
 
 def remove_user_access(user, modulePrefix):
     moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=user.userID).delete()
-
     return on_success([])
 
 
@@ -653,33 +707,33 @@ def update_module_ref():
             Error Code 16 - Incorrect Password Given
     """
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
-    if accessGranted == False:
+    accessGranted = userFunctionAuthorisations(user_bearer, 7, 'mst')
+    if accessGranted != True:
         return accessGranted
     from Program import db
     save_dir = os.getcwd()
     modulePrefix = request.values.get('modulePrefix')
-    ModulePass = request.values.get('modulePass')
     displayName = request.values.get('displayName')
-    if displayName == None or ModulePass == None or modulePrefix == None:
-        return on_error(3, "Missing Key Inputs, please check request is sending correct parameters")
+    if len(displayName) > 200:
+        return on_error(2, "Display Name Must be less than 200 Characters")
+    if displayName == None or modulePrefix == None:
+        return on_error(1, "Missing Key Inputs, please check request is sending correct parameters")
     dl_file = ''
     if len(request.files) != 0:
         dl_file = request.files['logo']
     old_module = Module.query.filter(Module.prefix == modulePrefix).first()
-    if old_module.moduleKey.strip() == ModulePass:
-        values = {"displayName": displayName}
-        if dl_file != '':
-            os.chdir("../")
-            os.chdir("./Front-End-Current/src/")
-            dl_file.save(f'./logo/{modulePrefix}.svg')
-            values["logo"] = f"./logo/{modulePrefix}.svg"
-        Module.query.filter(Module.prefix == modulePrefix).update(values)
-        db.session.commit()
-        os.chdir(save_dir)  # Reset to Base CWD
-        return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
-    else:
-        return on_error(16, "Incorrect Module Password entered")
+    if old_module == None:
+        return on_error(3, "Specified Module Does Not Exist")
+    values = {"displayName": displayName}
+    if dl_file != '':
+        os.chdir("../")
+        os.chdir("./Front-End-Current/src/")
+        dl_file.save(f'./logo/{modulePrefix}.svg')
+        values["logo"] = f"./logo/{modulePrefix}.svg"
+    Module.query.filter(Module.prefix == modulePrefix).update(values)
+    db.session.commit()
+    os.chdir(save_dir)  # Reset to Base CWD
+    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
 @blueprint.route('activate', methods=["POST"])
@@ -687,11 +741,13 @@ def activate_module():
     from Program import db
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
-    if accessGranted == False:
+    if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
+    if modulePrefix is None:
+        return on_error(1, "Module Key is Not Specified")
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
-        return on_error(3, "Specified Module Does Not Exist")
+        return on_error(2, "Specified Module Does Not Exist")
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
     db.session.commit()
@@ -702,11 +758,13 @@ def activate_module():
 def deactivate_module():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
-    if accessGranted == False:
+    if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
+    if modulePrefix is None:
+        return on_error(1, "Module Key is Not Specified")
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
-        return on_error(3, "Specified Module Does Not Exist")
+        return on_error(2, "Specified Module Does Not Exist")
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=False))
 
@@ -734,12 +792,11 @@ def upload_module():
         On Success - Return new_module Module As Json
     '''
     if request.method in ['POST', 'OPTIONS']:
-    #    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    #    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
-    #    if accessGranted == False:
-    #        return accessGranted
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+        if accessGranted != True:
+            return accessGranted
         update = request.values.get('update') == True
-        #userFunctionAuthorisations()
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
@@ -748,7 +805,13 @@ def upload_module():
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
         ModulePass = PasswordHash.new(ModulePass)
-
+        moduleLevel = request.values.get("securityLevel")
+        if moduleLevel is None:
+            moduleLevel = 1
+        try:
+            int(moduleLevel)
+        except:
+            return(on_error(5, "moduleLevel is Not a Valid Number"))
         if '' in [DisplayName, ModulePass.hash]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
@@ -839,7 +902,7 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path, moduleLevel)
         QueryInsertModule(new_Module)
         for page in front_end_success:
             if update:

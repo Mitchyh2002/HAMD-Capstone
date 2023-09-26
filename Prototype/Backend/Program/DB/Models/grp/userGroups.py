@@ -14,8 +14,7 @@ class userGroup(db.Model):
         returns:
             Dict Representation of OBJ
         '''
-        return {"id": self.userGroupID,
-                "groupID": self.groupID,
+        return {"groupID": self.groupID,
                 "userID": self.userID}
 
     def insert(self):

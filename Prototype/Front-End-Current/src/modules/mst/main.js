@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 import { getPlugins, getUsers } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
-export const pages = [{
+export const mst_pages = [{
     path: "Plugins",
     pageCode: "1",
     element: PluginList,
