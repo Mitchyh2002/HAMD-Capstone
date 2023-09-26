@@ -190,7 +190,7 @@ def QueryInsertModule(new_module: Module):
     db.session.commit()
 
 
-@blueprint.route('/getModule', methods='POST')
+@blueprint.route('/getModule', methods=['POST'])
 def getModule():
     configurations = mst_Setup.query.all()
     if configurations is None:
