@@ -18,23 +18,41 @@ blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
 
+@blueprint.route('/getAccount/', methods=['OPTIONS'])
+def handle_options():
+    #print("Handling OPTIONS request")
+    return on_success("Pre-flight Accepted")
 
-@blueprint.route('/changePassword/', methods=['POST'])
-def changePassword():
+@blueprint.route('/getAccount/', methods=['GET'])
+def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    user = bearer_decode(user_bearer)
-    user = Select(User).where(UserID = user['userID']).first()
+    user = bearer_decode(user_bearer)['Values']
+    selectedUser = User.query.filter_by(userID=user['userID']).first()
+    user['totalKarma'] = selectedUser.totalKarma
+    return on_success(user)
 
-    oldPassword = input.get('currentPassword')
-    inputBytes = oldPassword.encode('utf-8')
+@blueprint.route('/changePassword', methods=['POST', 'OPTIONS'])
+def changePassword():
+    if request.method == 'OPTIONS':
+        return handle_options()
+    else:
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        user = bearer_decode(user_bearer)['Values']
+        user = User.query.filter_by(userID=user['userID']).first()
 
-    storedHash = user.passwordHash.hash[2:-1]
-    storedHash = storedHash.encode('utf-8')
-    
-    if bcrypt.checkpw(inputBytes, storedHash):
-        newPassword = input.get('newPassword')
-        user.changePassword(newPassword)
-        return on_success("password successfully changed")
+        input = request.values
+        oldPassword = input.get('currentPassword')
+        inputBytes = oldPassword.encode('utf-8')
+
+        storedHash = user.passwordHash.hash[2:-1]
+        storedHash = storedHash.encode('utf-8')
+        
+        if bcrypt.checkpw(inputBytes, storedHash):
+            newPassword = input.get('newPassword')
+            user.changePassword(newPassword)
+            user.set_id()
+            login_user(user)
+            return on_success(user.get_id())
     
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -52,6 +70,7 @@ def login():
     elif inputPass == "" or inputPass is None:
         return on_error(20, "Password is required, please enter a password")
     else:
+        print(inputEmail)
         # Finding User in database
         user = QuerySelectUser(inputEmail)        
         if user is None:
@@ -64,7 +83,7 @@ def login():
 
                 
                 if user.adminLevel == 0:
-                    return on_error(30, "Account has been suspended")
+                    return on_error(1, "Account has been suspended")
 
                 if not user.confirmed:
                     return on_error(30, "Please confirm your account")
@@ -201,6 +220,7 @@ def resetPassword(token):
         user.changePassword(inputPass)
     else:
         return on_error(62, "Account is not valid")
+
 
 
 

@@ -7,6 +7,9 @@ import Login from "Pages/Login";
 import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
 import { ConfirmEmail } from "Pages/Confirm";
+import Account from "Pages/Account";
+import { baseUrl } from "config";
+import ChangePassword from "Pages/ChangePassword";
 
 
 /*All Routes
@@ -28,10 +31,15 @@ export function CreateAllPaths(Components) {
     console.log(Components);
     //Create Route Directory
     const Routes = [{
+        path: "/",
+        loader: async ()  => {
+            return redirect("/Home")
+        }
+    },{
         path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
-        children: Components.map(e => createComponentRoutes(e)),
+        children: createHomeRoutes(Components),
         loader: async ()  => {
             const token = getToken();
             console.log(token);
@@ -52,11 +60,11 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch("http://localhost:5000/confirm/"+params.id);
+                const response = await fetch(baseUrl + "/mst/confirm/"+params.id);
                 const json = await response.json();
                 return json;
             }catch{
-                return({Message: "Local error/network error encounterded", StatusCode: -1, Success: false});
+                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
             }
         }
     },{
@@ -80,9 +88,11 @@ export function createComponentRoutes(module) {
         path: module.prefix,
         //Element function from main.js of the module
         element: <CreateParentOutlet module = {module} />,
+    }
 
-        //Create child path for each directory
-        children: Directory[module.prefix].map(e => {
+    if(Directory[module.prefix]){
+        Root.children = 
+        Directory[module.prefix].map(e => {
             console.log(e.children)
             if (module.pages.some(obj => obj.pageCode == e.pageCode)){
                 return({
@@ -94,6 +104,7 @@ export function createComponentRoutes(module) {
         }),
         //Create sub directories from pages
     }
+    console.log(Root)
 
     return Root;
 }
@@ -112,5 +123,38 @@ export function CreateParentOutlet (props) {
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )
+
+}
+
+function createHomeRoutes(modules){
+    //generate child modules
+    const children = modules.map(e => createComponentRoutes(e));
+    children.push(
+        {
+            path:"Account",
+            element: <Account />,
+            loader: async () => {
+                try{
+                    const response = await fetch(baseUrl + "/mst/user/getAccount/",{
+                        method: "GET",
+                        headers: {
+                            'Authorization': "Bearer " + getToken(),
+                        }
+                    });
+    
+                    const json = await response.json();
+                    return json;
+                }catch{
+                    return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
+                }
+            }
+        },
+        {
+            path:"ChangePassword",
+            element: <ChangePassword changed={false}/>
+        }
+    )
+
+    return children
 
 }

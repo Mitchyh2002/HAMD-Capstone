@@ -1,6 +1,7 @@
 import react, {useRef, useState} from "react";
 import axios from "axios";
 import "./admin.css";
+import { baseUrl } from "config";
 
 
 export default function Upload(props){
@@ -25,7 +26,7 @@ export default function Upload(props){
         const formData = new FormData(form);
         const method = (document.getElementById("update").checked? "UPDATE" : "POST")
 
-        fetch("http://localhost:5000/module/upload", {
+        fetch(baseUrl + "/mst/module/upload", {
             method: method,
             body: formData,
         }).then(response => (response.json()

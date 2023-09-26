@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "./admin.css";
 import { checkEmailValid, checkDOB, checkName, checkPass } from "../../Pages/Login.js";
+import { baseUrl } from "config";
 
 export default function AddUser(){
     const [nameError, setNameError] = useState();
@@ -44,7 +45,7 @@ export default function AddUser(){
 
         const valid = validateForm(formData);
         if(valid){
-            fetch("http://localhost:5000/user/register", {
+            fetch(baseUrl + "/mst/user/register", {
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()

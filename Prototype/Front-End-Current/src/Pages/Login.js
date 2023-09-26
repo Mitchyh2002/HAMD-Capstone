@@ -3,6 +3,7 @@ import './Login.css';
 import { login } from "Functions/User";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { baseUrl } from "config";
 
 export default function Login(props) {
     const register = props.register;
@@ -164,7 +165,7 @@ function RegisterForm(props) {
 
         const valid = validateFrom(formData);
         if (valid) {
-            fetch("http://localhost:5000/mst/user/register", {
+            fetch(baseUrl + "/mst/user/register", {
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()
@@ -197,7 +198,7 @@ function RegisterForm(props) {
                             error = {nameError}
                         />
                     <FormInput
-                            label="Year of Birth"
+                            label="Birth Year"
                             error={dobError}
                             type="number"
                             min="1910"

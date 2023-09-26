@@ -1,7 +1,7 @@
 /*Setting Variables*/
 :root {
-  --font1: Merriweather, serif;
-  --font2: Lato, sans-serif;
+  --font1: 'Merriweather', serif;
+  --font2: 'Lato', sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
   --header: rgba(146, 180, 236);
@@ -54,6 +54,19 @@ h3{
   font-family: var(--font1);
   font-size: 30px;
   font-weight: normal;
+}
+
+h3-bold{
+  font-family: var(--font1);
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+h3-bolder{
+  font-family: var(--font1);
+  font-size: 30px;
+  font-weight: bolder;
 }
 
 h4{
@@ -367,4 +380,15 @@ input:focus{
   align-content: center;
   align-self: stretch;
   justify-self: stretch;
+}
+
+/*Account Div*/
+.accountContainer{
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.accountContainer h3 {
+  margin: 12px
 }
