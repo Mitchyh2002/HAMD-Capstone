@@ -275,6 +275,7 @@ def get_active_plugins():
                 valid_modules.append(curr_module)
 
     user_modules = moduleAccess.query.filter_by(userID=user.userID).all()
+    curr_module = None
     for module in user_modules:
         curr_module = Module.query.filter_by(prefix=module.modulePrefix).first()
         pages = ModuleSecurity.query.filter(ModuleSecurity.modulePrefix == module.modulePrefix,
@@ -290,8 +291,12 @@ def get_active_plugins():
         curr_module = curr_module.toJSON(True)
         curr_module['pages'] = pages
         valid_modules.append(curr_module)
-
-    return on_success(valid_modules)
+    if curr_module is not None:
+        if curr_module['pages'] != []:
+            curr_module['pages'] = [page.toJSON() for page in curr_module['pages']]
+        return on_success(valid_modules)
+    else:
+        return on_success([])
 
 
 @blueprint.route('getall')
@@ -342,7 +347,7 @@ def updatePageLevel():
         return on_error(2, "Specified Module Does Not Exist")
 
     selectedPage = ModuleSecurity.query.filter_by(modulePrefix=modulePrefix, pageCode=pageCode).first()
-    if selectedModule == None:
+    if selectedPage is None:
         return on_error(2, "Specified Page Does Not Exist")
     selectedPage.SecurityLevel = securityLevel
     if pageName is not None:
@@ -640,6 +645,12 @@ def Module_Access_Control():
         return accessGranted
 
     userID = request.values.get("userID")
+    try:
+        if float(userID) % 1 != 0.0:
+            return on_error(6, "userID is not a valid number")
+    except:
+        return on_error(6, "userID not a valid number")
+
     user = User.query.filter_by(userID=userID).first()
 
     modulePrefix = request.values.get("modulePrefix")
@@ -711,11 +722,12 @@ def update_module_ref():
     from Program import db
     save_dir = os.getcwd()
     modulePrefix = request.values.get('modulePrefix')
+
     displayName = request.values.get('displayName')
-    if len(displayName) > 200:
-        return on_error(2, "Display Name Must be less than 200 Characters")
     if displayName == None or modulePrefix == None:
         return on_error(1, "Missing Key Inputs, please check request is sending correct parameters")
+    if len(displayName) > 200:
+        return on_error(2, "Display Name Must be less than 200 Characters")
     dl_file = ''
     if len(request.files) != 0:
         dl_file = request.files['logo']
