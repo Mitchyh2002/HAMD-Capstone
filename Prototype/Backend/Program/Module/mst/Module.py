@@ -220,7 +220,8 @@ def getModule():
         modulePages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
         selectedModule['Pages'] = modulePages
 
-    return selectedModule
+    return on_success(selectedModule)
+
 @blueprint.route('/getactive', methods=['GET'])
 def get_active_plugins():
     '''
@@ -244,10 +245,7 @@ def get_active_plugins():
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
     user_data = bearer_decode(user_bearer)
     if user_data['Success'] == False:
-        if user_data['StatusCode'] == 403:
-            return user_data
-        valid_modules = Module.query.filter(Module.status == True).all()
-        return on_success([x.toJSON(True) for x in valid_modules])
+        return user_data
     user_data = user_data['Values']
     #If Breakglass Show All Active Modules
     if user_data['adminLevel'] == 9:
@@ -310,7 +308,7 @@ def get_all_plugins():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted == True:
-        return [Module.toJSON(True, True) for Module in Module.query.all()]
+        return on_success([Module.toJSON(True, True) for Module in Module.query.all()])
     return accessGranted
 
 @blueprint.route('updatePage', methods=['POST'])
@@ -385,7 +383,7 @@ def get_module_pages(modulePrefix=None):
         selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
         if selectedModule == None:
             return on_error(2, "Selected Module Doesnt Exist")
-        return [ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
+        return on_success([ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()])
     return accessGranted
 
 def check_files(temp_dir, module_prefix):
@@ -751,7 +749,7 @@ def activate_module():
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
     db.session.commit()
-    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
+    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
 @blueprint.route('deactivate', methods=["POST"])
@@ -769,7 +767,7 @@ def deactivate_module():
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=False))
 
     db.session.commit()
-    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
+    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
 @blueprint.route('/upload', methods=['GET', 'POST', 'OPTIONS'])
