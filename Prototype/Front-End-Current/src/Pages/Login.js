@@ -296,7 +296,7 @@ export function checkPass(pass) {
     }
 }
 
-function FormInput(props) {
+export function FormInput(props) {
     return (
         <div className="form-group">
             <label>{props.label}</label>

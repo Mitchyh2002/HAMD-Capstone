@@ -1,7 +1,7 @@
 import Header from "Components/Header"
 import { Link } from "react-router-dom"
 import { useState } from "react";
-import { checkPass } from "./Login";
+import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
 import { getToken } from "Functions/User";
 
@@ -130,21 +130,4 @@ export function comparePass(newPass1, newPass2) {
     } catch {
 
     }
-}
-
-function FormInput(props) {
-    return (
-        <div className="form-group">
-            <label>{props.label}</label>
-            <div>
-                <input
-                    type={props.type}
-                    name={props.name}
-                    className={props.class}
-                    placeholder={props.placeholder}
-                />
-                <p style={{ color: "red" }}>{props.error}</p>
-            </div>
-        </div>
-    )
 }

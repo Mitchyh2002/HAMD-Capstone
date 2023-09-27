@@ -2,7 +2,6 @@ import Upload from "./Upload";
 import PluginList from "./PluginList";
 import Users from "./Users"
 import AddUser from "./AddUser";
-import UserAccount from "./UserAccount";
 import { Outlet } from "react-router-dom";
 import { adminCheck, getPlugins, getUser, getUsers } from "./loaderFunctions";
 
@@ -22,11 +21,11 @@ export const pages = [{
     path: "Add User",
     element: AddUser,
     loader: adminCheck
-},{
+}/* ,{
     path: "User Account/:id",
     element: UserAccount,
     loader: getUser
-}];
+} */];
 
 export default function mst_master(){
     return(

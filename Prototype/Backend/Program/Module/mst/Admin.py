@@ -1,7 +1,8 @@
 from datetime import datetime
 from flask import Blueprint, request
 try:
-    from sqlalchemy import Select, Update
+    from sqlalchemy import Update
+    from sqlalchemy import select as Select
 except ImportError:
     from sqlalchemy import select as Select
     from sqlalchemy import update as Update
@@ -16,26 +17,29 @@ blueprint = Blueprint('admin', __name__, url_prefix="/mst/admin")
 
 TESTING = True
 
-@blueprint.route('/getAllUsers', methods=['GET'])
+@blueprint.route('/getAllUsers', methods=['GET', 'OPTIONS'])
 def getAllUsers():
+    if request.method == 'OPTIONS':
+        return on_success("Pre-flight request")
+    
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
 
-    if accessGranted == False:
+    if not accessGranted:
         return accessGranted
 
     adminUser = adminReturn(user_bearer)
     if len(adminUser) == 3:
         return on_error(402, "User does not have access to make changes")
     
-    return [User.toJSON() for User in Select(User).where(User.adminLevel < adminUser['adminLevel']).all()]
+    return [User.toJSON() for User in User.query.filter(User.adminLevel < adminUser['adminLevel']).all()]
 
 @blueprint.route('/getUser/<userID>', methods=['GET'])
 def getUser(userID):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
      
-    if accessGranted == False:
+    if not accessGranted:
         return accessGranted
     
     adminUser = adminReturn(user_bearer, userID)
@@ -44,12 +48,15 @@ def getUser(userID):
 
     return [User.toJSON() for User in Select(User).where(User.userID == userID).first()]
     
-@blueprint.route('/updateUser/<userID>', methods=['POST'])
+@blueprint.route('/updateUser/<ID>', methods=['POST', 'OPTIONS'])
 def updateUser(ID):
+    if request.method == 'OPTIONS':
+        return on_success("Pre-flight request")
+    
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
 
-    if accessGranted == False:
+    if not accessGranted:
         return accessGranted
 
     adminUser = adminReturn(user_bearer, ID)
@@ -62,8 +69,8 @@ def updateUser(ID):
     inputDateOfBirth = input.get('dateOfBirth')
     inputPhoneNumber = input.get('phoneNumber')
 
-    targetUser = Select(User).where(userID = ID)
-    if not (inputEmail is None and emailIsValid(inputEmail)):
+    targetUser = User.query.filter(User.userID == ID).first()
+    if inputEmail is not None and inputEmail != "" and emailIsValid(inputEmail):
 
         uniqueEmail = QuerySelectUser(inputEmail)
         if type(uniqueEmail).__name__ == "user" and uniqueEmail.userID != ID:
@@ -71,13 +78,13 @@ def updateUser(ID):
 
         targetUser.email = inputEmail
 
-    if not (inputFirstName is None and firstNameIsValid(inputFirstName)):
+    if inputFirstName is not None and inputFirstName != "" and firstNameIsValid(inputFirstName):
         targetUser.firstName = inputFirstName
 
-    if not (inputDateOfBirth is None and dateOfBirthIsValid(inputDateOfBirth)):
+    if inputDateOfBirth is not None and inputDateOfBirth != "" and dateOfBirthIsValid(inputDateOfBirth):
         targetUser.dateOfBirth = inputDateOfBirth
 
-    if not (inputPhoneNumber is None and phoneNumberIsValid(inputPhoneNumber)):
+    if inputPhoneNumber is not None and inputPhoneNumber != "" and phoneNumberIsValid(inputPhoneNumber):
 
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user" and uniqueEmail.userID != ID:
@@ -85,36 +92,44 @@ def updateUser(ID):
 
         targetUser.phoneNumber = inputPhoneNumber
 
-    Update(User).where(userID = ID).values(email=targetUser.email, firstName=targetUser.firstName, dateOfBirth=targetUser.dateOfBirth, phoneNumber=targetUser.phoneNumber)
+    db.session.add(targetUser)
     db.session.commit()
     return on_success("User has been updated")
 
-@blueprint.route('/updateLevel/<userID>', methods=['POST'])
+@blueprint.route('/updateLevel/<ID>', methods=['POST', 'OPTIONS'])
 def updateUserLevel(ID):
-    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+    if request.method == 'OPTIONS':
+        return on_success("Pre-flight request")
     
-    if accessGranted == False:
-        return accessGranted
+    if request.values.get('adminLevel') != '':
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
+        
+        if not accessGranted:
+            return accessGranted
 
-    adminUser = adminReturn(user_bearer, ID)
-    if len(adminUser) == 3:
-        return on_error(402, "User does not have access to make changes")
+        adminUser = adminReturn(user_bearer, ID)
+        if len(adminUser) == 3:
+            return on_error(402, "User does not have access to make changes")
+        
+        
+        targetUser = User.query.filter(User.userID == ID).first()
+        desired_level = int(request.values.get('adminLevel'))
+        
+        if ID == adminUser['userID']:
+            return on_error(1, "Cannot modify your own permissions")
+
+        if desired_level > adminUser['adminLevel']:
+            return on_error(2, "Cannot give a user greater permissions than you have")
+
+        targetUser.adminLevel = desired_level
+        db.session.add(targetUser)
+        db.session.commit()
+        return on_success("User level has been changed")
     
-    
-    targetUser = Select(User).where(userID = ID)
-    desired_level = request.values.get('adminLevel')
-    
-    if ID == adminUser['userID']:
-        return on_error(1, "Cannot modify your own permissions")
+    return on_success("User Level not changed")
 
-    if desired_level > adminUser['adminLevel']:
-        return on_error(2, "Cannot give a user greater permissions than you have")
-
-    Update(User).where(userID = ID).values(adminLevel=desired_level)
-    return on_success("User level has been changed")
-
-@blueprint.route('/resetUserPassword/<userID>', methods=['POST'])
+@blueprint.route('/resetUserPassword/<ID>', methods=['POST'])
 def resetUserPassword(ID):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
@@ -164,4 +179,4 @@ def adminReturn(auth_header, targetUser=0):
     return user
 
 def adminLevelRequired(ID):
-    return Select(User.adminLevel).where(userID = ID).first()
+    return (User.query.filter(User.userID == ID).first()).adminLevel
