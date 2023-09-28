@@ -64,18 +64,7 @@ export function CreateAllPaths(Components) {
         }
     },{
         path:"/ResetPassword/:id",
-        element: <ResetPassword />,/* 
-        loader: async ({params}) => {
-            try{
-                const response = await fetch(baseUrl + "/mst/resetPassword/"+params.id, {
-                    method: "GET"
-                });
-                const json = await response.json();
-                return json;
-            }catch{
-                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
-            }
-        } */
+        element: <ResetPassword />,
     },{ 
         path:'*',
         element:<NoMatchingPage />
