@@ -70,7 +70,7 @@ def login():
     elif inputPass == "" or inputPass is None:
         return on_error(20, "Password is required, please enter a password")
     else:
-        print(inputEmail)
+        inputEmail = inputEmail.lower()
         # Finding User in database
         user = QuerySelectUser(inputEmail)        
         if user is None:
@@ -129,6 +129,7 @@ def register():
     elif not dateOfBirthIsValid(inputDateOfBirth):
         return on_error(41, "Date of Birth entered is invalid, please enter a valid date of birth.")
     
+    inputEmail = inputEmail.lower()
     # Checking email is Unique
     uniqueEmail = QuerySelectUser(inputEmail)
     if type(uniqueEmail).__name__ == "user":

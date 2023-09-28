@@ -71,7 +71,7 @@ def updateUser(ID):
 
     targetUser = User.query.filter(User.userID == ID).first()
     if inputEmail is not None and inputEmail != "" and emailIsValid(inputEmail):
-
+        inputEmail = inputEmail.lower()
         uniqueEmail = QuerySelectUser(inputEmail)
         if type(uniqueEmail).__name__ == "user" and uniqueEmail.userID != ID:
             return on_error(14, "Email is already taken")
