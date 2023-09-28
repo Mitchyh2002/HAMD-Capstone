@@ -2,7 +2,7 @@ import Breadcrumbs from "Components/Breadcrumbs";
 import Header from "Components/Header";
 import LandingPage from "./LandingPage";
 import Content from "Content"
-import { Link, Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 export default function Main(props) {
     const accountButton = "Account";
