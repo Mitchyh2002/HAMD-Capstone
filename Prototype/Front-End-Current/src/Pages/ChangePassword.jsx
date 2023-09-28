@@ -9,12 +9,12 @@ export default function ChangePassword(props) {
     const [changed, setChanged] = useState(props.changed);
 
     return (<>
-        <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
+        <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
             <div className="flexBoxGrow" style={{ maxWidth: "65%" }}>
-                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center" }}>
+                <div style={{ justifyContent: "center", display:'flex', flexDirection:'column'}}>
                     {changed ? (
                         <div>
                             <p>You have successfully changed your password! Please click below to navigate to home</p>
@@ -90,7 +90,7 @@ function ChangePasswordForm(props) {
         }
     }
     return (<>
-        <form className="password-form" id="Change Password">
+        <form className="password-form" id="Change Password" style={{width:'65vh'}}>
             <div className="password-form-content">
                 <FormInput
                     label="Current Password"
