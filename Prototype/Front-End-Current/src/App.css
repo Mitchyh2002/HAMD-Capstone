@@ -15,6 +15,8 @@
   --loginImage: url("../public/login-image.jpg");
   --bee: url("../public/bee3.png");
   --welcomeText: "Welcome to Bee Aware";
+  --landingImage: url("../public/landing-image.jpg");
+  --mainTitle: "Bee Aware";
 }
 
 /*Defaults*/
@@ -36,6 +38,19 @@ h3{
   font-family: var(--font1);
   font-size: 30px;
   font-weight: normal;
+}
+
+h3-bold{
+  font-family: var(--font1);
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+h3-bolder{
+  font-family: var(--font1);
+  font-size: 30px;
+  font-weight: bolder;
 }
 
 h4{
@@ -349,4 +364,15 @@ input:focus{
   align-content: center;
   align-self: stretch;
   justify-self: stretch;
+}
+
+/*Account Div*/
+.accountContainer{
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.accountContainer h3 {
+  margin: 12px
 }

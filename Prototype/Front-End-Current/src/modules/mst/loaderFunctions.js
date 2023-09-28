@@ -1,7 +1,9 @@
+import { getToken } from 'Functions/User';
+import { baseUrl } from "config";
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {
-    return fetch("http://localhost:5000/module/getall")
+    return fetch(baseUrl + "/mst/module/getall")
         .then(res => res.json())
         .then(res => {
             return res;
@@ -11,7 +13,7 @@ export async function getPlugins() {
 }
 
 export function updateName(form) {
-    return fetch("http://localhost:5000/module/updatereference",
+    return fetch(baseUrl + "/mst/module/updatereference",
         {
             method: "POST",
             body: form
@@ -21,7 +23,42 @@ export function updateName(form) {
 }
 
 export async function getUsers() {
-    return fetch("http://localhost:5000/admin/getallusers")
+    return fetch(baseUrl + "/mst/admin/getAllUsers", {
+        method: 'GET',
+        headers: {
+            'Authorization': "Bearer " + getToken(),
+        }
+    })
+        .then(res => res.json())
+        .then(res => {
+            return res;
+        }).catch(error => {
+            return error;
+        })
+}
+
+export async function adminCheck() {
+    return fetch(baseUrl + "/mst/admin/adminCheckForRoutes", {
+        method: 'GET',
+        headers: {
+            'Authorization': "Bearer " + getToken(),
+        }
+    })
+        .then(res => res.json())
+        .then(res => {
+            return res;
+        }).catch(error => {
+            return error;
+        })
+}
+
+export async function getUser({ params }) {
+    return fetch(baseUrl + "/mst/admin/getUser/" + params.id, {
+        method: 'GET',
+        headers: {
+            'Authorization': "Bearer " + getToken(),
+        }
+    })
         .then(res => res.json())
         .then(res => {
             return res;

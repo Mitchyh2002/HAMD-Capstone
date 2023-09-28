@@ -1,3 +1,5 @@
+from datetime import date
+
 from Program.DB.Builder import create_db
 from Program.DB.Models.grp.Groups import create_group
 from Program import init_app
@@ -19,7 +21,9 @@ def sys_create():
 
     new_module = create_module("mst", "Master Module", PasswordHash.new("M_STER@aaa").hash, True, '')
     grp_module = create_module("grp", "Group management", PasswordHash.new("GroupMDL").hash, False, '')
-    user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 7)
+    user = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 9)
+    user.confirmed = True
+    user.confirmedDate = date.today()
     
     grp = create_group('Default')
     with app.app_context():

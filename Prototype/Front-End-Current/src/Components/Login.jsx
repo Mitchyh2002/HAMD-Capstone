@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { baseUrl } from "config";
 
 export default function Login(props) {
     const [register, setRegister] = useState(false);
@@ -7,7 +8,7 @@ export default function Login(props) {
         const form = document.getElementById("inputs");
         const formData = new FormData(form);
 
-        fetch("http://localhost:5000/user/login", {
+        fetch(baseUrl + "/mst/user/login", {
             method: "POST",
             body: formData,
         }).then(response => (response.json()
@@ -26,7 +27,7 @@ export default function Login(props) {
         const form = document.getElementById("inputs");
         const formData = new FormData(form);
         
-        fetch("http://localhost:5000/user/register", {
+        fetch(baseUrl + "/mst/user/register", {
             method: "POST",
             body: formData,
         }).then(response => (response.json()

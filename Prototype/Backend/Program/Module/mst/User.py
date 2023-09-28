@@ -18,23 +18,41 @@ blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 
 TESTING = True
 
+@blueprint.route('/getAccount/', methods=['OPTIONS'])
+def handle_options():
+    #print("Handling OPTIONS request")
+    return on_success("Pre-flight Accepted")
 
-@blueprint.route('/changePassword/', methods=['POST'])
-def changePassword():
+@blueprint.route('/getAccount/', methods=['GET'])
+def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    user = bearer_decode(user_bearer)
-    user = Select(User).where(UserID = user['userID']).first()
+    user = bearer_decode(user_bearer)['Values']
+    selectedUser = User.query.filter_by(userID=user['userID']).first()
+    user['totalKarma'] = selectedUser.totalKarma
+    return on_success(user)
 
-    oldPassword = input.get('currentPassword')
-    inputBytes = oldPassword.encode('utf-8')
+@blueprint.route('/changePassword', methods=['POST', 'OPTIONS'])
+def changePassword():
+    if request.method == 'OPTIONS':
+        return handle_options()
+    else:
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        user = bearer_decode(user_bearer)['Values']
+        user = User.query.filter_by(userID=user['userID']).first()
 
-    storedHash = user.passwordHash.hash[2:-1]
-    storedHash = storedHash.encode('utf-8')
-    
-    if bcrypt.checkpw(inputBytes, storedHash):
-        newPassword = input.get('newPassword')
-        user.changePassword(newPassword)
-        return on_success("password successfully changed")
+        input = request.values
+        oldPassword = input.get('currentPassword')
+        inputBytes = oldPassword.encode('utf-8')
+
+        storedHash = user.passwordHash.hash[2:-1]
+        storedHash = storedHash.encode('utf-8')
+        
+        if bcrypt.checkpw(inputBytes, storedHash):
+            newPassword = input.get('newPassword')
+            user.changePassword(newPassword)
+            user.set_id()
+            login_user(user)
+            return on_success(user.get_id())
     
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -52,6 +70,7 @@ def login():
     elif inputPass == "" or inputPass is None:
         return on_error(20, "Password is required, please enter a password")
     else:
+        inputEmail = inputEmail.lower()
         # Finding User in database
         user = QuerySelectUser(inputEmail)        
         if user is None:
@@ -64,7 +83,7 @@ def login():
 
                 
                 if user.adminLevel == 0:
-                    return on_error(30, "Account has been suspended")
+                    return on_error(1, "Account has been suspended")
 
                 if not user.confirmed:
                     return on_error(30, "Please confirm your account")
@@ -110,6 +129,7 @@ def register():
     elif not dateOfBirthIsValid(inputDateOfBirth):
         return on_error(41, "Date of Birth entered is invalid, please enter a valid date of birth.")
     
+    inputEmail = inputEmail.lower()
     # Checking email is Unique
     uniqueEmail = QuerySelectUser(inputEmail)
     if type(uniqueEmail).__name__ == "user":
@@ -164,24 +184,26 @@ def phoneNumberIsValid(phoneNumber):
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
 
-@blueprint.route('/forgotPassword')
+@blueprint.route('/forgotPassword', methods=['POST'])
 def forgotPassword():
     input = request.values
-    inputEmail = input.get('email')
+    inputEmail = input.get('email').lower()
     user = QuerySelectUser(inputEmail)
 
-    if type(user).__name__ == "user":
+    if type(user).__name__ == "User":
         token = generate_confirmation_token(user.email)
         forgot_url = 'http://localhost:3000/resetPassword/' + token
         html = render_template('reset.html', forgot_url=forgot_url)
         subject = "BeeAware Password Reset"
         send_email(user.email, subject, html)
+        return on_success("Email sent")
     else:
-        return on_error(62, "Account is not valid")
+        return on_success("Account is not valid")
     
-@blueprint.route('/resetPassword/<token>')
+@blueprint.route('/resetPassword/<token>', methods=['POST', 'GET'])
 def resetPassword(token):
     email = confirm_token(token)
+        
     try:
         if not email:
             return on_error(60, "The confirmation link is invalid or has expired.")
@@ -189,18 +211,26 @@ def resetPassword(token):
     except:
         pass
 
+    
     user = QuerySelectUser(email)
 
-    if type(user).__name__ == "user":
-        input = request.values
-        inputPass = input.get('password')
+    if type(user).__name__ == "User":
+        if request.method == 'POST':
+            input = request.values
+            inputPass = input.get('password')
+            print(input)
 
-        if inputPass == "" or inputPass is None:
-            return on_error(20, "Password is required, please enter a password")
-        
-        user.changePassword(inputPass)
+            if inputPass == "" or inputPass is None:
+                return on_error(20, "Password is required, please enter a password")
+            
+            user.changePassword(inputPass)
+
+            return on_success("Password Changed")
+        else:
+            return on_success("Token verified")
     else:
         return on_error(62, "Account is not valid")
+
 
 
 
