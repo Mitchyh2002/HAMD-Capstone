@@ -1,15 +1,10 @@
 import {Directory, Modules } from "../moduleDefs"
 import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
-import Main from "Pages/Main";
+import {Main, Login, NoMatchingPage, ConfirmEmail, Account, ChangePassword, ResetPassword} from "Pages/";
 import React from "react";
 import SubMenu from "Components/SubMenu";
-import Login from "Pages/Login";
-import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
-import { ConfirmEmail } from "Pages/Confirm";
-import Account from "Pages/Account";
 import { baseUrl } from "config";
-import ChangePassword from "Pages/ChangePassword";
 
 
 /*All Routes
@@ -68,6 +63,20 @@ export function CreateAllPaths(Components) {
             }
         }
     },{
+        path:"/ResetPassword/:id",
+        element: <ResetPassword />,/* 
+        loader: async ({params}) => {
+            try{
+                const response = await fetch(baseUrl + "/mst/resetPassword/"+params.id, {
+                    method: "GET"
+                });
+                const json = await response.json();
+                return json;
+            }catch{
+                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
+            }
+        } */
+    },{ 
         path:'*',
         element:<NoMatchingPage />
     }];

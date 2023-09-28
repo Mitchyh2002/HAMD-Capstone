@@ -184,24 +184,26 @@ def phoneNumberIsValid(phoneNumber):
     elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
         return False
 
-@blueprint.route('/forgotPassword')
+@blueprint.route('/forgotPassword', methods=['POST'])
 def forgotPassword():
     input = request.values
-    inputEmail = input.get('email')
+    inputEmail = input.get('email').lower()
     user = QuerySelectUser(inputEmail)
 
-    if type(user).__name__ == "user":
+    if type(user).__name__ == "User":
         token = generate_confirmation_token(user.email)
         forgot_url = 'http://localhost:3000/resetPassword/' + token
         html = render_template('reset.html', forgot_url=forgot_url)
         subject = "BeeAware Password Reset"
         send_email(user.email, subject, html)
+        return on_success("Email sent")
     else:
-        return on_error(62, "Account is not valid")
+        return on_success("Account is not valid")
     
-@blueprint.route('/resetPassword/<token>')
+@blueprint.route('/resetPassword/<token>', methods=['POST', 'GET'])
 def resetPassword(token):
     email = confirm_token(token)
+        
     try:
         if not email:
             return on_error(60, "The confirmation link is invalid or has expired.")
@@ -209,16 +211,23 @@ def resetPassword(token):
     except:
         pass
 
+    
     user = QuerySelectUser(email)
 
-    if type(user).__name__ == "user":
-        input = request.values
-        inputPass = input.get('password')
+    if type(user).__name__ == "User":
+        if request.method == 'POST':
+            input = request.values
+            inputPass = input.get('password')
+            print(input)
 
-        if inputPass == "" or inputPass is None:
-            return on_error(20, "Password is required, please enter a password")
-        
-        user.changePassword(inputPass)
+            if inputPass == "" or inputPass is None:
+                return on_error(20, "Password is required, please enter a password")
+            
+            user.changePassword(inputPass)
+
+            return on_success("Password Changed")
+        else:
+            return on_success("Token verified")
     else:
         return on_error(62, "Account is not valid")
 
