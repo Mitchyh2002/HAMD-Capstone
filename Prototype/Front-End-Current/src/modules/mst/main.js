@@ -20,7 +20,8 @@ export const pages = [{
     loader: getUsers
 },{
     path: "Add User",
-    element: AddUser
+    element: AddUser,
+    loader: adminCheck,
 },{
     path: "Configure",
     element: Configure
