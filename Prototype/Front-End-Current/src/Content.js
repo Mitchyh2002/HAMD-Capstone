@@ -5,7 +5,7 @@ import React from "react";
 
 //Main Frame of applications after the user has logged in
 export default function Content(props){
-
+ 
     return (
       <>
         <div style={{display: "flex", flexDirection:"row", flexGrow: 1}}>

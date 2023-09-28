@@ -1,5 +1,3 @@
-import re
-
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
@@ -32,13 +30,13 @@ def import_blueprint(app, moduleName, ModuleFile):
 
     """
     for file in ModuleFile:
-        imp_str = "Program.Module." + str(moduleName) + "." + str(file.replace('.py', ''))
+        imp_str = "Program.Module." + str(moduleName) + "." + str(file.strip('.py'))
+        new_blueprint = __import__(imp_str)
         try:
-            new_blueprint = __import__(imp_str)
-            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.replace('.py', '')) + ".blueprint"
+            bp_str = "new_blueprint.Module." + str(moduleName) + "." + str(file.strip('.py')) + ".blueprint"
             app.register_blueprint(eval(bp_str))
-        except AttributeError:
-            print("Module Doesn't have Blueprint Variable")
+        except ModuleNotFoundError:
+            print("Module Doesn't have Blueprint file")
 
 
 def init_app() -> Flask:
@@ -48,7 +46,7 @@ def init_app() -> Flask:
 
     app.secret_key = '1738'
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@localhost:5432/CapstoneTestDB'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://root:root@localhost:5432/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     UPLOAD_FOLDER = '/static/img'

@@ -1,10 +1,9 @@
-import react, {useRef, useState} from "react";
+import react, { useRef, useState } from "react";
 import axios from "axios";
 import "./admin.css";
-import { baseUrl } from "config";
 
 
-export default function Upload(props){
+export default function Upload(props) {
 
     const [selectedFile, setSelectedFile] = useState();
     const [isSelected, setIsSelected] = useState(false);
@@ -25,30 +24,31 @@ export default function Upload(props){
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
-        const method = (document.getElementById("update").checked? "UPDATE" : "POST")
+        const method = (document.getElementById("update").checked ? "UPDATE" : "POST")
 
-        fetch(baseUrl + "/mst/module/upload", {
+        fetch("http://localhost:5000/module/upload", {
             method: method,
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {
             setResponse(response);
             if (response.Success == true) {
-                    setSuccess(true);
-                    setError(false);
-                } else {
-                    setSuccess(false);
-                    setError(true);
-                }
-            
+                setSuccess(true);
+                setError(false);
+            } else {
+                setSuccess(false);
+                setError(true);
+            }
+
             console.log("success: " + success);
             console.log("error :" + error);
             console.log(response);
-            }
+        }
         ).catch(function (error) {
-             console.log(error);
+            console.log(error);
         })
     };
+
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
@@ -85,27 +85,14 @@ export default function Upload(props){
                             </div>) : (
                                 <p> </p>
                             )}
-
                     </div>
+                    <label>Update?</label>
+                    <input type="checkbox" id="update" />
+                </form>
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
                 </div>
-                <label>Module Password</label>
-                <input className="uploadInput" type="password" id="modulePass" name="modulePass" />
-                {isSelected ? 
-                (<div>
-                    <p>Filename: {selectedFile.name}</p>
-                    <p>Filetype: {selectedFile.type}</p>
-                    <p>Size in bytes: {selectedFile.size}</p>
-                </div>) : (
-                    <p> </p>
-                )}
-                </div>
-                <label>Update?</label>
-                <input type="checkbox" id="update" />
-            </form>
-            <div className="flexBoxRowGrow" style={{justifyContent: "center"}}>
-                <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
             </div>
-        </div>
         </div>
     )
 };

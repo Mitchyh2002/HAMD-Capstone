@@ -8,15 +8,13 @@ export default function Header (props) {
     return(
         <div className="header">
             <header>
-                <div className="breadcrumbs breadcrumbs1">
-                    <Link to='/home' style={{ display: 'contents' }}>
-                        <img className="bee-logo" alt="logo"></img>
-                    </Link>
+            <div className="breadcrumbs breadcrumbs1">
+                    <img className="bee-logo" alt="logo" />
                     {props.breadcrumbs}
                 </div>
                 <nav>
                     <ul>
-                        <li><Link to="/home/account">{props.accountButton}</Link></li>
+                        <li><Link to="#!">{props.accountButton}</Link></li>
                         <li><Link to='/login' onClick={logout}>{props.logoutButton}</Link></li>
                     </ul>
                 </nav>

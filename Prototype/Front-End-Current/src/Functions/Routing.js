@@ -1,10 +1,12 @@
 import {Directory, Modules } from "../moduleDefs"
 import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
-import {Main, Login, NoMatchingPage, ConfirmEmail, Account, ChangePassword, ResetPassword} from "Pages/";
+import Main from "Pages/Main";
 import React from "react";
 import SubMenu from "Components/SubMenu";
+import Login from "Pages/Login";
+import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
-import { baseUrl } from "config";
+import { ConfirmEmail } from "Pages/Confirm";
 
 
 /*All Routes
@@ -26,15 +28,10 @@ export function CreateAllPaths(Components) {
     console.log(Components);
     //Create Route Directory
     const Routes = [{
-        path: "/",
-        loader: async ()  => {
-            return redirect("/Home")
-        }
-    },{
         path: "/Home",
         element: <Main modules={Components}/>,
         //Map Component Directories
-        children: createHomeRoutes(Components),
+        children: Components.map(e => createComponentRoutes(e)),
         loader: async ()  => {
             const token = getToken();
             console.log(token);
@@ -55,17 +52,14 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch(baseUrl + "/mst/confirm/"+params.id);
+                const response = await fetch("http://localhost:5000/confirm/"+params.id);
                 const json = await response.json();
                 return json;
             }catch{
-                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
+                return({Message: "Local error/network error encounterded", StatusCode: -1, Success: false});
             }
         }
     },{
-        path:"/ResetPassword/:id",
-        element: <ResetPassword />,
-    },{ 
         path:'*',
         element:<NoMatchingPage />
     }];
@@ -85,19 +79,18 @@ export function createComponentRoutes(module) {
         path: module.prefix,
         //Element function from main.js of the module
         element: <CreateParentOutlet module = {module} />,
-    }
 
-    if(Directory[module.prefix]){
-        Root.children = 
-        Directory[module.prefix].map(e => {
+        //Create child path for each directory
+        children: Directory[module.prefix].map(e => {
             console.log(e.children)
             return({
             path: e.path,
             ...e.loader&& {loader: e.loader},
             ...e.children&& {children: e.children},
-            element: React.createElement(e.element)})})
+            element: React.createElement(e.element)})
+        }),
+        //Create sub directories from pages
     }
-    console.log(Root)
 
     return Root;
 }
@@ -116,38 +109,5 @@ export function CreateParentOutlet (props) {
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )
-
-}
-
-function createHomeRoutes(modules){
-    //generate child modules
-    const children = modules.map(e => createComponentRoutes(e));
-    children.push(
-        {
-            path:"Account",
-            element: <Account />,
-            loader: async () => {
-                try{
-                    const response = await fetch(baseUrl + "/mst/user/getAccount/",{
-                        method: "GET",
-                        headers: {
-                            'Authorization': "Bearer " + getToken(),
-                        }
-                    });
-    
-                    const json = await response.json();
-                    return json;
-                }catch{
-                    return({Message: "Local error/network error encountered", StatusCode: -1, Success: false})
-                }
-            }
-        },
-        {
-            path:"ChangePassword",
-            element: <ChangePassword changed={false}/>
-        }
-    )
-
-    return children
 
 }
