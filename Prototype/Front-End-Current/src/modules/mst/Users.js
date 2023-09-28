@@ -222,7 +222,7 @@ function UserListModal(props) {
                 </button>
                 {type === 'edit' ? (<>
                     <h4 className='modal-heading'>Edit</h4>
-                    <form id="edit user">
+                    <form id="edit user" style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                         <FormInput
                             label="Name:"
                             type="text"
@@ -267,7 +267,8 @@ function UserListModal(props) {
                     </button>
                 </>) : (
                     <>
-                        <p>Are you sure you want to suspend this user?</p>
+                        <h4 className='modal-heading' style={{justifyContent:'center'}}>Suspend User</h4>
+                        <p>Are you sure you want to suspend this user, {user.email}?</p>
                         <button className='buttons user-confirm-button' onClick={handleSuspend}>
                             Suspend User
                         </button>

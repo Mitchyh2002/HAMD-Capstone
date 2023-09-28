@@ -176,11 +176,14 @@ function ForgotPasswordForm(props) {
                         />
                     </div>
                 </form>}
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+            <div className="flexBoxColumnGrow" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                 {submitted ?
                     <button className="primaryButton sign-in-button" onClick={() => props.setForgotPassword(false)}>Return to Login</button>
                     :
+                    <div>
                     <button className="primaryButton sign-in-button" onClick={handleForgot} disabled={loading}>Confirm</button>
+                    <button className="formButton sign-in-button" onClick={() => props.setForgotPassword(false)} style={{marginLeft: '45px'}}>Cancel</button>
+                    </div>
                 }
             </div>
         </>)
@@ -193,6 +196,7 @@ function ForgotPasswordForm(props) {
         const [dobError, setDobError] = useState();
         const [passError, setPassError] = useState();
         const [loading, setLoading] = useState(false);
+        const [visible, setVisible] = useState(false);
 
         const validateForm = (formData) => {
             setNameError(checkName(formData.get("firstName")));
