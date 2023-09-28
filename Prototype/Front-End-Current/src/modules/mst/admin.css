@@ -274,3 +274,9 @@ left: 190px;
   min-width: 300px;
 }
 
+.visible-icon{
+  margin-top: 10px;
+  cursor: pointer;
+  height: 30px;
+}
+

@@ -63,7 +63,15 @@ export default function Configure() {
                                 id="welcomeText"
                                 name="welcomeText"
                             />
-                            <UploadImage
+                             <FormInput
+                                tooltipText="This text will be displayed on the landing page."
+                                className="uploadInput"
+                                label="Website Name"
+                                type="text"
+                                id="websiteName"
+                                name="websiteName"
+                            />
+                            <UploadFile
                                 tooltipText="This logo image will appear in the header bar. Please upload a png file only."
                                 label="Logo Image"
                                 className="formButton"
@@ -73,7 +81,7 @@ export default function Configure() {
                                 id="logoImage"
                                 name="logoImage"
                             />
-                            <UploadImage
+                            <UploadFile
                                 tooltipText="This image will be displayed on the login and register pages. Please upload a jpg file only."
                                 label="Login Image"
                                 className="formButton"
@@ -83,7 +91,7 @@ export default function Configure() {
                                 id="loginImage"
                                 name="loginImage"
                             />
-                            <UploadImage
+                            <UploadFile
                                 tooltipText="This image will be displayed on the landing page. Please upload a jpg file only."
                                 label="Landing Page Image"
                                 className="formButton"
@@ -92,6 +100,16 @@ export default function Configure() {
                                 accept=".jpg"
                                 id="landingImage"
                                 name="landingImage"
+                            />
+                              <UploadFile
+                                tooltipText=""
+                                label="Database URL"
+                                className="formButton"
+                                buttonName="Upload File"
+                                type="file"
+                                accept=".zip"
+                                id="databaseURL"
+                                name="databaseURL"
                             />
                         </div>
                     </form>
@@ -132,7 +150,7 @@ function FormInput(props) {
     )
 }
 
-function UploadImage(props) {
+function UploadFile(props) {
     return (
         <div style={{ justifyContent: "space-between", paddingTop: "20px" }} className="flexBoxRowGrow">
             <label style={{ display: "flex", flexDirection: "row" }}>

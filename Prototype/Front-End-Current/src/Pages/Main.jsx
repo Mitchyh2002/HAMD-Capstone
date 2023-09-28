@@ -11,9 +11,9 @@ export default function Main(props) {
     return(
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
             <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} accountButton={accountButton} logoutButton={logoutButton}/>
-            <LandingPage modules={props.modules}/>
+            <Content modules={props.modules}/>
         </div>
     )
 }
 
-/* <Content modules={props.modules}/> */
+/* <LandingPage modules={props.modules}/> <Content modules={props.modules}/> */

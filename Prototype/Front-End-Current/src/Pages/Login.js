@@ -127,6 +127,7 @@ function RegisterForm(props) {
     const [dobError, setDobError] = useState();
     const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const validateFrom = (formData) => {
         setNameError(checkName(formData.get("firstName")));
@@ -213,14 +214,19 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
-                    <FormInput
-                        label="Password"
-                        error={passError}
-                        type="password"
-                        name="password"
-                        className="password"
-                        placeholder="Password"
-                    />
+                    <div style={{display:"flex", flexDirection:"row"}}>
+                        <FormInput
+                            label="Password"
+                            error={passError}
+                            type={visible ? "text" : "password"}
+                            name="password"
+                            className="password"
+                            placeholder="Password"
+                        />
+                        <div className="visible-icon" onClick={() => setVisible(!visible)}>
+                            {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                        </div>
+                    </div>
                 </div>
             </form>
 

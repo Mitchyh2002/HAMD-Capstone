@@ -10,6 +10,7 @@ export default function Upload(props) {
     const [response, setResponse] = useState();
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const changeFile = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -70,7 +71,12 @@ export default function Upload(props) {
                             </div>
                         </div>
                         <label>Module Password</label>
-                        <input className="uploadInput" type="password" id="modulePass" name="modulePass" />
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <input className="uploadInput" type={visible ? "text" : "password"} id="modulePass" name="modulePass" />
+                            <div onClick={() => setVisible(!visible)}>
+                                {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                            </div>
+                        </div>
                         {isSelected ?
                             (<div>
                                 <p>Filename: {selectedFile.name}</p>

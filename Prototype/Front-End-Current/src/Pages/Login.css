@@ -24,6 +24,17 @@
     content: var(--welcomeText);
 }
 
+.visible-icon{
+    margin-top: 10px;
+    cursor: pointer;
+    height: 30px;
+}
+
+.password{
+    display: flex;
+    flex-direction: column;
+}
+
 /* Landing Page CSS */
 
 .landing-image{
