@@ -10,6 +10,6 @@ export default function GetComponent(props) {
     }
     //return error in the form of a component
     return React.createElement(
-      () => <div>Looks like something went wrong... We couldnt find your module in our system.</div>
+      () => <div>Looks like something went wrong... WE couldnt find your module in our system!.</div>
     );
   };

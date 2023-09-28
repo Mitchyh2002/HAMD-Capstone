@@ -1,1 +1,1 @@
-npm start test
+npm install && npm start test
