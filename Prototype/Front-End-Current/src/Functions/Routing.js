@@ -32,7 +32,7 @@ export function CreateAllPaths(Components) {
         }
     },{
         path: "/Home",
-        element: <Main modules={Components}/>,
+        element: <Main modules={Components} clicked={false}/>,
         //Map Component Directories
         children: createHomeRoutes(Components),
         loader: async ()  => {

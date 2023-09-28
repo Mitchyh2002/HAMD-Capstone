@@ -9,13 +9,14 @@ export default function Main(props) {
     const accountButton = "Account";
     const logoutButton = "Logout";
     const [moduleClick, setModuleClick] = useState();
+    const [landing, setLanding] = useState();
 
-    return(<> { moduleClick ?
+    return(<> { landing ?
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
-            <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} accountButton={accountButton} logoutButton={logoutButton}/>
+            <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} setLanding={setLanding} accountButton={accountButton} logoutButton={logoutButton}/>
             <Content modules={props.modules}/>
         </div> :
-        <LandingPage modules={props.modules} setModuleClick={setModuleClick}/>
+        <LandingPage modules={props.modules} setModuleClick={setLanding}/>
     }
     </>)
 }

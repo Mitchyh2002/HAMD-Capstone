@@ -3,13 +3,15 @@ import '../App.css';
 import { logout } from "Functions/User";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
+import { useState } from "react";
 
 export default function Header (props) {
+
     return(
         <div className="header">
             <header>
                 <div className="breadcrumbs breadcrumbs1">
-                    <Link to='/home' style={{ display: 'contents' }}>
+                    <Link to='/home' style={{ display: 'contents' }} onClick={() => props.setLanding(false)}>
                         <img className="bee-logo" alt="logo"></img>
                     </Link>
                     {props.breadcrumbs}
