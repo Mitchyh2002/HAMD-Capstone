@@ -1,5 +1,7 @@
 @import '../App.css';
 
+/* Login Page CSS */
+
 .login-image{
     content: var(--loginImage);
     width: 50vw;
@@ -20,6 +22,31 @@
     position: relative;
     font-size: 4rem;
     content: var(--welcomeText);
+}
+
+/* Landing Page CSS */
+
+.landing-image{
+    content: var(--landingImage);
+    width: 100%;
+    height: 50vh;
+    object-fit: cover;
+    opacity: 80%;
+    position: absolute;
+    flex: 1;
+}
+
+.main-title{
+    content: var(--mainTitle);
+    color: var(--black);
+    position: relative;
+    font-size: 0;
+}
+
+.main-title::after{
+    position: relative;
+    font-size: 4rem;
+    content: var(--mainTitle);
 }
 
 /* Container CSS */
@@ -59,6 +86,43 @@
 .thirddiv{
     width: 50vw;
     padding: 50px;
+}
+
+.landingdiv{
+    display: flex;
+    flex-direction: column;
+}
+
+.toppage{
+    display: flex;
+    height: 50vh;
+}
+
+.bottompage{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.modulecontainer{
+    margin: 30px;
+    border-radius: 20px;
+}
+
+.modulebutton{
+    height: 250px;
+    width: 250px;
+    text-decoration: none;
+    background-color: none;
+    border: none;
+    cursor: pointer;
+    font-size: 30px;
+    font-family: var(--font2);
+    text-align: center;
+    background-color: var(--subnav40);
+    border-radius: 20px;
 }
 
 /* Form CSS */
@@ -153,4 +217,6 @@ input::placeholder{
     text-decoration: underline;
     text-decoration-color: var(--black);
 }
+
+
 

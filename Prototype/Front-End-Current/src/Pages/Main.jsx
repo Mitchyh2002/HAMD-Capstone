@@ -1,5 +1,6 @@
 import Breadcrumbs from "Components/Breadcrumbs";
-import Header from "Components/Header"
+import Header from "Components/Header";
+import LandingPage from "./LandingPage";
 import Content from "Content"
 import { Outlet } from "react-router-dom"
 
@@ -10,7 +11,9 @@ export default function Main(props) {
     return(
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
             <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} accountButton={accountButton} logoutButton={logoutButton}/>
-            <Content modules={props.modules}/>
+            <LandingPage modules={props.modules}/>
         </div>
     )
 }
+
+/* <Content modules={props.modules}/> */
