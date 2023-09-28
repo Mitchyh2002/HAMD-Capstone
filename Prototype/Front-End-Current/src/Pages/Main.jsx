@@ -1,5 +1,6 @@
 import Breadcrumbs from "Components/Breadcrumbs";
-import Header from "Components/Header"
+import Header from "Components/Header";
+import LandingPage from "./LandingPage";
 import Content from "Content"
 import { Link, Outlet } from "react-router-dom"
 
@@ -14,3 +15,5 @@ export default function Main(props) {
         </div>
     )
 }
+
+/* <LandingPage modules={props.modules}/> <Content modules={props.modules}/> */

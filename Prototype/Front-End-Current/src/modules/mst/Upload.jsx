@@ -11,6 +11,7 @@ export default function Upload(props){
     const [response, setResponse] = useState();
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const changeFile = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -49,25 +50,42 @@ export default function Upload(props){
         })
     };
 
+    return (
+        <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
+            <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
+                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                    <h3>Add Plugin</h3>
+                </div>
+                <form id="upload">
+                    <div style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
+                        {(success == true) ? <p>Your file has been uploaded and installed.</p> : (error) && <p>{response.Message}</p>}
+                        <label>Module Prefix</label>
+                        <input className="uploadInput" type="text" id="prefixName" name="prefixName" />
+                        <label>Plugin Display Name</label>
+                        <input className="uploadInput" type="text" id="pluginDisplayName" name="displayName" />
+                        <div style={{ justifyContent: "space-between" }} className="flexBoxRowGrow">
+                            <label>Module Code</label>
+                            <div className="formButton" onClick={handleFileClick}>
+                                <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
+                                <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden />
+                            </div>
+                        </div>
+                        <label>Module Password</label>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <input className="uploadInput" type={visible ? "text" : "password"} id="modulePass" name="modulePass" />
+                            <div onClick={() => setVisible(!visible)}>
+                                {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                            </div>
+                        </div>
+                        {isSelected ?
+                            (<div>
+                                <p>Filename: {selectedFile.name}</p>
+                                <p>Filetype: {selectedFile.type}</p>
+                                <p>Size in bytes: {selectedFile.size}</p>
+                            </div>) : (
+                                <p> </p>
+                            )}
 
-    return(
-        <div style={{display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1"}}>
-        <div className="flexBoxColumnGrow" style={{padding: "32px", maxWidth: "500px"}}>
-            <div className="subNav" style={{borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px"}}>
-                <h3>Add Plugin</h3>
-            </div>
-            <form id="upload">
-                <div style={{display: "flex", flexDirection: "column", rowGap:"8px"}}>
-                {(success == true)? <p>Your files has been uploaded and installed</p> : (error)&& <p>{response.Message}</p>}
-                <label>Module Prefix</label>
-                <input className="uploadInput" type="text" id="prefixName" name="prefixName" />
-                <label>Plugin Display Name</label>
-                <input className="uploadInput" type="text" id="pluginDisplayName" name="displayName" />
-                <div className="flexBoxRow" style={{justifyContent: "space-between"}}>
-                    <label>Module Code</label>
-                    <div className="formButton" onClick={handleFileClick}>
-                        <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
-                        <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden/>
                     </div>
                 </div>
                 <label>Module Password</label>

@@ -128,6 +128,7 @@ function ForgotPasswordForm(props) {
     const [submitted, setSubmitted] = useState();
     const [emailError, setEmailError] = useState();
     const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     const validateForm = (formData) => {
         const emailErr = checkEmailValid(formData.get("email"));
@@ -279,16 +280,21 @@ function ForgotPasswordForm(props) {
                             className="emailAddress"
                             placeholder="Email Address"
                         />
+                        <div style={{display:"flex", flexDirection:"row"}}>
                         <FormInput
                             label="Password"
                             error={passError}
-                            type="password"
+                            type={visible ? "text" : "password"}
                             name="password"
                             className="password"
                             placeholder="Password"
                         />
+                        <div className="visible-icon" onClick={() => setVisible(!visible)}>
+                            {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                        </div>
                     </div>
-                </form>
+                </div>
+            </form>
 
 
                 <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
