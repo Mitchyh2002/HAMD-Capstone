@@ -1,3 +1,5 @@
+import { baseUrl } from "config";
+
 //Storage keys
 const token = "BAtoken";
 
@@ -5,7 +7,7 @@ const token = "BAtoken";
 
 //Log User In
 export async function login(formData){
-    return fetch("http://localhost:5000/user/login", {
+    return fetch(baseUrl + "/mst/user/login", {
         method: "POST",
         body: formData,
     }).then(response => (response.json()

@@ -1,5 +1,7 @@
-from Program.Module.Main.Module import scan_file
+import datetime
 
+from Program.Module.mst.Module import scan_file
+from Program.DB.Models.mst.User import PasswordHash, User
 from werkzeug.serving import run_simple
 
 from Program import init_app
@@ -38,7 +40,7 @@ def scan_file_test():
 
 def test_getactive(client):
     modules = client.get("module/getactive").json["Values"]
-    testing_modules = ['df1', 'mst']
+    testing_modules = ['grp', 'mst']
 
     correct = 0
     for module in modules:
@@ -54,6 +56,4 @@ if __name__ == "__main__":
         "TESTING": True
     })
     client = app.test_client()
-
-    scan_file_test()
-    test_getactive(client)
+    test_genuser(client)

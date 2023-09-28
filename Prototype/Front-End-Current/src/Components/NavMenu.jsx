@@ -1,4 +1,4 @@
-import { useNavigate, NavLink, useHref } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 /*Main Nav Menu
     Props:
@@ -17,7 +17,7 @@ export default function NavMenu(props) {
     const navigate = useNavigate();
 
     const handler = (prefix) => {
-        const destination = prefix;
+        const destination = "/" + prefix;
         navigate(destination);
       }
 
@@ -30,27 +30,7 @@ export default function NavMenu(props) {
             {props.modules.map(module  => {
                 console.log(module);
                 return (<NavMenuButton activeClass="mainNavItemActive" passiveClass="mainNavItem" to={module.prefix} name={module.displayName} icon="/icons/mst.png"/>)})}
+
         </div>
     )
-}
-
-function NavMenuButton(props) {
-    const navigate = useNavigate();
-    const href = useHref();
-    let sanatizedTo = encodeURI(props.to);
-    const regEx = "\/" + sanatizedTo.replaceAll("\/", "\\\/");
-    const active = (RegExp(regEx).exec(href) != null);
-
-    const handleClick = () => {
-        navigate(props.to);
-    }
-
-    return(
-        <button onClick={handleClick} className={(active)? props.activeClass: props.passiveClass}>
-            <img src={props.icon} style={{width: "60px", height: "60px"}}/>
-            <br></br>
-            {props.name}
-        </button>
-    )
-
 }
