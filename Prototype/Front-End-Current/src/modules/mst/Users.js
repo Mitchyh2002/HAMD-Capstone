@@ -268,7 +268,7 @@ function UserListModal(props) {
                 </>) : (
                     <>
                         <p>Are you sure you want to suspend this user?</p>
-                        <button className='buttons suspend-user-button' onClick={handleSuspend}>
+                        <button className='buttons user-confirm-button' onClick={handleSuspend}>
                             Suspend User
                         </button>
                     </>
