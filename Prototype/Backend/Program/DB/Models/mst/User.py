@@ -91,7 +91,7 @@ class User(UserMixin, db.Model):
 
     def toJSON(self, is_query=False):
         '''
-        QOL function to convert OBJ to a valid JSON file. If is for query only return prefix & display name.
+        QOL function to convert OBJ to a valid JSON file. If is for query only return email, adminlevel and name.
 
         Paramaters:
             is_query (Bool): True, if sending to front end, default False.
@@ -145,9 +145,9 @@ class User(UserMixin, db.Model):
     def setIsAnonymous(self, bool):
         self._is_anonymous = bool
 
-def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None, adminLevel=1):
+def create_user(email: str, firstName, passwordHash, dateOfBirth, phoneNumber=None, adminLevel=1):
     created_user = User()
-    created_user.email = email
+    created_user.email = email.lower()
     created_user.firstName = firstName
     created_user.passwordHash = passwordHash
     created_user.dateOfBirth = dateOfBirth

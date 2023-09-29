@@ -2,8 +2,9 @@ import Upload from "./Upload";
 import PluginList from "./PluginList";
 import Users from "./Users"
 import AddUser from "./AddUser";
+import Configure from "./Configure.js";
 import { Outlet } from "react-router-dom";
-import { getPlugins, getUsers } from "./loaderFunctions";
+import { adminCheck, getPlugins, getUser, getUsers } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
 export const mst_pages = [{
@@ -16,10 +17,14 @@ export const mst_pages = [{
 },{
     path: "Users",
     element: Users,
-    loader: getUsers,
+    loader: getUsers
 },{
     path: "Add User",
-    element: AddUser
+    element: AddUser,
+    loader: adminCheck,
+},{
+    path: "Configure",
+    element: Configure
 }];
 
 export default function mst_master(){

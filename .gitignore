@@ -14,3 +14,11 @@ Prototype/Backend/Program/__pycache__/__init__.cpython-311.pyc
 Prototype/Backend/Program/DB/__pycache__/Builder.cpython-311.pyc
 Prototype/Backend/Program/DB/Models/master/__pycache__/Modules.cpython-311.pyc
 Prototype/Backend/Program/OS/__pycache__/__init__.cpython-311.pyc
+<<<<<<< HEAD
+*.pyc
+=======
+Prototype/Backend/Program/__pycache__/__init__.cpython-311.pyc
+Prototype/Backend/Program/DB/__pycache__/Builder.cpython-311.pyc
+Prototype/Backend/Program/DB/Models/master/__pycache__/Modules.cpython-311.pyc
+Prototype/Backend/Program/OS/__pycache__/__init__.cpython-311.pyc
+>>>>>>> parent of 9a14959 (Merge branch 'Front-End-Development' of https://github.com/Mitchyh2002/HAMD-Capstone into Aodhan-DevBranch)

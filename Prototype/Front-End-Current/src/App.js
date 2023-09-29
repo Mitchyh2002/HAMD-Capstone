@@ -3,6 +3,7 @@ import { BrowserRouter, RouterProvider, createBrowserRouter} from 'react-router-
 import { AllRoutes, allRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
 import { getToken } from 'Functions/User';
+import { baseUrl } from 'config';
 
 function App() {
   const [modules, setModules] = useState([]);
@@ -10,7 +11,7 @@ function App() {
 
   //Get all active modules from the server and store in state
   useEffect(() => {
-    fetch("http://localhost:5000/module/getactive", {
+    fetch(baseUrl + "/mst/module/getactive", {
       method: "GET",
       headers: {
 	'Authorization': "Bearer " + getToken(),
