@@ -10,7 +10,7 @@ import os
 
 
 # DO NOT EVER CHANGE THIS Variable
-# THIS VARIABLE INITALISES A GLOBAL reload variable
+#  INITIALISES A GLOBAL reload variable
 to_reload = False
 
 db = SQLAlchemy()

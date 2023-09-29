@@ -30,7 +30,7 @@ def sys_create():
     testUser.confirmed = True
     testUser.confirmedDate = datetime.date.today()
     masterUser.confirmed = True
-    testUser.confirmed = datetime.date.today()
+    testUser.confirmedDate = datetime.date.today()
 
     userAccess = create_moduleAccess(masterUser.userID, 'mst')
     grp1 = create_group('Default')

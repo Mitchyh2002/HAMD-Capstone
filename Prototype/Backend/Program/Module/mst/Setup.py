@@ -145,6 +145,18 @@ def update_config_settings(request):
             replace_str = f'--welcomeText: "{welcomeText}";'
             content = re.sub(pattern, replace_str, content)
             final_configs["welcomeText"] = welcomeText
+        terms = request.files.get("terms")
+        if terms is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Terms & Conditions")
+        else:
+            if check_image(terms, '.txt') != True:
+                return check_image(terms, '.txt')
+            terms_dir = 'Front-End-Current/public/terms.txt'
+            final_configs['terms'] = terms_dir
+            terms.save(terms_dir)
+
 
         logo = request.files.get("logo")
         loginImage = request.files.get("loginImage")

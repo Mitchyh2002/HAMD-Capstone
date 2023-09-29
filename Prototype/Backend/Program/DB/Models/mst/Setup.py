@@ -12,6 +12,7 @@ class mst_Setup(db.Model):
     header = db.Column(db.String(7))
     navbar = db.Column(db.String(7))
     subnav = db.Column(db.String(7))
+    terms = db.Column(db.String(1000))
     welcomeText = db.Column(db.String(200))
     logo = db.Column(db.String(200))
     MiscImage = db.Column(db.String(200))
@@ -28,6 +29,7 @@ class mst_Setup(db.Model):
             "navbar": self.navbar,
             "subnav": self.subnav,
             "welcomeText": self.welcomeText,
+            "terms": self.terms,
             "logo": self.logo,
             "MiscImage": self.MiscImage,
             "loginImage": self.loginImage
