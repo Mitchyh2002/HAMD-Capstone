@@ -97,27 +97,31 @@ function ChangePasswordForm(props) {
                         error={currentPassError}
                         type={"password"}
                         name="currentPassword"
-                        placeholder="Current Password"
                     />
                     <FormInput
                         label="New Password"
                         error={new1PassError}
                         type={"password"}
                         name="newPassword"
-                        placeholder="New Password"
                     />
                     <FormInput
-                        label="Re-enter New Password"
+                        label="Confirm New Password"
                         error={[new2PassError, confPassError]}
                         type={"password"}
                         name="confPassword"
-                        placeholder="Confirm New Password"
                     />
             </div>
         </form>
 
         <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
             <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
+        </div>
+        
+        <div className="flexBoxRowGrow" style={{ justifyContent: "center", marginTop: "30px" }}>
+        <Link
+                    to="/home/account">
+                    <button className="formButton change-password-button">Back</button>
+                </Link>
         </div>
     </>)
 }
