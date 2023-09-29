@@ -38,9 +38,6 @@ function ChangePasswordForm(props) {
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
-    const [visibleCurrent, setVisibleCurrent] = useState(false);
-    const [visibleNew, setVisibleNew] = useState(false);
-    const [visibleConfirm, setVisibleConfirm] = useState(false);
 
     const validateForm = (formData) => {
         setCurrentPassError(checkPass(formData.get("currentPassword")))
@@ -95,42 +92,27 @@ function ChangePasswordForm(props) {
     return (<>
         <form className="password-form" id="Change Password" style={{ width: '65vh' }}>
             <div className="password-form-content">
-                <div style={{ display: "flex", flexDirection: "row" }}>
                     <FormInput
                         label="Current Password"
                         error={currentPassError}
-                        type={visibleCurrent ? "text" : "password"}
+                        type={"password"}
                         name="currentPassword"
                         placeholder="Current Password"
                     />
-                    <div className="visible-icon" onClick={() => setVisibleCurrent(!visibleCurrent)}>
-                        {visibleCurrent ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                    </div>
-                </div>
-                <div style={{ display: "flex", flexDirection: "row" }}>
                     <FormInput
                         label="New Password"
                         error={new1PassError}
-                        type={visibleNew ? "text" : "password"}
+                        type={"password"}
                         name="newPassword"
                         placeholder="New Password"
                     />
-                    <div className="visible-icon" onClick={() => setVisibleNew(!visibleNew)}>
-                        {visibleNew ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                    </div>
-                </div>
-                <div style={{ display: "flex", flexDirection: "row" }}>
                     <FormInput
                         label="Re-enter New Password"
                         error={[new2PassError, confPassError]}
-                        type={visibleConfirm ? "text" : "password"}
+                        type={"password"}
                         name="confPassword"
                         placeholder="Confirm New Password"
                     />
-                    <div className="visible-icon" onClick={() => setVisibleConfirm(!visibleConfirm)}>
-                        {visibleConfirm ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                    </div>
-                </div>
             </div>
         </form>
 

@@ -44,32 +44,18 @@ function WelcomeMessage(props) {
 
 //Login Form
 function LoginForm(props) {
-    const [emailError, setEmailError] = useState();
-    const [passError, setPassError] = useState();
     const [response, setResponse] = useState(null);
-    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         console.log(response);
     }, [response]);
 
-    const validateForm = (formData) => {
-
-        const emailIsValid = checkEmailValid(formData.get("email"));
-        const passIsValid = checkPass(formData.get("password"));
-
-        return emailIsValid && passIsValid;
-
-    }
-
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
 
-        const valid = validateForm(formData);
-        if (true) {
-            setResponse(await login(formData));
-        }
+        setResponse(await login(formData));
+        
     };
 
     return (
@@ -80,7 +66,6 @@ function LoginForm(props) {
                         type="text"
                         name="email"
                         placeholder="Email Address"
-                        //error={emailError}
                     />
                     {response &&
                      [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode) 
@@ -89,18 +74,12 @@ function LoginForm(props) {
                             {response.Message}
                         </div>
                     )}
-                    <div style={{ display: "flex", flexDirection: "row" }}>
                         <FormInput
-                            type={visible ? "text" : "password"}
+                            type={"password"}
                             name="password"
                             className="password"
                             placeholder="Password"
-                            error={passError}
                         />
-                        <div className="visible-icon" onClick={() => setVisible(!visible)}>
-                            {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                        </div>
-                    </div>
                     {response && response.StatusCode == LoginErrors.passwordEmpty &&(
                         <div className="error-message">
                             {response.Message}
@@ -213,7 +192,6 @@ function RegisterForm(props) {
     const [dobError, setDobError] = useState();
     const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
-    const [visible, setVisible] = useState(false);
 
     const validateForm = (formData) => {
         setNameError(checkName(formData.get("firstName")));
@@ -301,19 +279,14 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
-                    <div style={{ display: "flex", flexDirection: "row" }}>
                         <FormInput
                             label="Password"
                             error={passError}
-                            type={visible ? "text" : "password"}
+                            type={"password"}
                             name="password"
                             className="password"
                             placeholder="Password"
                         />
-                        <div className="visible-icon" onClick={() => setVisible(!visible)}>
-                            {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                        </div>
-                    </div>
                 </div>
             </form>
 
