@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { LoginErrors } from "errorCodes";
 
+
 export default function Login(props) {
     const register = props.register;
     const [email, setEmail] = useState();
@@ -45,6 +46,7 @@ function WelcomeMessage(props) {
 //Login Form
 function LoginForm(props) {
     const [response, setResponse] = useState(null);
+
 
     useEffect(() => {
         console.log(response);
@@ -184,48 +186,42 @@ function ForgotPasswordForm(props) {
         </div>
     </>)
 }
+    //Registration Form
+    function RegisterForm(props) {
+        const [nameError, setNameError] = useState();
+        const [emailError, setEmailError] = useState();
+        const [dobError, setDobError] = useState();
+        const [passError, setPassError] = useState();
+        const [loading, setLoading] = useState(false);
+        const [visible, setVisible] = useState(false);
 
-//Registration Form
-function RegisterForm(props) {
-    const [nameError, setNameError] = useState();
-    const [emailError, setEmailError] = useState();
-    const [dobError, setDobError] = useState();
-    const [passError, setPassError] = useState();
-    const [loading, setLoading] = useState(false);
+        const validateForm = (formData) => {
+            setNameError(checkName(formData.get("firstName")));
+            setEmailError(checkEmailValid(formData.get("email")));
+            setDobError(checkDOB(formData.get("dateOfBirth")));
+            setPassError(checkPass(formData.get("password")));
 
-    const validateForm = (formData) => {
-        setNameError(checkName(formData.get("firstName")));
-        setEmailError(checkEmailValid(formData.get("email")));
-        setDobError(checkDOB(formData.get("dateOfBirth")));
-        setPassError(checkPass(formData.get("password")));
+            let valid = true;
 
-        let valid = true;
+            if (nameError) {
+                valid = false;
+            }
 
-        if (nameError) {
-            valid = false;
+            if (emailError) {
+                valid = false;
+            }
+
+            if (dobError) {
+                valid = false;
+            }
+
+            if (passError) {
+                valid = false;
+            }
+
+            return (valid)
+
         }
-
-        if (emailError) {
-            valid = false;
-        }
-
-        if (dobError) {
-            valid = false;
-        }
-
-        if (passError) {
-            valid = false;
-        }
-
-        return (valid)
-
-    }
-
-    //const navigate = useNavigate();
-    const handleRegister = (e) => {
-        setLoading(true);
-        const form = document.getElementById("Register");
-        const formData = new FormData(form);
 
         const valid = validateForm(formData);
         if (valid) {
@@ -240,14 +236,13 @@ function RegisterForm(props) {
                     console.log(response);
                     window.alert(response.error)
                 }
+                ).catch(function (error) {
+                    console.log(error);
+                    setLoading(false);
+                })
+            } else {
                 setLoading(false);
             }
-            ).catch(function (error) {
-                console.log(error);
-                setLoading(false);
-            })
-        } else {
-            setLoading(false);
         }
     }
     return (
@@ -291,52 +286,53 @@ function RegisterForm(props) {
             </form>
 
 
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
-            </div>
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                <p style={{ fontSize: "14px" }}>
-                    Already have an account?
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
+                </div>
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                    <p style={{ fontSize: "14px" }}>
+                        Already have an account?
+                    </p>
+                </div>
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <Link
+                        to="/login"
+                        className="register-message"><button className="primaryButton create-account-button">Log In</button>
+                    </Link>
+                </div>
+            </>
+        )
+    }
+
+    function EmailConfirmation(props) {
+        function handleResend() {
+            //resend props.email to endpoint
+        }
+        return (
+            <div>
+                <p>
+                    Thank you for signing up. Please confirm your email address to get started.
                 </p>
             </div>
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <Link
-                    to="/login"
-                    className="register-message"><button className="primaryButton create-account-button">Log In</button>
-                </Link>
-            </div>
-        </>
-    )
-}
-
-function EmailConfirmation(props) {
-    function handleResend() {
-        //resend props.email to endpoint
+        )
     }
-    return (
-        <div>
-            <p>
-                Thank you for signing up. Please confirm your email address to get started.
-            </p>
-        </div>
-    )
-}
 
-/*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-<button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
-</div>*/
+    /*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+    <button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
+    </div>*/
 
-//Validation Functions
-export function checkEmailValid(email) {
-    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const checkValid = new RegExp(regEx);
+    //Validation Functions
+    export function checkEmailValid(email) {
+        const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const checkValid = new RegExp(regEx);
 
-    if (email == "") {
-        return "Email address is required.";
-    } else if (!checkValid.exec(email)) {
-        return "Please check the email format";
+        if (email == "") {
+            return "Email address is required.";
+        } else if (!checkValid.exec(email)) {
+            return "Please check the email format";
+        }
     }
-}
+
 
 export function checkDOB(dob) {
     const currentDate = new Date();
@@ -346,20 +342,20 @@ export function checkDOB(dob) {
         return "You need to be over 13";
     }
 
-}
 
-export function checkName(name) {
-    if (!name) {
-        return "Name is required.";
     }
-}
 
-export function checkPass(pass) {
-    if (!pass) {
-        return "Password is required."
+    export function checkName(name) {
+        if (!name) {
+            return "Name is required.";
+        }
     }
-}
 
+    export function checkPass(pass) {
+        if (!pass) {
+            return "Password is required."
+        }
+    }
 export function FormInput(props) {
     return (
         <div className="form-group">
@@ -372,7 +368,7 @@ export function FormInput(props) {
                     placeholder={props.placeholder}
                 />
                 <p style={{ color: "red" }}>{props.error}</p>
+
             </div>
-        </div>
-    )
-}
+        )
+    }

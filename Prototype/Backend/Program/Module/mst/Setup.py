@@ -23,11 +23,11 @@ TESTING = True
 
 def check_hex_code(hex_code):
     if hex_code is None:
-        return on_error(1, "Hex Code not Specified")
+        return on_error(3, "Hex Code not Specified")
     if len(hex_code) != 7:
-        return on_error(1, "Invalid Hex Code Specified")
+        return on_error(4, "Invalid Hex Code Specified")
     if hex_code[0] != "#":
-        return on_error(1, "Invalid Hex Code Specified")
+        return on_error(4, "Invalid Hex Code Specified")
 
     try:
         code1 = hex_code[1:3]
@@ -38,14 +38,14 @@ def check_hex_code(hex_code):
         code2 = int(code2, 16)
         code3 = int(code3, 16)
     except ValueError:
-        return on_error(1, "Invalid Hex Code Specified")
+        return on_error(4, "Invalid Hex Code Specified")
 
     if code1 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
+        return on_error(4, "Hex Value Cannot be greater than 255")
     if code2 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
+        return on_error(4, "Hex Value Cannot be greater than 255")
     if code3 > 255:
-        return on_error(2, "Hex Value Cannot be greater than 255")
+        return on_error(4, "Hex Value Cannot be greater than 255")
 
     return f"rgba({code1}, {code2}, {code3});"
 
@@ -57,10 +57,8 @@ def check_image(file, fileType, settings_exist=True):
         else:
             return on_error(1, "Image not Specified for inital startup")
     if splitext(file.filename)[1] != fileType:
-        return on_error(2, f'Image Uploaded must be a {fileType} file')
+        return on_error(5, f'Image Uploaded must be a {fileType} file')
 
-    if file.filename != fileName:
-        return on_error(3, f"File {file.filename} must be named FileName")
     return True
 
 
@@ -71,9 +69,9 @@ def update_config_settings(request):
     final_configs = {}
     db_url = configs.get("DatabaseURL")
     if db_url != None:
-        update_db = check_db_url(db_url)
-        if update_db is not None:
-            return update_db
+        db_valid = check_db_url(db_url)
+        if db_valid is not None:
+            return db_valid
     final_configs["DatabaseURL"] = db_url
     registration_email = configs.get("RegistrationEmail")
     welcomeText = request.values.get("welcomeText")
@@ -147,78 +145,96 @@ def update_config_settings(request):
             replace_str = f'--welcomeText: "{welcomeText}";'
             content = re.sub(pattern, replace_str, content)
             final_configs["welcomeText"] = welcomeText
+        terms = request.files.get("terms")
+        if terms is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Terms & Conditions")
+        else:
+            if check_image(terms, '.txt') != True:
+                return check_image(terms, '.txt')
+            terms_dir = 'Front-End-Current/public/terms.txt'
+            final_configs['terms'] = terms_dir
+            terms.save(terms_dir)
+
 
         logo = request.files.get("logo")
         loginImage = request.files.get("loginImage")
-        bee = request.files.get("loginImage")
+        bee = request.files.get("miscImage")
 
         final_configs["logo"] = ''
         final_configs["loginImage"] = ''
         final_configs["MiscImage"] = ''
 
-        #TODO: Uncomment Once front end is Built
-        # if logo is None:
-        #     if current_settings is None:
-        #         os.chdir(mst_dir)
-        #         return on_error(2, f"Missing Logo Image")
-        #     else:
-        #         logo_success = check_image(logo,'png')
-        #         if not logo_success:
-        #           os.chdir(mst_dir)
-        #           return logo_success
-        #         logo_dir = f'Front-End-Current/public/{logo_success.filename}'
-        #         pattern = '--logo: url\("..\/public\/.*.png"\);'
-        #         replace_str = f'--logo: url("{logo_dir}");'
-        #         content = re.sub(pattern, replace_str, content)
-        #         logo_success.save(logo_dir)
-        #         final_configs["logo"] = logo_dir
-        #
-        # if loginImage is None:
-        #     if current_settings is None:
-        #         os.chdir(mst_dir)
-        #         return on_error(2, f"Missing Login Image")
-        # else:
-        #     loginImage_success = check_image(loginImage,'jpg')
-        #     if not loginImage_success:
-        #     os.chdir(mst_dir)
-        #     return loginImage_success
-        #     login_dir = f'Front-End-Current/public/{loginImage_success.filename}'
-        #     pattern = '--loginImage: url\("..\/public\/.*"\);'
-        #     replace_str = f'--loginImage: url("{login_dir}");'
-        #     content = re.sub(pattern, replace_str, content)
-        #     loginImage_success.save(login_dir)
-        #     final_configs["loginImage"] = login_dir
-        # if bee is None:
-        #     os.chdir(mst_dir)
-        #     return on_error(2, f"Missing Miscellaneous Image")
-        # else:
-        #     bee_success = check_image(bee)
-        #     if not bee_success:
-        #     os.chdir(mst_dir)
-        #     return bee_success
-        #     bee_dir = f'Front-End-Current/public/{bee_success.filename}'
-        #     pattern = '--bee: url\("..\/public\/.*"\);'
-        #     replace_str = f'--bee: url("{bee_dir}");'
-        #     content = re.sub(pattern, replace_str, content)
-        #     bee_success.save(bee_dir)
-        #     final_configs["MiscImage"] = bee_dir
+        if logo is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Logo Image")
+        else:
+            logo_success = check_image(logo,'.png')
+            if logo_success != True:
+                os.chdir(mst_dir)
+                return logo_success
+            logo_dir = f'Front-End-Current/public/{logo.filename.lower()}'
+            logo_dir2 = f'../public/{logo.filename.lower()}'
+            pattern = '--logo: url\("..\/public\/.*.png"\);'
+            replace_str = f'--logo: url("{logo_dir2}");'
+            content = re.sub(pattern, replace_str, content)
+            logo.save(logo_dir)
+            final_configs["logo"] = logo_dir
+
+        if loginImage is None:
+             if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Login Image")
+        else:
+            loginImage_success = check_image(loginImage,'.jpg')
+            if loginImage_success != True:
+                os.chdir(mst_dir)
+                return loginImage_success
+            login_dir = f'Front-End-Current/public/{loginImage.filename.lower()}'
+            login_dir2 = f'../public/{loginImage.filename.lower()}'
+            pattern = '--loginImage: url\("..\/public\/.*"\);'
+            replace_str = f'--loginImage: url("{login_dir2}");'
+            content = re.sub(pattern, replace_str, content)
+            loginImage.save(login_dir)
+            final_configs["loginImage"] = login_dir
+
+        if bee is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Miscellaneous Image")
+        else:
+            bee_success = check_image(bee, '.png')
+            if bee_success != True:
+                os.chdir(mst_dir)
+                return bee_success
+            bee_dir2 = f'../public/{bee.filename.lower()}'
+            bee_dir = f'Front-End-Current/public/{bee.filename.lower()}'
+
+            pattern = '--bee: url\("..\/public\/.*"\);'
+            replace_str = f'--bee: url("{bee_dir2}");'
+            content = re.sub(pattern, replace_str, content)
+            bee.save(bee_dir)
+            final_configs["MiscImage"] = bee_dir
 
     with open('Front-End-Current/src/App.css', "w") as Styling:
         Styling.write(content)
+
     if current_settings == None:
-        final_configs = JSONtoConfig(final_configs)
+        final_OBJ = JSONtoConfig(final_configs)
         if db_url is not None:
+            os.chdir(mst_dir)
             success = update_db(db_url)
             if success is not None:
-                os.chdir(mst_dir)
                 return success
 
-        final_configs.insert()
+            final_OBJ.insert()
     else:
         if db_url is not None:
+            os.chdir(mst_dir)
             success = update_db(db_url)
             if success is not None:
-                os.chdir(mst_dir)
                 return success
         success = current_settings.mergeConfig(final_configs)
         if not success:
@@ -244,7 +260,7 @@ def get_config_settings():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     if user_bearer is None:
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 7, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 9, 'mst')
     if accessGranted != True:
         return accessGranted
     config_info = mst_Setup.query.first()
@@ -290,6 +306,7 @@ def update_db(db_conn_string):
             if 'url = ' in line:
                 content.pop(i)
                 content.insert(i, f"url = '{db_conn_string}'\n")
+                break
 
     with open("Program/DB/Builder.py", "w") as db_file_write:
         db_file_write.writelines(content)

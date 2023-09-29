@@ -10,7 +10,7 @@ import os
 
 
 # DO NOT EVER CHANGE THIS Variable
-# THIS VARIABLE INITALISES A GLOBAL reload variable
+#  INITIALISES A GLOBAL reload variable
 to_reload = False
 
 db = SQLAlchemy()
@@ -150,6 +150,7 @@ def export_mail_sender():
 
 def export_mail():
     return application.app.mail
+
 
 def export_front_end_link():
     return application.app.config["FRONT_END_URL"]

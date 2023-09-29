@@ -8,6 +8,7 @@ export default function Account() {
         <div className="flexBoxColumnGrow">
             <div>
                 <h2 className="account-header">{renderHeader(response.StatusCode)}</h2>
+
             </div>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
                 {renderBody(response.StatusCode, response.Values)}
@@ -22,6 +23,7 @@ export default function Account() {
                 </Link>
             </div>
             
+
         </div>
     </>)
 }
@@ -34,6 +36,7 @@ function renderHeader(responseCode) {
 
         case 200:
             return "My Account"
+
     }
 }
 
@@ -107,4 +110,5 @@ function FormInput(props) {
             </div>
         </div>
     )
+
 }

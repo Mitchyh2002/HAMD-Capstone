@@ -15,6 +15,7 @@ export default function ChangePassword(props) {
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
                 <div style={{ justifyContent: "center", display: 'flex', flexDirection: 'column' }}>
+
                     {changed ? (
                         <div>
                             <p>You have successfully changed your password! Please click below to navigate to home</p>
@@ -110,19 +111,20 @@ function ChangePasswordForm(props) {
                         type={"password"}
                         name="confPassword"
                     />
+
             </div>
         </form>
 
         <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
             <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
         </div>
-        
         <div className="flexBoxRowGrow" style={{ justifyContent: "center", marginTop: "30px" }}>
         <Link
                     to="/home/account">
                     <button className="formButton change-password-button">Back</button>
                 </Link>
         </div>
+
     </>)
 }
 

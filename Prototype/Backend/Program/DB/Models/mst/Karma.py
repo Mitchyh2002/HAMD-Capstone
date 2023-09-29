@@ -20,7 +20,7 @@ class Karma(db.Model):
 
     def toJSON(self):
         return {
-            "awardID": self.awardID,
+            "modulePrefix": self.modulePrefix,
             "Amount Given": self.karmaGiven,
             "Assigned To": self.karmaRecipient,
             "Reason": self.karmaReason,

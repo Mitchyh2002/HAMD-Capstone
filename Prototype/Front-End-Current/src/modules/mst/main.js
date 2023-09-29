@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 import { adminCheck, getPlugins, getUser, getUsers } from "./loaderFunctions";
 
 //Define Pages to pass to Sub Navigations
-export const pages = [{
+export const mst_pages = [{
     path: "Plugins",
     element: PluginList,
     loader: getPlugins
