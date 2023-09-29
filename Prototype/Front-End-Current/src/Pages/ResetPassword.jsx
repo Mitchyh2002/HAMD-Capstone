@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom"
 import { useState } from "react";
 import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
-import { getToken } from "Functions/User";
 
 export default function ResetPassword() {
     const [changed, setChanged] = useState();
@@ -26,7 +25,7 @@ export default function ResetPassword() {
                             </Link>
                         </div>
                     ) : (
-                        <ChangePasswordForm setChanged={setChanged} id={id}/>
+                        <ChangePasswordForm setChanged={setChanged} id={id} />
                     )}
                 </div>
             </div>
@@ -39,6 +38,9 @@ function ChangePasswordForm(props) {
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
+    const [visibleNew, setVisibleNew] = useState(false);
+    const [visibleConfirm, setVisibleConfirm] = useState(false);
+
 
     const validateForm = (formData) => {
         setNew1PassError(checkPass(formData.get("newPassword")))
@@ -65,7 +67,7 @@ function ChangePasswordForm(props) {
 
         const valid = validateForm(formData);
         if (valid) {
-            fetch(baseUrl + "/mst/user/resetPassword/"+ props.id, {
+            fetch(baseUrl + "/mst/user/resetPassword/" + props.id, {
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()
@@ -89,20 +91,30 @@ function ChangePasswordForm(props) {
     return (<>
         <form className="password-form" id="Reset Password">
             <div className="password-form-content">
-                <FormInput
-                    label="New Password"
-                    error={new1PassError}
-                    type="password"
-                    name="password"
-                    placeholder="New Password"
-                />
-                <FormInput
-                    label="Confirm New Password"
-                    error={[new2PassError, confPassError]}
-                    type="password"
-                    name="confPassword"
-                    placeholder="Confirm New Password"
-                />
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <FormInput
+                        label="New Password"
+                        error={new1PassError}
+                        type={visibleNew ? "text" : "password"}
+                        name="password"
+                        placeholder="New Password"
+                    />
+                    <div className="visible-icon" onClick={() => setVisibleNew(!visibleNew)}>
+                        {visibleNew ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                    </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <FormInput
+                        label="Confirm New Password"
+                        error={[new2PassError, confPassError]}
+                        type={visibleConfirm ? "text" : "password"}
+                        name="confPassword"
+                        placeholder="Confirm New Password"
+                    />
+                    <div className="visible-icon" onClick={() => setVisibleConfirm(!visibleConfirm)}>
+                        {visibleConfirm ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                    </div>
+                </div>
             </div>
         </form>
 

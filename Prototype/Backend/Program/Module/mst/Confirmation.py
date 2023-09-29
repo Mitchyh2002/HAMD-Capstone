@@ -9,7 +9,7 @@ except ImportError:
 
 from itsdangerous import URLSafeTimedSerializer
 
-from Program import db, export_key, export_mail, export_mail_sender
+from Program import db, export_key, export_mail, export_mail_sender, export_front_end_link
 from Program.DB.Models.mst.User import export_salt, User
 from Program.ResponseHandler import on_error, on_success
 
@@ -68,7 +68,7 @@ def resend_email():
             return on_error(61, "Account has already been confirmed. Please Login")
         else:
             token = generate_confirmation_token(user.email)
-            confirm_url = 'http://localhost:3000/Confirm/' + token
+            confirm_url = export_front_end_link() + '/Confirm/' + token
             html = render_template('activate.html', confirm_url=confirm_url)
             subject = "Please confirm your email"
             send_email(user.email, subject, html)

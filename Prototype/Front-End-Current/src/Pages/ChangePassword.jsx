@@ -14,7 +14,7 @@ export default function ChangePassword(props) {
                 <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center", display:'flex', flexDirection:'column'}}>
+                <div style={{ justifyContent: "center", display: 'flex', flexDirection: 'column' }}>
                     {changed ? (
                         <div>
                             <p>You have successfully changed your password! Please click below to navigate to home</p>
@@ -38,6 +38,9 @@ function ChangePasswordForm(props) {
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
+    const [visibleCurrent, setVisibleCurrent] = useState(false);
+    const [visibleNew, setVisibleNew] = useState(false);
+    const [visibleConfirm, setVisibleConfirm] = useState(false);
 
     const validateForm = (formData) => {
         setCurrentPassError(checkPass(formData.get("currentPassword")))
@@ -90,29 +93,44 @@ function ChangePasswordForm(props) {
         }
     }
     return (<>
-        <form className="password-form" id="Change Password" style={{width:'65vh'}}>
+        <form className="password-form" id="Change Password" style={{ width: '65vh' }}>
             <div className="password-form-content">
-                <FormInput
-                    label="Current Password"
-                    error={currentPassError}
-                    type="password"
-                    name="currentPassword"
-                    placeholder="Current Password"
-                />
-                <FormInput
-                    label="New Password"
-                    error={new1PassError}
-                    type="password"
-                    name="newPassword"
-                    placeholder="New Password"
-                />
-                <FormInput
-                    label="Re-enter New Password"
-                    error={[new2PassError, confPassError]}
-                    type="password"
-                    name="confPassword"
-                    placeholder="Confirm New Password"
-                />
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <FormInput
+                        label="Current Password"
+                        error={currentPassError}
+                        type={visibleCurrent ? "text" : "password"}
+                        name="currentPassword"
+                        placeholder="Current Password"
+                    />
+                    <div className="visible-icon" onClick={() => setVisibleCurrent(!visibleCurrent)}>
+                        {visibleCurrent ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                    </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <FormInput
+                        label="New Password"
+                        error={new1PassError}
+                        type={visibleNew ? "text" : "password"}
+                        name="newPassword"
+                        placeholder="New Password"
+                    />
+                    <div className="visible-icon" onClick={() => setVisibleNew(!visibleNew)}>
+                        {visibleNew ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                    </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <FormInput
+                        label="Re-enter New Password"
+                        error={[new2PassError, confPassError]}
+                        type={visibleConfirm ? "text" : "password"}
+                        name="confPassword"
+                        placeholder="Confirm New Password"
+                    />
+                    <div className="visible-icon" onClick={() => setVisibleConfirm(!visibleConfirm)}>
+                        {visibleConfirm ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                    </div>
+                </div>
             </div>
         </form>
 

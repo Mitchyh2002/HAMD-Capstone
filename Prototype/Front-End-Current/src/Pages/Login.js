@@ -2,7 +2,7 @@ import Header from "Components/Header";
 import './Login.css';
 import { login } from "Functions/User";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 
 export default function Login(props) {
@@ -45,23 +45,24 @@ function WelcomeMessage(props) {
 function LoginForm(props) {
     const [emailError, setEmailError] = useState();
     const [passError, setPassError] = useState();
-    const [response, setResponse] = useState();
+    const [response, setResponse] = useState(null);
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response]);
 
     const validateForm = (formData) => {
         setEmailError(checkEmailValid(formData.get("email")));
         setPassError(checkPass(formData.get("password")));
 
-        let valid = true;
+        const emailIsValid = checkEmailValid(formData.get("email"));
+        const passIsValid = checkPass(formData.get("password"));
 
-        if (emailError) {
-            valid = false;
-        }
+        setEmailError(emailIsValid ? null : 'Invalid email');
+        setPassError(passIsValid ? null : 'Invalid password');
 
-        if (passError) {
-            valid = false;
-        }
-
-        return (valid)
+        return emailIsValid && passIsValid;
 
     }
 
@@ -72,10 +73,8 @@ function LoginForm(props) {
         const valid = validateForm(formData);
         if (valid) {
             setResponse(await login(formData));
-            console.log(response);
-            //window.alert(await response);
         }
-    }
+    };
 
     return (
         <>
@@ -87,13 +86,28 @@ function LoginForm(props) {
                         placeholder="Email Address"
                         error={emailError}
                     />
-                    <FormInput
-                        type="password"
-                        name="password"
-                        className="password"
-                        placeholder="Password"
-                        error={passError}
-                    />
+                    {response && response.StatusCode in [10, 11, 13] &&(
+                        <div className="error-message">
+                            {response.Message}
+                        </div>
+                    )}
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                        <FormInput
+                            type={visible ? "text" : "password"}
+                            name="password"
+                            className="password"
+                            placeholder="Password"
+                            error={passError}
+                        />
+                        <div className="visible-icon" onClick={() => setVisible(!visible)}>
+                            {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
+                        </div>
+                    </div>
+                    {response && response.StatusCode in [20] &&(
+                        <div className="error-message">
+                            {response.Message}
+                        </div>
+                    )}
                     <p>
                         <Link
                             className="forgot-password"
@@ -104,6 +118,11 @@ function LoginForm(props) {
                 </div>
             </form>
 
+            {response && response.StatusCode in [1, 21, 30] && (
+                <div className="error-message">
+                    {response.Message}
+                </div>
+            )}
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
                 <Link
                     to="/Home">
@@ -128,7 +147,6 @@ function ForgotPasswordForm(props) {
     const [submitted, setSubmitted] = useState();
     const [emailError, setEmailError] = useState();
     const [loading, setLoading] = useState(false);
-    const [visible, setVisible] = useState(false);
 
     const validateForm = (formData) => {
         const emailErr = checkEmailValid(formData.get("email"));
@@ -143,148 +161,147 @@ function ForgotPasswordForm(props) {
         const emailErr = validateForm(formData);
         setEmailError(emailErr);
 
-        if (!emailErr)
-            {
-                fetch(baseUrl + "/mst/user/forgotPassword", {
-                    method: "POST",
-                    body: formData,
-                }).then(response => (response.json()
-                )).then((response) => {
-                    if (response.Success == true) {
-                        setSubmitted(true);
-                        console.log(response);
-                    } else {
-                        console.log(response);
-                        window.alert(response.error)
-                    }
-                    setLoading(false);
-                })
-            }
-        }
-        return (<>
-            {submitted ?
-                <p>If your email is registered, then please check your email for a link to reset your password</p>
-                : <form className="login-form" id="Forgot">
-                    <div className="login-form-content">
-                        <FormInput
-                            label="Email"
-                            error={emailError}
-                            type="email"
-                            name="email"
-                            className="emailAddress"
-                            placeholder="Email Address"
-                        />
-                    </div>
-                </form>}
-            <div className="flexBoxColumnGrow" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                {submitted ?
-                    <button className="primaryButton sign-in-button" onClick={() => props.setForgotPassword(false)}>Return to Login</button>
-                    :
-                    <div>
-                    <button className="primaryButton sign-in-button" onClick={handleForgot} disabled={loading}>Confirm</button>
-                    <button className="formButton sign-in-button" onClick={() => props.setForgotPassword(false)} style={{marginLeft: '45px'}}>Cancel</button>
-                    </div>
+        if (!emailErr) {
+            fetch(baseUrl + "/mst/user/forgotPassword", {
+                method: "POST",
+                body: formData,
+            }).then(response => (response.json()
+            )).then((response) => {
+                if (response.Success == true) {
+                    setSubmitted(true);
+                    console.log(response);
+                } else {
+                    console.log(response);
+                    window.alert(response.error)
                 }
-            </div>
-        </>)
+                setLoading(false);
+            })
+        }
+    }
+    return (<>
+        {submitted ?
+            <p>If your email is registered, then please check your email for a link to reset your password</p>
+            : <form className="login-form" id="Forgot">
+                <div className="login-form-content">
+                    <FormInput
+                        label="Email"
+                        error={emailError}
+                        type="email"
+                        name="email"
+                        className="emailAddress"
+                        placeholder="Email Address"
+                    />
+                </div>
+            </form>}
+        <div className="flexBoxColumnGrow" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+            {submitted ?
+                <button className="primaryButton sign-in-button" onClick={() => props.setForgotPassword(false)}>Return to Login</button>
+                :
+                <div>
+                    <button className="primaryButton sign-in-button" onClick={handleForgot} disabled={loading}>Confirm</button>
+                    <button className="formButton sign-in-button" onClick={() => props.setForgotPassword(false)} style={{ marginLeft: '45px' }}>Cancel</button>
+                </div>
+            }
+        </div>
+    </>)
+}
+
+//Registration Form
+function RegisterForm(props) {
+    const [nameError, setNameError] = useState();
+    const [emailError, setEmailError] = useState();
+    const [dobError, setDobError] = useState();
+    const [passError, setPassError] = useState();
+    const [loading, setLoading] = useState(false);
+    const [visible, setVisible] = useState(false);
+
+    const validateForm = (formData) => {
+        setNameError(checkName(formData.get("firstName")));
+        setEmailError(checkEmailValid(formData.get("email")));
+        setDobError(checkDOB(formData.get("dateOfBirth")));
+        setPassError(checkPass(formData.get("password")));
+
+        let valid = true;
+
+        if (nameError) {
+            valid = false;
+        }
+
+        if (emailError) {
+            valid = false;
+        }
+
+        if (dobError) {
+            valid = false;
+        }
+
+        if (passError) {
+            valid = false;
+        }
+
+        return (valid)
+
     }
 
-    //Registration Form
-    function RegisterForm(props) {
-        const [nameError, setNameError] = useState();
-        const [emailError, setEmailError] = useState();
-        const [dobError, setDobError] = useState();
-        const [passError, setPassError] = useState();
-        const [loading, setLoading] = useState(false);
-        const [visible, setVisible] = useState(false);
+    //const navigate = useNavigate();
+    const handleRegister = (e) => {
+        setLoading(true);
+        const form = document.getElementById("Register");
+        const formData = new FormData(form);
 
-        const validateForm = (formData) => {
-            setNameError(checkName(formData.get("firstName")));
-            setEmailError(checkEmailValid(formData.get("email")));
-            setDobError(checkDOB(formData.get("dateOfBirth")));
-            setPassError(checkPass(formData.get("password")));
-
-            let valid = true;
-
-            if (nameError) {
-                valid = false;
-            }
-
-            if (emailError) {
-                valid = false;
-            }
-
-            if (dobError) {
-                valid = false;
-            }
-
-            if (passError) {
-                valid = false;
-            }
-
-            return (valid)
-
-        }
-
-        //const navigate = useNavigate();
-        const handleRegister = (e) => {
-            setLoading(true);
-            const form = document.getElementById("Register");
-            const formData = new FormData(form);
-
-            const valid = validateForm(formData);
-            if (valid) {
-                fetch(baseUrl + "/mst/user/register", {
-                    method: "POST",
-                    body: formData,
-                }).then(response => (response.json()
-                )).then((response) => {
-                    if (response.Success == true) {
-                        props.setEmail(formData.get("email"));
-                    } else {
-                        console.log(response);
-                        window.alert(response.error)
-                    }
-                    setLoading(false);
+        const valid = validateForm(formData);
+        if (valid) {
+            fetch(baseUrl + "/mst/user/register", {
+                method: "POST",
+                body: formData,
+            }).then(response => (response.json()
+            )).then((response) => {
+                if (response.Success == true) {
+                    props.setEmail(formData.get("email"));
+                } else {
+                    console.log(response);
+                    window.alert(response.error)
                 }
-                ).catch(function (error) {
-                    console.log(error);
-                    setLoading(false);
-                })
-            } else {
                 setLoading(false);
             }
+            ).catch(function (error) {
+                console.log(error);
+                setLoading(false);
+            })
+        } else {
+            setLoading(false);
         }
-        return (
-            <>
-                <form className="login-form" id="Register">
-                    <div className="login-form-content">
-                        <FormInput
-                            label="First Name"
-                            type="text"
-                            name="firstName"
-                            placeholder="First Name"
-                            error={nameError}
-                        />
-                        <FormInput
-                            label="Birth Year"
-                            error={dobError}
-                            type="number"
-                            min="1910"
-                            max="2099"
-                            name="dateOfBirth"
-                            placeholder="Birth Year"
-                        />
+    }
+    return (
+        <>
+            <form className="login-form" id="Register">
+                <div className="login-form-content">
+                    <FormInput
+                        label="First Name"
+                        type="text"
+                        name="firstName"
+                        placeholder="First Name"
+                        error={nameError}
+                    />
+                    <FormInput
+                        label="Birth Year"
+                        error={dobError}
+                        type="number"
+                        min="1910"
+                        max="2099"
+                        name="dateOfBirth"
+                        placeholder="Birth Year"
+                    />
 
-                        <FormInput
-                            label="Email"
-                            error={emailError}
-                            type="email"
-                            name="email"
-                            className="emailAddress"
-                            placeholder="Email Address"
-                        />
-                        <div style={{display:"flex", flexDirection:"row"}}>
+                    <FormInput
+                        label="Email"
+                        error={emailError}
+                        type="email"
+                        name="email"
+                        className="emailAddress"
+                        placeholder="Email Address"
+                    />
+                    <div style={{ display: "flex", flexDirection: "row" }}>
                         <FormInput
                             label="Password"
                             error={passError}
@@ -301,88 +318,88 @@ function ForgotPasswordForm(props) {
             </form>
 
 
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                    <p style={{ fontSize: "14px" }}>
-                        Already have an account?
-                    </p>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <Link
-                        to="/login"
-                        className="register-message"><button className="primaryButton create-account-button">Log In</button>
-                    </Link>
-                </div>
-            </>
-        )
-    }
-
-    function EmailConfirmation(props) {
-        function handleResend() {
-            //resend props.email to endpoint
-        }
-        return (
-            <div>
-                <p>
-                    Thank you for signing up. Please confirm your email address to get started.
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
+            </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                <p style={{ fontSize: "14px" }}>
+                    Already have an account?
                 </p>
             </div>
-        )
-    }
-
-    /*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-    <button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
-    </div>*/
-
-    //Validation Functions
-    export function checkEmailValid(email) {
-        const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        const checkValid = new RegExp(regEx);
-
-        if (email == "") {
-            return "Email address is required.";
-        } else if (!checkValid.exec(email)) {
-            return "Please check the email format";
-        }
-    }
-
-    export function checkDOB(dob) {
-        const currentDate = new Date();
-        if (!dob) {
-            return "Year of Birth can't be empty";
-        } else if (dob > currentDate.getFullYear() - 13) {
-            return "You need to be over 13";
-        }
-
-    }
-
-    export function checkName(name) {
-        if (!name) {
-            return "Name is required.";
-        }
-    }
-
-    export function checkPass(pass) {
-        if (!pass) {
-            return "Password is required."
-        }
-    }
-
-    export function FormInput(props) {
-        return (
-            <div className="form-group">
-                <label>{props.label}</label>
-                <div>
-                    <input
-                        type={props.type}
-                        name={props.name}
-                        className={props.class}
-                        placeholder={props.placeholder}
-                    />
-                    <p style={{ color: "red" }}>{props.error}</p>
-                </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <Link
+                    to="/login"
+                    className="register-message"><button className="primaryButton create-account-button">Log In</button>
+                </Link>
             </div>
-        )
+        </>
+    )
+}
+
+function EmailConfirmation(props) {
+    function handleResend() {
+        //resend props.email to endpoint
     }
+    return (
+        <div>
+            <p>
+                Thank you for signing up. Please confirm your email address to get started.
+            </p>
+        </div>
+    )
+}
+
+/*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+<button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
+</div>*/
+
+//Validation Functions
+export function checkEmailValid(email) {
+    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const checkValid = new RegExp(regEx);
+
+    if (email == "") {
+        return "Email address is required.";
+    } else if (!checkValid.exec(email)) {
+        return "Please check the email format";
+    }
+}
+
+export function checkDOB(dob) {
+    const currentDate = new Date();
+    if (!dob) {
+        return "Year of Birth can't be empty";
+    } else if (dob > currentDate.getFullYear() - 13) {
+        return "You need to be over 13";
+    }
+
+}
+
+export function checkName(name) {
+    if (!name) {
+        return "Name is required.";
+    }
+}
+
+export function checkPass(pass) {
+    if (!pass) {
+        return "Password is required."
+    }
+}
+
+export function FormInput(props) {
+    return (
+        <div className="form-group">
+            <label>{props.label}</label>
+            <div>
+                <input
+                    type={props.type}
+                    name={props.name}
+                    className={props.class}
+                    placeholder={props.placeholder}
+                />
+                <p style={{ color: "red" }}>{props.error}</p>
+            </div>
+        </div>
+    )
+}
