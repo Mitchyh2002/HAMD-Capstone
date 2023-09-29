@@ -36,20 +36,6 @@ export function CreateAllPaths(Components) {
             return redirect("/Home")
         }
     },{
-        path: "/Home",
-        element: <Main modules={Components}/>,
-        //Map Component Directories
-        children: createHomeRoutes(Components),
-        loader: async ()  => {
-            const token = getToken();
-            console.log(token);
-            if(token == null){
-                return redirect("/login");
-            }else{
-                return token;
-            }
-        }
-    },{
         path:"/Login",
         element: <Login register={false}/>
     },{
@@ -60,7 +46,7 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch(baseUrl + "/mst/confirm/"+params.id);
+                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
                 const json = await response.json();
                 return json;
             }catch{
@@ -71,6 +57,26 @@ export function CreateAllPaths(Components) {
         path:'*',
         element:<NoMatchingPage />
     }];
+
+    const Home = {
+        path: "/Home",
+        element: <Main modules={Components}/>,
+        loader: async ()  => {
+            const token = getToken();
+            console.log(token);
+            if(token == null){
+                return redirect("/login");
+            }else{
+                return token;
+            }
+        }
+    }
+
+    if(Components){
+        Home.children = createHomeRoutes(Components);
+    }
+
+    Routes.push(Home);
     console.log(Routes);
     return Routes;
 }
@@ -82,7 +88,6 @@ export function CreateAllPaths(Components) {
 
 */
 export function createComponentRoutes(module) {
-    console.log(module.pages)
     const Root = {
         //Create Index as Display Name
         path: module.prefix,
@@ -90,20 +95,21 @@ export function createComponentRoutes(module) {
         element: <CreateParentOutlet module = {module} />,
     }
 
-    if(Directory[module.prefix]){
-        Root.children = 
-        Directory[module.prefix].map(e => {
-            console.log(e.children)
-            if (module.pages.some(obj => obj.pageCode == e.pageCode)){
-                return({
-                path: e.path,
-                ...e.loader&& {loader: e.loader},
-                ...e.children&& {children: e.children},
-                element: React.createElement(e.element)})
+    if(Directory[module.prefix] && module.pages){
+        Root.children = [];
+        module.pages.map(e => {
+            const page = Directory[module.prefix].find(obj => obj.pageCode == e.pageCode)
+            if (page){
+                Root.children.push({
+                    path: page.path,
+                    ...page.loader&& {loader: page.loader},
+                    ...page.children&& {children: page.children},
+                    element: React.createElement(page.element)
+                })
             }
-        }),
-        //Create sub directories from pages
+        })
     }
+    console.log("Root")
     console.log(Root)
 
     return Root;

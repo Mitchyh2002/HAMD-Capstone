@@ -1,10 +1,12 @@
-import { getElementError } from "@testing-library/react";
-import { updateName } from "./loaderFunctions";
+import { activateModule, deactivateModule, updateName } from "./loaderFunctions";
+import { useState } from "react";
 
 
-export default function Modal(props) {
+export function Modal(props) {
 
     let show = props.show;
+    const [error, setError] = useState(false);
+    const [success, setSucces] = useState(false);
 
     /* Setting the state for the modal */
     const toggleModal = () => {
@@ -17,8 +19,12 @@ export default function Modal(props) {
         const formData = new FormData(form);
         formData.append('modulePrefix', props.prefix)
         const response = updateName(formData).then(res =>{
-            console.log(res);
-            window.alert(res.Message);
+            setSucces(res.Success);
+            setError(!res.Success);
+            if(res.Success){
+                console.log("refreshing..")
+                props.refresh(true);
+            }
         });
     }
 
@@ -32,6 +38,8 @@ export default function Modal(props) {
                             x
                         </button>
                         <h4 className='modal-heading'>Edit</h4>
+                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
+                        {error == true && <label className="modal-label" style={{color: 'Red'}}>Something went wrong! Check your module key is correct</label>}
                         <form id="modalForm">
                             <label className='modal-label'>{props.label1}
                                 <input className='modal-input' type="text" name="displayName"/>
@@ -47,6 +55,66 @@ export default function Modal(props) {
                         <br></br>
                         <br></br>
                         <br></br>
+                        <br></br>
+                        <br></br>
+                        <button className='buttons confirm-button' onClick={updatePlugin}>
+                            Confirm Changes
+                        </button>
+                        <button className='buttons cancel-button' onClick={toggleModal}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+        </>
+    )
+}
+
+export function ActivateModal(props) {
+
+    let show = props.show;
+    const [error, setError] = useState(false);
+    const [success, setSucces] = useState(false);
+
+    /* Setting the state for the modal */
+    const toggleModal = () => {
+        show = false;
+        props.change(false);
+    }
+
+    const updatePlugin = () => {
+        const form = document.getElementById("modalForm");
+        const formData = new FormData(form);
+        formData.append('modulePrefix', props.prefix)
+        if(props.status == true) {
+            const response = activateModule(formData).then(res =>{
+                setSucces(res.success);
+                setError(!res.success);})
+            }else{
+                const response = deactivateModule(formData).then(res =>{
+                    setSucces(res.success);
+                    setError(!res.success);
+                })
+            }
+    }
+
+    return (
+        <>
+            {show && (
+                <div className="modal">
+                    <div onClick={toggleModal} className='overlay'></div>
+                    <div className='modal-content'>
+                        <button className='close-modal' onClick={toggleModal}>
+                            x
+                        </button>
+                        <h4 className='modal-heading'>Edit</h4>
+                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
+                        {error == true && <label className="modal-label" style={{color: 'Red'}}>Something went wrong! Check your module key is correct</label>}
+                        <form id="modalForm">                        
+                            <label className='modal-label'>Module Key
+                                <input className='modal-input' type="text" name="modulePass"/>
+                            </label>
+                        </form>
                         <br></br>
                         <br></br>
                         <button className='buttons confirm-button' onClick={updatePlugin}>

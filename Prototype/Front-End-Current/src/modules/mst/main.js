@@ -27,6 +27,7 @@ export const mst_pages = [{
     element: AddUser
 },{
     path: "User Account/:id",
+    pageCode: "4",
     element: UserAccount,
     loader: getUser
 }];

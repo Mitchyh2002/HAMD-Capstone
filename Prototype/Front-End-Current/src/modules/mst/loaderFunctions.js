@@ -3,7 +3,11 @@ import { baseUrl } from "config";
 /*All loader functions to export for react Router */
 
 export async function getPlugins() {
-    return fetch(baseUrl + "/mst/module/getall")
+    return fetch(baseUrl + "/mst/module/getall", {
+        headers: {
+      'Authorization': "Bearer " + getToken(),
+      }
+    })
         .then(res => res.json())
         .then(res => {
             return res;
@@ -16,7 +20,10 @@ export function updateName(form) {
     return fetch(baseUrl + "/mst/module/updatereference",
         {
             method: "POST",
-            body: form
+            body: form, 
+            headers: {
+                'Authorization': "Bearer " + getToken()
+            }
         })
         .then(res => res.json())
         .then(res => { return res })
@@ -33,9 +40,25 @@ export async function getUsers() {
 }
 
 export function deactivateModule(prefix){
-    return fetch("http://localhost:5000/module/deactivate",
+    return fetch(baseUrl + "/mst/module/deactivate",
     {
         method: "POST",
+        headers: {
+      'Authorization': "Bearer " + getToken(),
+      },
+        body: JSON.stringify({"modulePrefix" : prefix})
+    })
+    .then(res => res.json())
+    .then(res => { return res })
+}
+
+export function activateModule(prefix){
+    return fetch(baseUrl + "/mst/module/activate",
+    {
+        method: "POST",
+        headers: {
+      'Authorization': "Bearer " + getToken(),
+      },
         body: JSON.stringify({"modulePrefix" : prefix})
     })
     .then(res => res.json())
