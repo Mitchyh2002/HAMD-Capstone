@@ -90,9 +90,9 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
             url_check = re.findall(urlPattern, line)
             blueprint_check = re.findall(blueprintPattern, line)
             if len(blueprint_check) == 0:
-                return on_error(4, f"First Variable in Blueprint must contain {modulename}_")
+                return on_error(6, f"First Variable in Blueprint must contain {modulename}_")
             if len(url_check) == 0:
-                return on_error(4, f"url_prefix must start with module prefix")
+                return on_error(7, f"url_prefix must start with module prefix")
         if update:
             if "@blueprint.route" in line:
                 line = line.strip()
@@ -406,12 +406,12 @@ def check_files(temp_dir, module_prefix):
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
 
         if list(set(existing_content).difference(set(new_content))) != []:
-            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+            return on_error(5, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
 
     if os.path.exists(f'Program/Module/{module_prefix}'):
         back_end_dir = temp_dir + f'{module_prefix}/Backend'
         if not os.path.exists(back_end_dir):
-            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+            return on_error(5, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
         existing_content = dir_tree(f'Program/Module/{module_prefix}')
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Backend')[1] for x in dir_tree(back_end_dir, True)]
 
@@ -519,7 +519,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 old_functionName = re.findall(pattern, line)[0]
                 if functionName[0] != old_functionName:
                     os.chdir(master_dir)
-                    return on_error(16,
+                    return on_error(15,
                                     f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
                     break
@@ -782,7 +782,7 @@ def deactivate_module():
     return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
-@blueprint.route('/upload', methods=['GET', 'POST', 'OPTIONS'])
+@blueprint.route('/upload', methods=['POST', 'OPTIONS'])
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
@@ -815,13 +815,6 @@ def upload_module():
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
         ModulePass = PasswordHash.new(ModulePass)
-        moduleLevel = request.values.get("securityLevel")
-        if moduleLevel is None:
-            moduleLevel = 1
-        try:
-            int(moduleLevel)
-        except:
-            return(on_error(5, "moduleLevel is Not a Valid Number"))
         if '' in [DisplayName, ModulePass.hash]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
@@ -833,7 +826,7 @@ def upload_module():
                 return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
 
         if splitext(dl_file.filename)[1] != ".zip":
-            return 'File is not a zip file'
+            return on_error(2,'File is not a zip file')
         with zipfile.ZipFile(dl_file, 'r') as zip_ref:
             zip_ref.extractall("Program\Temp_Module")
 
@@ -912,7 +905,7 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path, moduleLevel)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
         QueryInsertModule(new_Module)
         for page in front_end_success:
             if update:
