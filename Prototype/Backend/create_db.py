@@ -1,3 +1,5 @@
+import datetime
+
 from Program.DB.Builder import create_db
 from Program.DB.Models.grp.Groups import create_group
 from Program import init_app
@@ -24,8 +26,12 @@ def sys_create():
     testUser = create_user('test@test.com', 'testUser', 'testUser', '2000', None, 1)
     testUser2 = create_user('test2@test.com', 'testUser', 'testUser', '2000', None, 5)
     testUser2.confirmed = True
+    testUser2.confirmedDate = datetime.date.today()
     testUser.confirmed = True
+    testUser.confirmedDate = datetime.date.today()
     masterUser.confirmed = True
+    testUser.confirmed = datetime.date.today()
+
     userAccess = create_moduleAccess(masterUser.userID, 'mst')
     grp1 = create_group('Default')
     grp2 = create_group('Test Group')
