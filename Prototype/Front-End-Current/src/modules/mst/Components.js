@@ -1,6 +1,6 @@
-import { Form } from "react-router-dom";
 import { activateModule, deactivateModule, updateName } from "./loaderFunctions";
 import { useRef, useState } from "react";
+import "./admin.css";
 
 
 export function Modal(props) {
@@ -134,5 +134,20 @@ export function ActivateModal(props) {
                 </div>
             )}
         </>
+    )
+}
+
+export const ToolTip = ({ text, children }) => {
+    const[isVisible, setIsVisible] = useState(false);
+
+    return(
+        <div 
+            className="tooltip-container"
+            onMouseEnter={() => setIsVisible(true)}
+            onMouseLeave={() => setIsVisible(false)}
+        >
+            {children}
+            {isVisible && <div className="tooltip">{text}</div>}
+        </div>
     )
 }

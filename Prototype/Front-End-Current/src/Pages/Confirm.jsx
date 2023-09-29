@@ -3,7 +3,7 @@ import Header from "Components/Header";
 import { useRef, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
 
-export function ConfirmEmail() {
+export default function ConfirmEmail() {
     const response = useLoaderData();
     return(<>
         <Header />

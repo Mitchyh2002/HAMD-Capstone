@@ -1,15 +1,10 @@
 import {Directory, Modules } from "../moduleDefs"
 import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
-import Main from "Pages/Main";
+import {Main, Login, NoMatchingPage, ConfirmEmail, Account, ChangePassword, ResetPassword} from "Pages/";
 import React from "react";
 import SubMenu from "Components/SubMenu";
-import Login from "Pages/Login";
-import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
-import { ConfirmEmail } from "Pages/Confirm";
-import Account from "Pages/Account";
 import { baseUrl } from "config";
-import ChangePassword from "Pages/ChangePassword";
 
 
 /*All Routes
@@ -36,6 +31,20 @@ export function CreateAllPaths(Components) {
             return redirect("/Home")
         }
     },{
+        path: "/Home",
+        element: <Main modules={Components} clicked={false}/>,
+        //Map Component Directories
+        children: createHomeRoutes(Components),
+        loader: async ()  => {
+            const token = getToken();
+            console.log(token);
+            if(token == null){
+                return redirect("/login");
+            }else{
+                return token;
+            }
+        }
+    },{
         path:"/Login",
         element: <Login register={false}/>
     },{
@@ -55,6 +64,9 @@ export function CreateAllPaths(Components) {
             }
         }
     },{
+        path:"/ResetPassword/:id",
+        element: <ResetPassword />,
+    },{ 
         path:'*',
         element:<NoMatchingPage />
     }];

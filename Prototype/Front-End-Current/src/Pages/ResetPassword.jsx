@@ -1,31 +1,33 @@
 import Header from "Components/Header"
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useState } from "react";
 import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
-import { getToken } from "Functions/User";
 
-export default function ChangePassword(props) {
-    const [changed, setChanged] = useState(props.changed);
+
+export default function ResetPassword() {
+    const [changed, setChanged] = useState();
+    const { id } = useParams();
 
     return (<>
-        <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
+        <Header />
+        <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
             <div className="flexBoxGrow" style={{ maxWidth: "65%" }}>
-                <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center", display: 'flex', flexDirection: 'column' }}>
-
+                <div style={{ justifyContent: "center" }}>
                     {changed ? (
                         <div>
-                            <p>You have successfully changed your password! Please click below to navigate to home</p>
+                            <p>You have successfully changed your password! Please click below to login</p>
                             <Link
                                 to="/Home">
-                                <button className="formButton home-button">Home</button>
+                                <button className="formButton home-button">Login</button>
                             </Link>
                         </div>
                     ) : (
-                        <ChangePasswordForm setChanged={setChanged} />
+                        <ChangePasswordForm setChanged={setChanged} id={id} />
+
                     )}
                 </div>
             </div>
@@ -34,21 +36,19 @@ export default function ChangePassword(props) {
 }
 
 function ChangePasswordForm(props) {
-    const [currentPassError, setCurrentPassError] = useState();
     const [new1PassError, setNew1PassError] = useState();
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
-
+  
     const validateForm = (formData) => {
-        setCurrentPassError(checkPass(formData.get("currentPassword")))
         setNew1PassError(checkPass(formData.get("newPassword")))
         setNew2PassError(checkPass(formData.get("confPassword")))
         setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")))
 
         let valid = true;
 
-        if (currentPassError || new1PassError || new2PassError || confPassError) {
+        if (new1PassError || new2PassError || confPassError) {
             valid = false;
         }
 
@@ -61,16 +61,14 @@ function ChangePasswordForm(props) {
 
     const handleChange = (e) => {
         setLoading(true);
-        const form = document.getElementById("Change Password");
+        const form = document.getElementById("Reset Password");
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
         if (valid) {
-            fetch(baseUrl + "/mst/user/changePassword", {
+            fetch(baseUrl + "/mst/user/resetPassword/" + props.id, {
+
                 method: "POST",
-                headers: {
-                    'Authorization': "Bearer " + getToken(),
-                },
                 body: formData,
             }).then(response => (response.json()
             )).then((response) => {
@@ -91,25 +89,21 @@ function ChangePasswordForm(props) {
         }
     }
     return (<>
-        <form className="password-form" id="Change Password" style={{ width: '65vh' }}>
+        <form className="password-form" id="Reset Password">
             <div className="password-form-content">
-                    <FormInput
-                        label="Current Password"
-                        error={currentPassError}
-                        type={"password"}
-                        name="currentPassword"
-                    />
                     <FormInput
                         label="New Password"
                         error={new1PassError}
                         type={"password"}
-                        name="newPassword"
+                        name="password"
+                        placeholder="New Password"
                     />
                     <FormInput
                         label="Confirm New Password"
                         error={[new2PassError, confPassError]}
                         type={"password"}
                         name="confPassword"
+                        placeholder="Confirm New Password"
                     />
 
             </div>
@@ -118,13 +112,6 @@ function ChangePasswordForm(props) {
         <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
             <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
         </div>
-        <div className="flexBoxRowGrow" style={{ justifyContent: "center", marginTop: "30px" }}>
-        <Link
-                    to="/home/account">
-                    <button className="formButton change-password-button">Back</button>
-                </Link>
-        </div>
-
     </>)
 }
 

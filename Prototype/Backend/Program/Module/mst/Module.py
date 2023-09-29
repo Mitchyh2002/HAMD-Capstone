@@ -90,9 +90,9 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
             url_check = re.findall(urlPattern, line)
             blueprint_check = re.findall(blueprintPattern, line)
             if len(blueprint_check) == 0:
-                return on_error(4, f"First Variable in Blueprint must contain {modulename}_")
+                return on_error(6, f"First Variable in Blueprint must contain {modulename}_")
             if len(url_check) == 0:
-                return on_error(4, f"url_prefix must start with module prefix")
+                return on_error(7, f"url_prefix must start with module prefix")
         if update:
             if "@blueprint.route" in line:
                 line = line.strip()
@@ -220,7 +220,8 @@ def getModule():
         modulePages = [Page.toJSON() for Page in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
         selectedModule['Pages'] = modulePages
 
-    return selectedModule
+    return on_success(selectedModule)
+
 @blueprint.route('/getactive', methods=['GET'])
 def get_active_plugins():
     '''
@@ -244,10 +245,7 @@ def get_active_plugins():
         user_bearer = request.values.get('HTTP_AUTHORIZATION')
     user_data = bearer_decode(user_bearer)
     if user_data['Success'] == False:
-        if user_data['StatusCode'] == 403:
-            return user_data
-        valid_modules = Module.query.filter(Module.status == True).all()
-        return on_success([x.toJSON(True) for x in valid_modules])
+        return user_data
     user_data = user_data['Values']
     #If Breakglass Show All Active Modules
     if user_data['adminLevel'] == 9:
@@ -277,6 +275,7 @@ def get_active_plugins():
                 valid_modules.append(curr_module)
 
     user_modules = moduleAccess.query.filter_by(userID=user.userID).all()
+    curr_module = None
     for module in user_modules:
         curr_module = Module.query.filter_by(prefix=module.modulePrefix).first()
         pages = ModuleSecurity.query.filter(ModuleSecurity.modulePrefix == module.modulePrefix,
@@ -292,8 +291,12 @@ def get_active_plugins():
         curr_module = curr_module.toJSON(True)
         curr_module['pages'] = pages
         valid_modules.append(curr_module)
-
-    return on_success(valid_modules)
+    if curr_module is not None:
+        if curr_module['pages'] != []:
+            curr_module['pages'] = [page.toJSON() for page in curr_module['pages']]
+        return on_success(valid_modules)
+    else:
+        return on_success([])
 
 
 @blueprint.route('getall')
@@ -310,7 +313,7 @@ def get_all_plugins():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted == True:
-        return [Module.toJSON(True, True) for Module in Module.query.all()]
+        return on_success([Module.toJSON(True, True) for Module in Module.query.all()])
     return accessGranted
 
 @blueprint.route('updatePage', methods=['POST'])
@@ -344,7 +347,7 @@ def updatePageLevel():
         return on_error(2, "Specified Module Does Not Exist")
 
     selectedPage = ModuleSecurity.query.filter_by(modulePrefix=modulePrefix, pageCode=pageCode).first()
-    if selectedModule == None:
+    if selectedPage is None:
         return on_error(2, "Specified Page Does Not Exist")
     selectedPage.SecurityLevel = securityLevel
     if pageName is not None:
@@ -385,7 +388,7 @@ def get_module_pages(modulePrefix=None):
         selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
         if selectedModule == None:
             return on_error(2, "Selected Module Doesnt Exist")
-        return [ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()]
+        return on_success([ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()])
     return accessGranted
 
 def check_files(temp_dir, module_prefix):
@@ -403,12 +406,12 @@ def check_files(temp_dir, module_prefix):
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
 
         if list(set(existing_content).difference(set(new_content))) != []:
-            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+            return on_error(5, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
 
     if os.path.exists(f'Program/Module/{module_prefix}'):
         back_end_dir = temp_dir + f'{module_prefix}/Backend'
         if not os.path.exists(back_end_dir):
-            return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
+            return on_error(5, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
         existing_content = dir_tree(f'Program/Module/{module_prefix}')
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Backend')[1] for x in dir_tree(back_end_dir, True)]
 
@@ -516,7 +519,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                 old_functionName = re.findall(pattern, line)[0]
                 if functionName[0] != old_functionName:
                     os.chdir(master_dir)
-                    return on_error(16,
+                    return on_error(15,
                                     f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
                     break
@@ -642,6 +645,12 @@ def Module_Access_Control():
         return accessGranted
 
     userID = request.values.get("userID")
+    try:
+        if float(userID) % 1 != 0.0:
+            return on_error(6, "userID is not a valid number")
+    except:
+        return on_error(6, "userID not a valid number")
+
     user = User.query.filter_by(userID=userID).first()
 
     modulePrefix = request.values.get("modulePrefix")
@@ -713,11 +722,12 @@ def update_module_ref():
     from Program import db
     save_dir = os.getcwd()
     modulePrefix = request.values.get('modulePrefix')
+
     displayName = request.values.get('displayName')
-    if len(displayName) > 200:
-        return on_error(2, "Display Name Must be less than 200 Characters")
     if displayName == None or modulePrefix == None:
         return on_error(1, "Missing Key Inputs, please check request is sending correct parameters")
+    if len(displayName) > 200:
+        return on_error(2, "Display Name Must be less than 200 Characters")
     dl_file = ''
     if len(request.files) != 0:
         dl_file = request.files['logo']
@@ -751,7 +761,7 @@ def activate_module():
 
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=True))
     db.session.commit()
-    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
+    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
 @blueprint.route('deactivate', methods=["POST"])
@@ -769,10 +779,10 @@ def deactivate_module():
     Module.query.filter(Module.prefix == modulePrefix).update(dict(status=False))
 
     db.session.commit()
-    return (Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True)
+    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
-@blueprint.route('/upload', methods=['GET', 'POST', 'OPTIONS'])
+@blueprint.route('/upload', methods=['POST', 'OPTIONS'])
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
@@ -805,13 +815,6 @@ def upload_module():
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
         ModulePass = PasswordHash.new(ModulePass)
-        moduleLevel = request.values.get("securityLevel")
-        if moduleLevel is None:
-            moduleLevel = 1
-        try:
-            int(moduleLevel)
-        except:
-            return(on_error(5, "moduleLevel is Not a Valid Number"))
         if '' in [DisplayName, ModulePass.hash]:
             return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
@@ -823,7 +826,7 @@ def upload_module():
                 return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
 
         if splitext(dl_file.filename)[1] != ".zip":
-            return 'File is not a zip file'
+            return on_error(2,'File is not a zip file')
         with zipfile.ZipFile(dl_file, 'r') as zip_ref:
             zip_ref.extractall("Program\Temp_Module")
 
@@ -902,7 +905,7 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path, moduleLevel)
+        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
         QueryInsertModule(new_Module)
         for page in front_end_success:
             if update:

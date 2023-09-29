@@ -177,7 +177,7 @@ body.active-modal {
 }
 
 .new-user-button{
-  background-color: rgba(242, 143, 59, 1);
+  background-color: var(--navbar);
 }
 
 .close-modal {
@@ -189,42 +189,42 @@ body.active-modal {
   }
   
 .confirm-button {
-    background-color: rgba(242, 143, 59, 1);
+    background-color: var(--navbar);
     position: absolute;
     bottom: 20px;
     left: 40px;
   }
   
 .cancel-button {
-    background-color: rgba(242, 143, 59, 0.5);
+    background-color: var(--navbar50);
     position: absolute;
     bottom: 20px;
     left: 190px;
   }
 
 .remove-user-button{
-    background-color: rgba(242, 143, 59, 1);
+    background-color: var(--navbar);
     position: absolute;
     bottom: 20px;
     left: 110px;
 }
 
 .user-confirm-button{
-  background-color: rgba(242, 143, 59, 1);
+  background-color: var(--navbar);
   position: absolute;
   bottom: 78px;
   left: 35px;
 }
 
 .user-cancel-button{
-background-color: rgba(242, 143, 59, 0.5);
+background-color: var(--navbar50);
 position: absolute;
 bottom: 78px;
 left: 190px;
 }
 
 .okay-button{
-  background-color: rgba(242, 143, 59, 1);
+  background-color: var(--navbar);
   position: absolute; 
   bottom: 20px;
   left: 110px;
@@ -246,13 +246,37 @@ left: 190px;
 .add-user-button{
   width: 180px;
   height: 50px;
-  background-color: rgba(242, 143, 59, 1);
+  background-color: var(--navbar);
   margin-top: 10px;
   margin-right: 50px;
   font-size: 18px;
 }
 .add-user-button:hover {
-  background-color: rgba(242, 143, 59, 0.7);
+  background-color: var(--navbar70);
 }
   
+.tooltipIcon{
+  width: 15px;
+}
+
+.tooltip-container{
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip{
+  position: absolute;
+  background-color: rgba(115, 114, 114, 1);
+  color: var(--white);
+  padding: 10px;
+  border-radius: 4px;
+  z-index: 1;
+  min-width: 300px;
+}
+
+.visible-icon{
+  margin-top: 10px;
+  cursor: pointer;
+  height: 30px;
+}
 

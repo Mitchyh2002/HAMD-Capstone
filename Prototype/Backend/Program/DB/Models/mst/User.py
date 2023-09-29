@@ -145,9 +145,9 @@ class User(UserMixin, db.Model):
     def setIsAnonymous(self, bool):
         self._is_anonymous = bool
 
-def create_user(email, firstName, passwordHash, dateOfBirth, phoneNumber=None, adminLevel=1):
+def create_user(email: str, firstName, passwordHash, dateOfBirth, phoneNumber=None, adminLevel=1):
     created_user = User()
-    created_user.email = email
+    created_user.email = email.lower()
     created_user.firstName = firstName
     created_user.passwordHash = passwordHash
     created_user.dateOfBirth = dateOfBirth

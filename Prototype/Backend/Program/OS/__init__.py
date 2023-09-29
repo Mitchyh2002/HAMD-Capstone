@@ -5,7 +5,7 @@ from Program.ResponseHandler import on_error, on_success
 from Program.DB.Models.mst.User import User
 from Program.DB.Models.grp.Groups import Group
 from Program.DB.Models.grp.moduleGroups import moduleGroups
-from Program.DB.Models.mst.ModuleSecurity import ModuleSecurity, JSONtomoduleAccess
+from Program.DB.Models.mst.moduleAccess import moduleAccess
 from Program.DB.Models.grp.userGroups import userGroup
 from Program.DB.Models.mst.Module import Module, create_module
 
@@ -73,6 +73,11 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
             for module in modules:
                 if module.module_prefix == modulePrefix and group.securityLevel == adminLvl:
                     return True
+    if adminLvl >= 5:
+        visibleModules = moduleAccess.query.filter_by(userID=user.userID, modulePrefix=modulePrefix).first()
+        if visibleModules == None:
+            return on_error(401, "You do not have access to the function")
+
     if user['adminLevel'] < adminLvl:
         return on_error(401, "You do not have access to the function")
     return True
