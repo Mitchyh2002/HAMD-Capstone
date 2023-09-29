@@ -4,6 +4,7 @@ import { login } from "Functions/User";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { baseUrl } from "config";
+import { LoginErrors } from "errorCodes";
 
 export default function Login(props) {
     const register = props.register;
@@ -53,14 +54,9 @@ function LoginForm(props) {
     }, [response]);
 
     const validateForm = (formData) => {
-        setEmailError(checkEmailValid(formData.get("email")));
-        setPassError(checkPass(formData.get("password")));
 
         const emailIsValid = checkEmailValid(formData.get("email"));
         const passIsValid = checkPass(formData.get("password"));
-
-        setEmailError(emailIsValid ? null : 'Invalid email');
-        setPassError(passIsValid ? null : 'Invalid password');
 
         return emailIsValid && passIsValid;
 
@@ -71,7 +67,7 @@ function LoginForm(props) {
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
-        if (valid) {
+        if (true) {
             setResponse(await login(formData));
         }
     };
@@ -84,9 +80,11 @@ function LoginForm(props) {
                         type="text"
                         name="email"
                         placeholder="Email Address"
-                        error={emailError}
+                        //error={emailError}
                     />
-                    {response && response.StatusCode in [10, 11, 13] &&(
+                    {response &&
+                     [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode) 
+                     &&(
                         <div className="error-message">
                             {response.Message}
                         </div>
@@ -103,7 +101,7 @@ function LoginForm(props) {
                             {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
                         </div>
                     </div>
-                    {response && response.StatusCode in [20] &&(
+                    {response && response.StatusCode == LoginErrors.passwordEmpty &&(
                         <div className="error-message">
                             {response.Message}
                         </div>
@@ -118,7 +116,9 @@ function LoginForm(props) {
                 </div>
             </form>
 
-            {response && response.StatusCode in [1, 21, 30] && (
+            {response && 
+            [LoginErrors.accountSuspended, LoginErrors.accountUncomfirmed, LoginErrors.passwordWrong].includes(response.StatusCode) 
+            && (
                 <div className="error-message">
                     {response.Message}
                 </div>
