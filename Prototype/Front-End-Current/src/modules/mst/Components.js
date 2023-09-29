@@ -1,5 +1,6 @@
+import { Form } from "react-router-dom";
 import { activateModule, deactivateModule, updateName } from "./loaderFunctions";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 
 export function Modal(props) {
@@ -22,7 +23,6 @@ export function Modal(props) {
             setSucces(res.Success);
             setError(!res.Success);
             if(res.Success){
-                console.log("refreshing..")
                 props.refresh(true);
             }
         });
@@ -75,6 +75,7 @@ export function ActivateModal(props) {
     let show = props.show;
     const [error, setError] = useState(false);
     const [success, setSucces] = useState(false);
+    const passRef = useRef();
 
     /* Setting the state for the modal */
     const toggleModal = () => {
@@ -82,18 +83,24 @@ export function ActivateModal(props) {
         props.change(false);
     }
 
-    const updatePlugin = () => {
-        const form = document.getElementById("modalForm");
-        const formData = new FormData(form);
-        formData.append('modulePrefix', props.prefix)
+    const updatePlugin = (prefix, active) => {
+        const form = new FormData();
+        form.append('modulePrefix', props.prefix)
         if(props.status == true) {
-            const response = activateModule(formData).then(res =>{
+            const response = activateModule(form).then(res =>{
                 setSucces(res.success);
-                setError(!res.success);})
+                setError(!res.success);
+                if(res.Success){
+                    props.refresh(true);
+                }
+            })
             }else{
-                const response = deactivateModule(formData).then(res =>{
+                const response = deactivateModule(form).then(res =>{
                     setSucces(res.success);
                     setError(!res.success);
+                    if(res.Success){
+                        props.refresh(true);
+                    }
                 })
             }
     }
@@ -112,7 +119,7 @@ export function ActivateModal(props) {
                         {error == true && <label className="modal-label" style={{color: 'Red'}}>Something went wrong! Check your module key is correct</label>}
                         <form id="modalForm">                        
                             <label className='modal-label'>Module Key
-                                <input className='modal-input' type="text" name="modulePass"/>
+                                <input className='modal-input' type="text" name="modulePass" ref={passRef}/>
                             </label>
                         </form>
                         <br></br>

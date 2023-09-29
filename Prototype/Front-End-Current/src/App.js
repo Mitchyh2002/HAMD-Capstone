@@ -4,6 +4,7 @@ import { AllRoutes, allRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
 import { getToken, logout } from 'Functions/User';
 import { baseUrl } from 'config';
+import { AppLoader } from 'Components/loader';
 
 function App() {
   const [modules, setModules] = useState([]);
@@ -39,7 +40,7 @@ function App() {
       {router &&
       <RouterProvider 
       router={router} 
-      fallbackElement={<div><label>Loading</label></div>}/>}
+      fallbackElement={<AppLoader />} />}
     </>
   );
 }

@@ -1,4 +1,6 @@
+import { EmailConfirmation } from "Components/EmailConfirmation";
 import Header from "Components/Header";
+import { useRef, useState } from "react";
 import { useLoaderData, Link } from "react-router-dom";
 
 export function ConfirmEmail() {
@@ -11,7 +13,7 @@ export function ConfirmEmail() {
                     <h3>{renderHeader(response.StatusCode)}</h3>
                 </div>
                 <div style={{ justifyContent: "center"}}>
-                    {renderBody(response.StatusCode)}
+                    <RenderBody responseCode = {response.StatusCode} />
                 </div>
             </div>
         </div>
@@ -37,12 +39,24 @@ function renderHeader(responseCode) {
 }
 
 //Determine which element to return for the body based on the status code
-function renderBody(responseCode){
-    switch (responseCode) {
+function RenderBody(props){
+    const emailRef = useRef();
+    const [email, setEmail] = useState();
+
+    const emailChange = () => {
+        const email = emailRef.current.value
+        setEmail(email);
+    }
+    switch (props.responseCode) {
         case -1:
             return <p>Looks like some thing went wrong while we were processing you request. Try refreshing the page and checking your internet connection.</p>
         case 60:
-            return <p>Looks like the token is either invalid or has expired, try sending another one.</p>
+            return( 
+            <div className="flexBoxGrowColumn" style={{alignItems: "center"}}>
+                <p>Looks like the token is either invalid or has expired, enter your email below and try sending another one.</p>
+                <input placeholder="Enter Email Here" ref={emailRef} onChange={emailChange}></input>
+                 <EmailConfirmation setEmail = {setEmail} email={email} hideInitial = {true}/> 
+            </div>)
         case 61:
             return(<>
                 <p>Looks like you have already verified your email address. Click the button below to return to the login screen.</p>

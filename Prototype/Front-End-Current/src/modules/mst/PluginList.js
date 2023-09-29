@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData } from 'react-router-dom';
-import { getPlugins } from "./loaderFunctions";
+import { getPlugins, activateModule, deactivateModule } from "./loaderFunctions";
 import {Modal, ActivateModal} from './Components.js';
 import "./admin.css";
 
@@ -36,9 +36,7 @@ export default function PluginList() {
 
 function PluginTable (props){
     const [modal, setModal] = useState(false);
-    const [activateModal, setActivateModal] = useState(false);
     const [prefix, setPrefix] = useState();
-    const [moduleStatus, setModuleStatus] = useState();
 
 
     /* Getting the data from the database  */
@@ -64,11 +62,25 @@ function PluginTable (props){
         setModal(!modal);
     }
 
-    const toggleActivateModal = (status, prefix) => {
-        setPrefix(prefix);
-        setActivateModal(!activateModal);
-        setModuleStatus(status);
+    const toggleModuleActivation = (status, prefix) => {
+        const form = new FormData();
+        console.log(status);
+        form.append('modulePrefix', prefix)
+        if(status == false) {
+            const response = activateModule(form).then(res => {
+                if(!res.Success){
+                    props.refresh(true);
+                }
+            })
+            }else{
+                const response = deactivateModule(form).then(res =>{
+                    if(!res.Success){
+                        props.refresh(true);
+                    }
+                })
+            }
     }
+
     return(
     <>
     <div className="pluginPage">
@@ -104,7 +116,7 @@ function PluginTable (props){
                                         Edit
                                     </button>
                                     |
-                                    <button className="btn-modal delete-btn" onClick={() => {toggleActivateModal(row.original.status, row.original.prefix)}}>
+                                    <button className="btn-modal delete-btn" onClick={() => {toggleModuleActivation(row.original.status, row.original.prefix)}}>
                                         {row.original.status == true ? "Deactivate" : "Activate"}
                                     </button>
                                 </td>
@@ -117,9 +129,6 @@ function PluginTable (props){
     </div>
     {modal && (
         <Modal label1="Change Display Name:" show={modal} change={setModal} prefix={prefix} refresh={props.refresh}/>
-    )}
-    {activateModal && (
-        <ActivateModal label1="Enter Module Key:" show={activateModal} change={setActivateModal} prefix={prefix} status={moduleStatus} refresh={props.refresh}/> 
     )}
 </>
     )

@@ -39,27 +39,27 @@ export async function getUsers() {
         })
 }
 
-export function deactivateModule(prefix){
+export function deactivateModule(form){
     return fetch(baseUrl + "/mst/module/deactivate",
     {
         method: "POST",
         headers: {
       'Authorization': "Bearer " + getToken(),
       },
-        body: JSON.stringify({"modulePrefix" : prefix})
+        body: form
     })
     .then(res => res.json())
     .then(res => { return res })
 }
 
-export function activateModule(prefix){
+export function activateModule(form){
     return fetch(baseUrl + "/mst/module/activate",
     {
         method: "POST",
         headers: {
       'Authorization': "Bearer " + getToken(),
       },
-        body: JSON.stringify({"modulePrefix" : prefix})
+        body: form
     })
     .then(res => res.json())
     .then(res => { return res })

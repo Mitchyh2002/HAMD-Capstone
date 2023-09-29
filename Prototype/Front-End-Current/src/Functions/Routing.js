@@ -48,6 +48,7 @@ export function CreateAllPaths(Components) {
             try{
                 const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
                 const json = await response.json();
+                console.log(json)
                 return json;
             }catch{
                 return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});

@@ -1,9 +1,10 @@
 import Header from "Components/Header";
 import './Login.css';
-import { login } from "Functions/User";
-import { Link } from "react-router-dom";
+import { login, resendRegistraionEmail } from "Functions/User";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { baseUrl } from "config";
+import { EmailConfirmation } from "Components/EmailConfirmation";
 
 export default function Login(props) {
     const register = props.register;
@@ -19,7 +20,7 @@ export default function Login(props) {
                         <img className="bee-image" alt="small-bee-image" />
                         <h3>{register ? "Create Account" : "Sign In"}</h3>
                     </div>
-                    {email ? <EmailConfirmation email={email} /> :
+                    {email ? <EmailConfirmation email={email} setEmail={setEmail} /> :
                         register ?
                             <RegisterForm setEmail={setEmail} /> : <LoginForm />}
                 </div>
@@ -244,23 +245,6 @@ function RegisterForm(props) {
         </>
     )
 }
-
-function EmailConfirmation(props) {
-    function handleResend() {
-        //resend props.email to endpoint
-    }
-    return (
-        <div>
-            <p>
-                Thank you for signing up. Please confirm your email address to get started.
-            </p>
-        </div>
-    )
-}
-
-/*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-<button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
-</div>*/
 
 //Validation Functions
 export function checkEmailValid(email) {
