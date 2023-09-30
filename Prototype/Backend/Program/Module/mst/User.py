@@ -11,8 +11,7 @@ except ImportError:
 from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email, confirm_token
-from Program.ResponseHandler import on_error, on_success
-from Program.OS import bearer_decode
+from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
 
 blueprint = Blueprint('user', __name__, url_prefix="/mst/user")
 

@@ -9,7 +9,7 @@ import zipfile
 import shutil
 import re
 import ast
-from Program.ResponseHandler import on_error, on_success, not_configured
+from Program.ResponseHandler import on_error, on_success, not_configured, bearer_decode, userFunctionAuthorisations
 from os.path import splitext
 from os import mkdir
 from re import search
@@ -25,7 +25,7 @@ from Program.DB.Models.grp.Groups import Group
 from Program.DB.Models.grp.moduleGroups import moduleGroups
 
 from Program import reload, db
-from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunctionAuthorisations
+from Program.OS import dir_tree, convert_to_imports
 
 # from Program.DB.Models.mst.Modules import Module, create_module
 from sqlalchemy.orm import Session

@@ -9,8 +9,8 @@ from Program.DB.Models.mst.Module import Module
 from Program.DB.Models.grp.userGroups import userGroup, create_userGroup
 from Program.DB.Models.grp.Groups import Group, create_group
 from Program.DB.Models.grp.moduleGroups import moduleGroups, create_moduleGroup
-from Program.ResponseHandler import on_error, on_success
-from Program.OS import dir_tree, convert_to_imports, bearer_decode, userFunctionAuthorisations
+from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
+from Program.OS import dir_tree, convert_to_imports
 
 blueprint = Blueprint('grp_Group', __name__, url_prefix="/grp/group")
 

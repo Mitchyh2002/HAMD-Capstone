@@ -9,8 +9,7 @@ except ImportError:
 
 from Program import db
 from Program.DB.Models.mst.User import User, JSONtoUser
-from Program.ResponseHandler import on_error, on_success
-from Program.OS import userFunctionAuthorisations, bearer_decode
+from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
 from Program.Module.mst.User import emailIsValid, firstNameIsValid, dateOfBirthIsValid, phoneNumberIsValid, QuerySelectUser
 
 blueprint = Blueprint('admin', __name__, url_prefix="/mst/admin")

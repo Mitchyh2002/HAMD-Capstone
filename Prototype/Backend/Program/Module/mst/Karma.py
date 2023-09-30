@@ -1,8 +1,7 @@
 import datetime
 
 import bcrypt
-from Program.ResponseHandler import on_error, on_success
-from Program.OS import userFunctionAuthorisations, bearer_decode
+from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
 from flask import Blueprint, render_template, request, session, redirect, url_for
 
 from Program.DB.Builder import db
