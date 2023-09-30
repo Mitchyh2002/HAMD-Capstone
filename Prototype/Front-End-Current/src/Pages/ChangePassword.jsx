@@ -14,7 +14,8 @@ export default function ChangePassword(props) {
                 <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center", display:'flex', flexDirection:'column'}}>
+                <div style={{ justifyContent: "center", display: 'flex', flexDirection: 'column' }}>
+
                     {changed ? (
                         <div>
                             <p>You have successfully changed your password! Please click below to navigate to home</p>
@@ -90,35 +91,40 @@ function ChangePasswordForm(props) {
         }
     }
     return (<>
-        <form className="password-form" id="Change Password" style={{width:'65vh'}}>
+        <form className="password-form" id="Change Password" style={{ width: '65vh' }}>
             <div className="password-form-content">
-                <FormInput
-                    label="Current Password"
-                    error={currentPassError}
-                    type="password"
-                    name="currentPassword"
-                    placeholder="Current Password"
-                />
-                <FormInput
-                    label="New Password"
-                    error={new1PassError}
-                    type="password"
-                    name="newPassword"
-                    placeholder="New Password"
-                />
-                <FormInput
-                    label="Re-enter New Password"
-                    error={[new2PassError, confPassError]}
-                    type="password"
-                    name="confPassword"
-                    placeholder="Confirm New Password"
-                />
+                    <FormInput
+                        label="Current Password"
+                        error={currentPassError}
+                        type={"password"}
+                        name="currentPassword"
+                    />
+                    <FormInput
+                        label="New Password"
+                        error={new1PassError}
+                        type={"password"}
+                        name="newPassword"
+                    />
+                    <FormInput
+                        label="Confirm New Password"
+                        error={[new2PassError, confPassError]}
+                        type={"password"}
+                        name="confPassword"
+                    />
+
             </div>
         </form>
 
         <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
             <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
         </div>
+        <div className="flexBoxRowGrow" style={{ justifyContent: "center", marginTop: "30px" }}>
+        <Link
+                    to="/home/account">
+                    <button className="formButton change-password-button">Back</button>
+                </Link>
+        </div>
+
     </>)
 }
 

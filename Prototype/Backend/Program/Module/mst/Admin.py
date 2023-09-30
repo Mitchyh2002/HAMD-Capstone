@@ -77,19 +77,29 @@ def updateUser(ID):
 
         targetUser.email = inputEmail
 
+    elif inputEmail is not None and inputEmail != "" and not emailIsValid(inputEmail):
+        return on_error(11, "Email is invalid")
+
     if inputFirstName is not None and inputFirstName != "" and firstNameIsValid(inputFirstName):
         targetUser.firstName = inputFirstName
+    elif inputFirstName is not None and inputFirstName != "" and not firstNameIsValid(inputFirstName):
+        return on_error(31, "Name is invalid")
 
     if inputDateOfBirth is not None and inputDateOfBirth != "" and dateOfBirthIsValid(inputDateOfBirth):
         targetUser.dateOfBirth = inputDateOfBirth
+
+    elif inputDateOfBirth is not None and inputDateOfBirth != "" and not dateOfBirthIsValid(inputDateOfBirth):
+        return on_error(41, "Birth year is invalid")
 
     if inputPhoneNumber is not None and inputPhoneNumber != "" and phoneNumberIsValid(inputPhoneNumber):
 
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user" and uniqueEmail.userID != ID:
-            return on_error(53, "Phone Number is already taken.")
+            return on_error(54, "Phone Number is already taken.")
 
         targetUser.phoneNumber = inputPhoneNumber
+    elif inputPhoneNumber is not None and inputPhoneNumber != "" and not phoneNumberIsValid(inputPhoneNumber):
+        return on_error(51, "Phone number is invalid")
 
     db.session.add(targetUser)
     db.session.commit()
@@ -116,10 +126,12 @@ def updateUserLevel(ID):
         desired_level = int(request.values.get('adminLevel'))
         
         if ID == adminUser['userID']:
-            return on_error(1, "Cannot modify your own permissions")
+
+            return on_error(406, "Cannot modify your own permissions")
 
         if desired_level > adminUser['adminLevel']:
-            return on_error(2, "Cannot give a user greater permissions than you have")
+            return on_error(407, "Cannot give a user greater permissions than you have")
+
 
         targetUser.adminLevel = desired_level
         db.session.add(targetUser)

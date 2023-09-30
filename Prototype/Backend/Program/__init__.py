@@ -51,6 +51,8 @@ def init_app() -> Flask:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:root@localhost:5432/CapstoneTestDB'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    app.config['FRONT_END_URL'] = 'http://localhost:3000'
+
     UPLOAD_FOLDER = '/static/img'
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -149,5 +151,8 @@ def export_mail_sender():
 def export_mail():
     return application.app.mail
 
-application = AppReloader(init_app)
 
+def export_front_end_link():
+    return application.app.config["FRONT_END_URL"]
+
+application = AppReloader(init_app)

@@ -1,14 +1,14 @@
 import bcrypt
 
 from datetime import datetime
-from flask import Blueprint, request, render_template, url_for
+from flask import Blueprint, request, render_template
 from flask_login import current_user, login_user, logout_user, login_required
 try:
     from sqlalchemy import Select
 except ImportError:
     from sqlalchemy import select as Select
 
-from Program import db
+from Program import db, export_front_end_link
 from Program.DB.Models.mst.User import User, JSONtoUser
 from Program.Module.mst.Confirmation import generate_confirmation_token, send_email, confirm_token
 from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
@@ -61,6 +61,7 @@ def login():
     inputBytes = inputPass.encode('utf-8')
     inputEmail = input.get('email')
 
+    print(inputPass)
     # Validating Inputs
     if inputEmail == "" or inputEmail is None:
         return on_error(10,"Email is empty, please enter your email.")
@@ -92,7 +93,7 @@ def login():
                 login_user(user)
                 return on_success(user.get_id())
             else:
-                return on_error(21, "Password is incorrect, please try again.")
+                return on_error(21, "Login details are incorrect, please try again.")
             
     
 
@@ -138,7 +139,7 @@ def register():
     if inputPhoneNumber != "" and inputPhoneNumber is not None:
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
         if type(uniquePhone).__name__ == "user":
-            return on_error(53, "Phone Number is already registered, would you like to sign in?")
+            return on_error(54, "Phone Number is already registered, would you like to sign in?")
         if not phoneNumberIsValid(inputPhoneNumber):
             return on_error(51, "Phone number entered is invalid, please enter a valid phone number.")
     
@@ -147,7 +148,7 @@ def register():
 
     
     token = generate_confirmation_token(user.email)
-    confirm_url = 'http://localhost:3000/Confirm/' + token
+    confirm_url = export_front_end_link() + '/Confirm/' + token
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
