@@ -20,7 +20,8 @@ class ModuleSecurity(db.Model):
         returns:
             Dict Representation of OBJ
         '''
-        return {"pageName": self.pageName,
+        return {"modulePrefix":self.modulePrefix,
+                "pageName": self.pageName,
                 "pageCode": self.pageCode,
                 "securityLevel": self.SecurityLevel,
                 "description": self.description}

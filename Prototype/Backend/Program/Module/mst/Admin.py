@@ -77,9 +77,10 @@ def updateUser(ID):
             return on_error(14, "Email is already taken")
 
         targetUser.email = inputEmail
+
     elif inputEmail is not None and inputEmail != "" and not emailIsValid(inputEmail):
         return on_error(11, "Email is invalid")
-    
+
     if inputFirstName is not None and inputFirstName != "" and firstNameIsValid(inputFirstName):
         targetUser.firstName = inputFirstName
     elif inputFirstName is not None and inputFirstName != "" and not firstNameIsValid(inputFirstName):
@@ -87,9 +88,10 @@ def updateUser(ID):
 
     if inputDateOfBirth is not None and inputDateOfBirth != "" and dateOfBirthIsValid(inputDateOfBirth):
         targetUser.dateOfBirth = inputDateOfBirth
+
     elif inputDateOfBirth is not None and inputDateOfBirth != "" and not dateOfBirthIsValid(inputDateOfBirth):
         return on_error(41, "Birth year is invalid")
-    
+
     if inputPhoneNumber is not None and inputPhoneNumber != "" and phoneNumberIsValid(inputPhoneNumber):
 
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
@@ -125,10 +127,12 @@ def updateUserLevel(ID):
         desired_level = int(request.values.get('adminLevel'))
         
         if ID == adminUser['userID']:
+
             return on_error(406, "Cannot modify your own permissions")
 
         if desired_level > adminUser['adminLevel']:
             return on_error(407, "Cannot give a user greater permissions than you have")
+
 
         targetUser.adminLevel = desired_level
         db.session.add(targetUser)

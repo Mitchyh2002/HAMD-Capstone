@@ -4,6 +4,7 @@ import { useState } from "react";
 import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
 
+
 export default function ResetPassword() {
     const [changed, setChanged] = useState();
     const { id } = useParams();
@@ -26,6 +27,7 @@ export default function ResetPassword() {
                         </div>
                     ) : (
                         <ChangePasswordForm setChanged={setChanged} id={id} />
+
                     )}
                 </div>
             </div>
@@ -38,8 +40,7 @@ function ChangePasswordForm(props) {
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
-
-
+  
     const validateForm = (formData) => {
         setNew1PassError(checkPass(formData.get("newPassword")))
         setNew2PassError(checkPass(formData.get("confPassword")))
@@ -66,6 +67,7 @@ function ChangePasswordForm(props) {
         const valid = validateForm(formData);
         if (valid) {
             fetch(baseUrl + "/mst/user/resetPassword/" + props.id, {
+
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()
@@ -103,6 +105,7 @@ function ChangePasswordForm(props) {
                         name="confPassword"
                         placeholder="Confirm New Password"
                     />
+
             </div>
         </form>
 

@@ -192,6 +192,7 @@ input::placeholder{
 
 .sign-in-button{
     margin-top: 20px;
+    border: none;
 }
 
 .create-account-button{
@@ -228,6 +229,3 @@ input::placeholder{
     text-decoration: underline;
     text-decoration-color: var(--black);
 }
-
-
-
