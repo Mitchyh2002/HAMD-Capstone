@@ -4,7 +4,7 @@ import { checkEmailValid, checkDOB, checkName, checkPass } from "../../Pages/Log
 import { baseUrl } from "config";
 import { useLoaderData } from 'react-router';
 
-export default function AddUser() {
+export default function CreateUser() {
     const response = useLoaderData();
 
     return (<>
