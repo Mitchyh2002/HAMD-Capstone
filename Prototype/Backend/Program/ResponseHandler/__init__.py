@@ -3,6 +3,31 @@ import jwt
 from Program import export_key
 
 
+def on_error(error_code, error_message):
+    return {"Success": False,
+            "StatusCode": error_code,
+            "Message": error_message}
+
+def on_success(data):
+    return {
+        "Success": True,
+        "StatusCode": 200,
+        "Values": data
+    }
+
+def not_configured():
+    return {
+        "Success": True,
+        "StatusCode": 1001,
+        "Values": "System Not Configured"
+    }
+
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
+from Program.DB.Models.grp.userGroups import userGroup
+from Program.DB.Models.grp.Groups import Group
+from Program.DB.Models.grp.moduleGroups import moduleGroups
+
+
 def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
     if Auth_Header == None or 'null' in Auth_Header:
         return on_error(400, "Auth Header Not Provided")
@@ -55,22 +80,3 @@ def bearer_decode(Auth_Header, algorithms=["HS256"]):
     if user is None:
         return on_error(400, "User Does Not Exist")
     return on_success(user.toJSON())
-
-def on_error(error_code, error_message):
-    return {"Success": False,
-            "StatusCode": error_code,
-            "Message": error_message}
-
-def on_success(data):
-    return {
-        "Success": True,
-        "StatusCode": 200,
-        "Values": data
-    }
-
-def not_configured():
-    return {
-        "Success": True,
-        "StatusCode": 1001,
-        "Values": "System Not Configured"
-    }

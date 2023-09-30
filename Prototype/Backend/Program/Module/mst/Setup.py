@@ -8,10 +8,6 @@ import re
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from Program.ResponseHandler import on_error, on_success, bearer_decode, userFunctionAuthorisations
 
-from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
-from Program.DB.Models.grp.userGroups import userGroup
-from Program.DB.Models.grp.Groups import Group
-from Program.DB.Models.grp.moduleGroups import moduleGroups
 
 from Program import reload, db
 from Program.OS import dir_tree, convert_to_imports
