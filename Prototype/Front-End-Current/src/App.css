@@ -95,6 +95,14 @@ body{
   font-size: 16px;
 }
 
+.bold{
+  font-weight: bold;
+}
+
+.normal{
+  font-weight: normal;
+}
+
 /*Containers*/
 /*Header CSS*/
 .header{
@@ -330,6 +338,12 @@ header li a:hover {
   background-color: var(--header);
 }
 
+.text-button{
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
 /* Inputs */
 input{
   border-top: none;
@@ -383,14 +397,11 @@ input::-webkit-inner-spin-button {
   display: flex;
   align-items: center;
   margin-bottom: 0px;
+  margin-top: 10px;
 }
 
 .accountContainer h3 {
   margin: 12px
-}
-
-.account-header{
-  font-weight: normal;
 }
 
 .change-password-button{
@@ -398,12 +409,16 @@ input::-webkit-inner-spin-button {
   margin-bottom: 20px;
 }
 
-.account-title{
+.bold{
   font-weight: bold;
 }
 
 .left20px{
   margin-left: 20px;
+}
+
+.left5px{
+  margin-left: 5px;
 }
 
 .personal-details{

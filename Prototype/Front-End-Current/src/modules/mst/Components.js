@@ -28,23 +28,20 @@ export default function Modal(props) {
                 <div className="modal">
                     <div onClick={toggleModal} className='overlay'></div>
                     <div className='modal-content'>
-                        <button className='close-modal' onClick={toggleModal}>
-                            x
-                        </button>
-                        <h4 className='modal-heading'>Edit</h4>
-                        <form id="modalForm">
-                            <label className='modal-label'>{props.label1}
-                                <input className='modal-input' type="text" />
-                            </label>
-                        </form>
-                        <br></br>
-                        <br></br>
-                        <button className='buttons confirm-button' onClick={updatePlugin}>
-                            Confirm Changes
-                        </button>
-                        <button className='buttons cancel-button' onClick={toggleModal}>
-                            Cancel
-                        </button>
+                        <div className='flexBoxColumnGrow'>
+                            <h4 className='modal-heading'>Edit</h4>
+                            <form id="modalForm">
+                                <label className='modal-label'>{props.label1}
+                                    <input className='modal-input' type="text" />
+                                </label>
+                            </form>
+                            <button className='buttons confirm-button' onClick={updatePlugin}>
+                                Confirm Changes
+                            </button>
+                            <button className='buttons cancel-button' onClick={toggleModal}>
+                                Cancel
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

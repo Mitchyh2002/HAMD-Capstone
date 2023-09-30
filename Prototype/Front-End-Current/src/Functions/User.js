@@ -40,3 +40,15 @@ export function getToken(){
 export async function logout(){
     localStorage.clear();
 }
+
+export async function resendRegistraionEmail (email){
+    const form = new FormData();
+    form.append("email", email);
+    const res = await fetch(baseUrl + "/mst/confirm/resend", {
+        method: "POST",
+        body: form
+    });
+    const jsonRes = await res.json();
+    return jsonRes;
+
+}
