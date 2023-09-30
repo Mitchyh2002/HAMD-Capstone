@@ -22,13 +22,14 @@ def not_configured():
         "Values": "System Not Configured"
     }
 
-from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
-from Program.DB.Models.grp.userGroups import userGroup
-from Program.DB.Models.grp.Groups import Group
-from Program.DB.Models.grp.moduleGroups import moduleGroups
 
 
 def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
+    from Program.DB.Models.grp.userGroups import userGroup
+    from Program.DB.Models.grp.Groups import Group
+    from Program.DB.Models.grp.moduleGroups import moduleGroups
+    from Program.DB.Models.mst.moduleAccess import moduleAccess
+
     if Auth_Header == None or 'null' in Auth_Header:
         return on_error(400, "Auth Header Not Provided")
     try:
@@ -57,6 +58,8 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
 
 
 def bearer_decode(Auth_Header, algorithms=["HS256"]):
+    from Program.DB.Models.mst.User import User
+
     if Auth_Header is None:
         return on_error(400, "Token Not Sent")
     if 'null' in Auth_Header:
