@@ -1,4 +1,5 @@
 import { useNavigate, NavLink, useHref } from "react-router-dom";
+import Footer from "Components/Footer.js"
 import './Login.css';
 
 export default function LandingPage(props) {
@@ -16,6 +17,7 @@ export default function LandingPage(props) {
                         return (<ModuleContainer to={module.prefix} name={module.displayName} setModuleClick={props.setModuleClick} icon="/icons/mst.png" />)
                     })}
                 </div>
+                <Footer />
             </div>
         </>
     )

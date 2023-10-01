@@ -216,10 +216,7 @@ function UserListModal(props) {
     return (
         <div className="modal" >
             <div className='overlay' ></div>
-            <div className='user-modal' >
-                <button className='close-modal' onClick={() => toggleModal(props)}>
-                    x
-                </button>
+            <div className='user-modal flexBoxColumnGrow' >
                 {type === 'edit' ? (<>
                     <h4 className='modal-heading'>Edit</h4>
                     <form id="edit user" style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
@@ -229,6 +226,7 @@ function UserListModal(props) {
                             name="firstName"
                             value={user.firstName}
                             placeholder={user.firstName}
+                            className="edit-user-input"
                         />
                         <FormInput
                             label="Birth Year:"
@@ -262,19 +260,19 @@ function UserListModal(props) {
                             placeholder={user.adminLevel}
                         />
                     </form>
-                    <button className='buttons user-confirm-button' onClick={handleEdit}>
+                    <button className='buttons confirm-button' onClick={handleEdit}>
                         Confirm Changes
                     </button>
                 </>) : (
                     <>
                         <h4 className='modal-heading' style={{justifyContent:'center'}}>Suspend User</h4>
                         <p>Are you sure you want to suspend this user, {user.email}?</p>
-                        <button className='buttons user-confirm-button' onClick={handleSuspend}>
+                        <button className='buttons confirm-button' onClick={handleSuspend}>
                             Suspend User
                         </button>
                     </>
                 )}
-                <button className='buttons user-cancel-button' onClick={() => toggleModal(props)}>
+                <button className='buttons cancel-button' onClick={() => toggleModal(props)}>
                     Cancel
                 </button>
             </div>

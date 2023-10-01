@@ -1,10 +1,15 @@
 import {Directory, Modules } from "../moduleDefs"
 import { Outlet, createBrowserRouter, redirect, useOutlet, useRoutes } from "react-router-dom";
-import {Main, Login, NoMatchingPage, ConfirmEmail, Account, ChangePassword, ResetPassword} from "Pages/";
+import Main from "Pages/Main";
 import React from "react";
 import SubMenu from "Components/SubMenu";
+import Login from "Pages/Login";
+import NoMatchingPage from "Pages/404";
 import { getToken } from "./User";
+import { ConfirmEmail } from "Pages/Confirm";
+import Account from "Pages/Account";
 import { baseUrl } from "config";
+import ChangePassword from "Pages/ChangePassword";
 
 
 /*All Routes
@@ -31,20 +36,6 @@ export function CreateAllPaths(Components) {
             return redirect("/Home")
         }
     },{
-        path: "/Home",
-        element: <Main modules={Components} clicked={false}/>,
-        //Map Component Directories
-        children: createHomeRoutes(Components),
-        loader: async ()  => {
-            const token = getToken();
-            console.log(token);
-            if(token == null){
-                return redirect("/login");
-            }else{
-                return token;
-            }
-        }
-    },{
         path:"/Login",
         element: <Login register={false}/>
     },{
@@ -55,20 +46,38 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch(baseUrl + "/mst/confirm/"+params.id);
+                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
                 const json = await response.json();
+                console.log(json)
                 return json;
             }catch{
                 return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
             }
         }
     },{
-        path:"/ResetPassword/:id",
-        element: <ResetPassword />,
-    },{ 
         path:'*',
         element:<NoMatchingPage />
     }];
+
+    const Home = {
+        path: "/Home",
+        element: <Main modules={Components}/>,
+        loader: async ()  => {
+            const token = getToken();
+            console.log(token);
+            if(token == null){
+                return redirect("/login");
+            }else{
+                return token;
+            }
+        }
+    }
+
+    if(Components){
+        Home.children = createHomeRoutes(Components);
+    }
+
+    Routes.push(Home);
     console.log(Routes);
     return Routes;
 }
@@ -87,16 +96,21 @@ export function createComponentRoutes(module) {
         element: <CreateParentOutlet module = {module} />,
     }
 
-    if(Directory[module.prefix]){
-        Root.children = 
-        Directory[module.prefix].map(e => {
-            console.log(e.children)
-            return({
-            path: e.path,
-            ...e.loader&& {loader: e.loader},
-            ...e.children&& {children: e.children},
-            element: React.createElement(e.element)})})
+    if(Directory[module.prefix] && module.pages){
+        Root.children = [];
+        module.pages.map(e => {
+            const page = Directory[module.prefix].find(obj => obj.pageCode == e.pageCode)
+            if (page){
+                Root.children.push({
+                    path: page.path,
+                    ...page.loader&& {loader: page.loader},
+                    ...page.children&& {children: page.children},
+                    element: React.createElement(page.element)
+                })
+            }
+        })
     }
+    console.log("Root")
     console.log(Root)
 
     return Root;
