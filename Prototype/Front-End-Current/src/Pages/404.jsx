@@ -10,7 +10,7 @@ export default function NoMatchingPage() {
         <div className="flexBoxColumnGrow error-page">
         <h1 className="error-title">Sorry, 404 Error</h1>
         <h3>The page you are looking for cannot be found.</h3>
-        <p>Go back or please try our <Link className="home-button"to="/home">home</Link> page instead.</p>
+        <p>Go back or please try our <Link className="text-button-underline"to="/home">home</Link> page instead.</p>
         </div>
         </>
     )

@@ -30,7 +30,6 @@ export default function NavMenu(props) {
             {props.modules.map(module  => {
                 console.log(module);
                 return (<NavMenuButton activeClass="mainNavItemActive" passiveClass="mainNavItem" to={module.prefix} name={module.displayName} icon="/icons/mst.png"/>)})}
-
         </div>
     )
 }

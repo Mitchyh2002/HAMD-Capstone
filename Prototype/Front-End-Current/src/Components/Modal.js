@@ -2,6 +2,9 @@ import '../App.css';
 import '../modules/mst/admin.css';
 import React from "react";
 
+/* A simple modal componant that just shows a message.
+props.message - the message that will be displayed on the modal. */
+
 export default function MessageModal(props){
 
     let show = props.show;

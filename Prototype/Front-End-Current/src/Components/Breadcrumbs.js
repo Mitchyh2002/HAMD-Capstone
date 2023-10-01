@@ -2,6 +2,9 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import '../App.css';
 
+/* Displays a breadcrumb link in the Header. 
+Takes in the module prefix and module name. */
+
 export default function Breadcrumbs({ prefix, moduleName }) {
     const location = useLocation();
     

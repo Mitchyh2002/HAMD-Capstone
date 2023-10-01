@@ -51,8 +51,6 @@ export default function SubMenu(props) {
 }
 
 /*
-    {subComponents.map(component, index => createNavLinks(component))}
-
     Sub Nav Button
     Links to a given location, know when it is active and changes classes accrodingly
     Props:

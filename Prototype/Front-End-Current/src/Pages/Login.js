@@ -341,7 +341,7 @@ export function checkEmailValid(email) {
 export function checkDOB(dob) {
     const currentDate = new Date();
     if (!dob) {
-        return "Year of Birth can't be empty";
+        return "Birth year is required.";
     } else if (dob > currentDate.getFullYear() - 13) {
         return "You need to be over 13";
     }

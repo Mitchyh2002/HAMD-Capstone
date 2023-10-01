@@ -188,7 +188,6 @@ input::placeholder{
     flex-direction: column;
     row-gap: 10px;
     width: 100%;
-    height: 80px;
     justify-content: space-between;
 }
 
@@ -206,32 +205,3 @@ input::placeholder{
     margin-top: 10px;
 }
 
-/* Error CSS */
-#email-error{
-    color: red;
-}
-
-#password-error{
-    color: red;
-}
-
-/* 404 Page CSS */
-.error-page{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(320deg, #f28f3b, #ffe69a, #92b4ec);
-    height: 100vh;
-}
-
-.error-title{
-    color: var(--navbar);
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.home-button{
-    color: var(--black);
-    text-decoration: underline;
-    text-decoration-color: var(--black);
-}

@@ -14,16 +14,15 @@ export default function ChangePassword(props) {
                 <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ justifyContent: "center", display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems:"center", justifyContent: "center" }}>
 
-                    {changed ? (
-                        <div>
-                            <p>You have successfully changed your password! Please click below to navigate to home</p>
+                    {changed ? (<>
+                            <p>You have successfully changed your password! Please click below to go back.</p>
                             <Link
-                                to="/Home">
-                                <button className="formButton home-button">Home</button>
+                                to="/home/account">
+                                <button className="formButton change-password-button">Back</button>
                             </Link>
-                        </div>
+                        </>
                     ) : (
                         <ChangePasswordForm setChanged={setChanged} />
                     )}

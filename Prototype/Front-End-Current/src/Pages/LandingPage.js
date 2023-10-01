@@ -35,7 +35,7 @@ function ModuleContainer(props) {
         <>
             <div className="modulecontainer">
                 <button onClick={handleClick} className="modulebutton">
-                    <img src={props.icon} style={{width: "120px", height: "120px"}} />
+                    <img src={props.icon} style={{width: "90px", height: "90px"}} />
                     <br></br>
                     {props.name}
                 </button>
