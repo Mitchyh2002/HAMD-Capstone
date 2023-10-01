@@ -34,6 +34,7 @@ export const mst_pages = [{
     loader: getUser
 },{
     path: "User Module Access",
+    pageCode: 6,
     element: UserModuleAccess,
     loader: adminCheck
 },{
