@@ -1,10 +1,49 @@
 import React, { useState } from 'react';
 import { ToolTip } from "./Components";
 import "./admin.css";
+import { baseUrl } from 'config';
+import { getToken } from 'Functions/User';
+import { useLoaderData } from 'react-router-dom';
 
 export default function Configure() {
     const [selectedFile, setSelectedFile] = useState();
     const [isSelected, setIsSelected] = useState(false);
+    const [error, setError] = useState();
+    const [errorMessage, setErrorMessage]  = useState();
+    const [success, setSuccess] = useState();
+    const initialValues = useLoaderData();
+
+    const handleClick = (e) => {
+        const form = document.getElementById("upload")
+        const formData = new FormData(form);
+        formData.append("black", "#000000");
+        formData.append("white", "#ffffff");
+        formData.append("terms", "#ffffff");
+
+        fetch(baseUrl + "/mst/config/",{
+            method: "POST",
+            Authorization: "Bearer " + getToken(),
+            body: formData
+        }
+        ).then(res => 
+            res.json()).then(res => {
+            console.log(res)
+            if (res.Success == true) {
+                setSuccess(true);
+                setError(false);
+            } else {
+                setError(true);
+                setErrorMessage(res.Message);
+            }
+        }
+        ).catch(err => {
+            setError(true);
+            setSuccess(false);
+            setErrorMessage("Looks like something went wrong with the request. Please try again");
+            console.log(err)
+        })
+        
+    }
 
     return (
         <>
@@ -15,6 +54,8 @@ export default function Configure() {
                     </div>
                     <form id="upload">
                         <div style={{ display: "flex", flexDirection: "column" }}>
+                            {success&& <label style={{color: "green"}} >Updated!</label>}
+                            {error&& <label style={{color: "red"}} >{errorMessage}</label>}
                             <FormInput
                                 tooltipText="This font will be used for the welcome message, and page headers. A serif font will work best here. Please enter font name. E.g. 'Merriweather'."
                                 className="uploadInput"
@@ -37,7 +78,7 @@ export default function Configure() {
                                 label="Header Colour"
                                 type="text"
                                 id="headerColour"
-                                name="headerColour"
+                                name="header"
                             />
                             <FormInput
                                 tooltipText="This colour will be used for the main navigation bar, and on some buttons. Please choose a colour that works well with black and white text. Enter hex code only. E.g. #FFFFFF"
@@ -45,7 +86,7 @@ export default function Configure() {
                                 label="Nav Bar Colour"
                                 type="text"
                                 id="navbarColour"
-                                name="navbarColour"
+                                name="navbar"
                             />
                             <FormInput
                                 tooltipText="This colour will be used for the sub navigation bar, and form headers. Please choose a colour that works well with black text. Enter hex code only. E.g. #FFFFFF"
@@ -53,7 +94,7 @@ export default function Configure() {
                                 label="Sub Nav Colour"
                                 type="text"
                                 id="subnavColour"
-                                name="subnavColour"
+                                name="subnav"
                             />
                             <FormInput
                                 tooltipText="This text will be displayed on the login and register pages to welcome visitors.  E.g. 'Welcome to Bee Aware'."
@@ -119,11 +160,21 @@ export default function Configure() {
                                 id="terms&conditions"
                                 name="terms&conditions"
                             />
-                             
+                            
+                            <UploadFile
+                                tooltipText="Upload a text file with the current terms and conditions"
+                                label="Terms & Conditions"
+                                className="formButton"
+                                buttonName="Upload File"
+                                type="file"
+                                accept=".txt"
+                                id="terms"
+                                name="terms"
+                            />
                         </div>
                     </form>
                     <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                        <button className="primaryButton">Apply</button>
+                        <button className="primaryButton" onClick={handleClick}>Apply</button>
                     </div>
                 </div>
             </div>
@@ -160,6 +211,10 @@ function FormInput(props) {
 }
 
 function UploadFile(props) {
+    const handleFileClick = () => {
+        document.getElementById(props.id).click();
+    }
+
     return (
         <div style={{ justifyContent: "space-between", paddingTop: "20px" }} className="flexBoxRowGrow">
             <label style={{ display: "flex", flexDirection: "row" }}>
@@ -173,7 +228,7 @@ function UploadFile(props) {
                     />
                 </ToolTip>
             </label>
-            <div className={props.className}>
+            <div className={props.className} onClick={handleFileClick}>
                 <p> {props.buttonName} </p>
                 <input
                     type={props.type}

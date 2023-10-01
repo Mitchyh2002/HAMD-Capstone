@@ -1,15 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData, Link } from 'react-router-dom';
 import "./admin.css";
 import { getToken } from 'Functions/User';
 import { FormInput } from 'Pages/Login';
 import { baseUrl } from 'config';
+import { getUsers } from './loaderFunctions';
 
 export default function Users() {
 
     /* Calls to the loader function defined in main.js */
-    const users = useLoaderData();
+    const [users, setUsers] = useState(useLoaderData());
+    const [refresh, setRefresh] = useState(false);
+    console.log(users)
 
     /* Setting the state for the modal*/
     const [modal, setModal] = useState(false);
@@ -52,6 +55,16 @@ export default function Users() {
     /* Setting react useTable */
     const tableInstance = useTable({ columns, data });
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
+
+    //functions
+    const refreshData = () => {
+        setUsers(getUsers());
+    }
+
+    useEffect(() => {
+        refreshData();
+        setRefresh(false);
+    }, [refresh]);
 
     return (
         <>
@@ -106,7 +119,7 @@ export default function Users() {
                 </div>
             </div>
             {modal && (
-                <UserListModal show={show} toggleModal={toggleModal} type={modalType} user={user} />
+                <UserListModal show={show} toggleModal={toggleModal} type={modalType} user={user} refresh={setRefresh}/>
             )}
         </>
     )
@@ -184,6 +197,7 @@ function UserListModal(props) {
                         setConsoleError(userDetailResponse.Success ? userLevelResponse : userDetailResponse);
                     }
                     setLoading(false);
+                    props.refresh(true);
                 })
                 .catch(error => {
                     console.log(error);

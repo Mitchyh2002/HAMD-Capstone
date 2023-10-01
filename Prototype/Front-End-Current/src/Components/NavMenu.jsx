@@ -14,12 +14,6 @@ import { useNavigate, NavLink, useHref } from "react-router-dom";
 */
 
 export default function NavMenu(props) {
-    const navigate = useNavigate();
-
-    const handler = (prefix) => {
-        const destination = "/" + prefix;
-        navigate(destination);
-      }
 
 
     return(
@@ -27,7 +21,7 @@ export default function NavMenu(props) {
             <div style={{height: "auto",  display: "flex", justifyContent: "center"}}>
                 <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
             </div>
-            {props.modules.map(module  => {
+            {props.modules&& props.modules.map(module  => {
                 console.log(module);
                 return (<NavMenuButton activeClass="mainNavItemActive" passiveClass="mainNavItem" to={module.prefix} name={module.displayName} icon="/icons/mst.png"/>)})}
         </div>

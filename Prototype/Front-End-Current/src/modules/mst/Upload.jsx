@@ -3,6 +3,8 @@ import axios from "axios";
 import "./admin.css";
 import { baseUrl } from "config";
 import { FormInput } from "Pages/Login";
+import { getToken } from "Functions/User";
+
 
 export default function Upload(props) {
 
@@ -57,33 +59,35 @@ export default function Upload(props) {
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
-        const method = (document.getElementById("update").checked ? "UPDATE" : "POST")
-        const valid = validateForm(formData);
+        let method = "POST"
+        if(document.getElementById("update").checked){
+            method = "UPDATE";
+            formData.append("update", true);
+        }else{
+            method = "POST";
+            formData.append("update", false);
+        }
 
-        if (valid){
-            fetch(baseUrl + "/mst/module/upload", {
-                method: method,
-                body: formData,
-            }).then(response => (response.json()
-            )).then((response) => {
-                setResponse(response);
-                if (response.Success == true) {
-                    setSuccess(true);
-                    setError(false);
-                } else {
-                    setSuccess(false);
-                    setError(true);
-                }
-
-                console.log("success: " + success);
-                console.log("error :" + error);
-                console.log(response);
-            }
+        fetch(baseUrl + "/mst/module/upload", {
+            method: method,
+            headers: {
+                "Authorization": "Bearer " + getToken()
+            },
+            body: formData,
+        }).then(response => (response.json()
+        )).then((response) => {
+            setResponse(response);
+            if (response.Success == true) {
+                setSuccess(true);
+                setError(false);
+            } else {
+                setSuccess(false);
+                setError(true);
+            }}
             ).catch(function (error) {
                 console.log(error);
             })
-        }
-    };
+      };
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
@@ -141,7 +145,7 @@ export default function Upload(props) {
             </div >
         </div >
     )
-};
+}
 
 // Functions to check the upload form inputs for any errors.
 

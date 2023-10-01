@@ -1,17 +1,47 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData } from 'react-router-dom';
-import { updateName } from "./loaderFunctions";
-import Modal from './Components.js';
+import { getPlugins, activateModule, deactivateModule } from "./loaderFunctions";
+import {Modal, ActivateModal} from './Components.js';
 import "./admin.css";
 
 export default function PluginList() {
 
+    //State
     /* Calls to the loader function defined in main.js */
-    const plugins = useLoaderData();
+    const [plugins, setPlugins] = useState(useLoaderData());
+    const [refresh, setRefresh] = useState(true);
+    
+    const refreshData = () =>{
+        getPlugins().then(res => {
+            setPlugins(res);
+        })
+    }
+
+    useEffect(() => {
+        if (refresh == true){
+            refreshData();
+            setRefresh(false);
+        }
+    }, [refresh]);
+
+    useEffect(() => {
+        refreshData();
+    }, [])
+
+    return (
+        <PluginTable refresh = {setRefresh} plugins={plugins} />
+    )
+};
+
+function PluginTable (props){
+    const [modal, setModal] = useState(false);
+    const [prefix, setPrefix] = useState();
+
 
     /* Getting the data from the database  */
-    const data = useMemo(() => plugins, []);
+    //const data = useMemo(() => props.plugins, [props.plugins])
+    const data = props.plugins;
     const columns = useMemo(() => [
         {
             Header: "Prefix",
@@ -22,73 +52,85 @@ export default function PluginList() {
         }
     ], []);
 
-    const tableInstance = useTable({ columns, data });
+    const tableInstance = useTable({columns, data});
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
-    /* Setting the state for the modal */
-    const [modal, setModal] = useState(false);
-    const toggleModal = () => {
+
+    //Functions
+    const toggleModal = (prefix) => {
+        setPrefix(prefix);
         setModal(!modal);
     }
 
-    const updatePlugin = () => {
-        const form = document.getElementById("modalForm");
-        const formData = new FormData(form);
-        const response = updateName(formData);
-        console.log(response);
-        window.alert("hello")
+    const toggleModuleActivation = (status, prefix) => {
+        const form = new FormData();
+        console.log(status);
+        form.append('modulePrefix', prefix)
+        if(status == false) {
+            const response = activateModule(form).then(res => {
+                if(!res.Success){
+                    props.refresh(true);
+                }
+            })
+            }else{
+                const response = deactivateModule(form).then(res =>{
+                    if(!res.Success){
+                        props.refresh(true);
+                    }
+                })
+            }
     }
 
-    return (
-        <>
-            <div className="pluginPage">
-                <h2>Plugins</h2>
-                <div className="pluginTable">
-                    <table {...getTableProps()}>
-                        <thead>
-                            {headerGroups.map((headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map((column) => (
-                                        <th{...column.getHeaderProps()}>
-                                            {column.render("Header")}
-                                        </th>
-                                    ))}
-                                    <th>
-                                        Action
-                                    </th>
-                                </tr>
+    return(
+    <>
+    <div className="pluginPage">
+        <h2>Plugins</h2>
+        <div className="pluginTable">
+            <table {...getTableProps()}>
+                <thead>
+                    {headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map((column) => (
+                                <th{...column.getHeaderProps()}>
+                                    {column.render("Header")}
+                                </th>
                             ))}
-                        </thead>
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row)
-                                return (
-                                    <tr{...row.getRowProps()}>
-                                        {row.cells.map((cell) => (
-                                            <td className="pluginTableCell"{...cell.getCellProps()}>
-                                                {cell.render("Cell")}
-                                            </td>
-                                        ))}
-                                        <td>
-                                            <button onClick={toggleModal} className="btn-modal">
-                                                Edit
-                                            </button>
-                                            |
-                                            <button className="btn-modal delete-btn">
-                                                Deactivate
-                                            </button>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            {modal && (
-                <Modal label1="Change Display Name:" show={modal} change={setModal} />
-            )}
-        </>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                    ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                    {rows.map((row) => {
+                        prepareRow(row)
+                        return (
+                            <tr{...row.getRowProps()}>
+                                {row.cells.map((cell) => (
+                                    <td className="pluginTableCell"{...cell.getCellProps()}>
+                                        {cell.render("Cell")}
+                                    </td>
+                                ))}
+                                <td>
+                                    <button onClick={() => {toggleModal(row.values.prefix)}} className="btn-modal">
+                                        Edit
+                                    </button>
+                                    |
+                                    <button className="btn-modal delete-btn" onClick={() => {toggleModuleActivation(row.original.status, row.original.prefix)}}>
+                                        {row.original.status == true ? "Deactivate" : "Activate"}
+                                    </button>
+                                </td>
+                            </tr>
+                        )
+                    })}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {modal && (
+        <Modal label1="Change Display Name:" show={modal} change={setModal} prefix={prefix} refresh={props.refresh}/>
+    )}
+</>
     )
-};
+}
 
