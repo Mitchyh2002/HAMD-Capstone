@@ -9,25 +9,26 @@ export default function PluginList() {
 
     //State
     /* Calls to the loader function defined in main.js */
-    const [plugins, setPlugins] = useState(useLoaderData());
+    const [plugins, setPlugins] = useState(useLoaderData().Values);
     const [refresh, setRefresh] = useState(true);
+    !plugins && setPlugins([])
     
     const refreshData = () =>{
         getPlugins().then(res => {
-            setPlugins(res);
+            setPlugins(res.Values);
+            !res.Values && setPlugins([]);
+        }).catch(err => {
+            console.log(err);
         })
     }
 
     useEffect(() => {
+        console.log("refresh")
         if (refresh == true){
             refreshData();
             setRefresh(false);
         }
     }, [refresh]);
-
-    useEffect(() => {
-        refreshData();
-    }, [])
 
     return (
         <PluginTable refresh = {setRefresh} plugins={plugins} />
@@ -51,6 +52,7 @@ function PluginTable (props){
             accessor: "displayName",
         }
     ], []);
+    console.log(data)
 
     const tableInstance = useTable({columns, data});
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
@@ -68,13 +70,13 @@ function PluginTable (props){
         form.append('modulePrefix', prefix)
         if(status == false) {
             const response = activateModule(form).then(res => {
-                if(!res.Success){
+                if(res.Success){
                     props.refresh(true);
                 }
             })
             }else{
                 const response = deactivateModule(form).then(res =>{
-                    if(!res.Success){
+                    if(res.Success){
                         props.refresh(true);
                     }
                 })
