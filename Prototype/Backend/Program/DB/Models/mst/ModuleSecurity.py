@@ -66,10 +66,11 @@ def JSONtomoduleAccess(JSON):
     return created_securityLevel
 
 def init_masterPages():
-    page1 = create_moduleAccess(1,'mst','1','Plugins',5, "Show All Modules")
+    page1 = create_moduleAccess(1,'mst','1','Plugins',5, "Show All Plugins")
     page2 = create_moduleAccess(1,'mst','2','Add Plugin',7, "Add Plugin To System")
     page3 = create_moduleAccess(1, 'mst','3','Users',5, "Show All Users")
     page4 = create_moduleAccess(1, 'mst', '3.1', 'Add User', 5, "Add User to System")
+    page5 = create_moduleAccess(1, 'mst', '4', 'Configure', 9, "Configure System UI")
     page1.insert()
     page2.insert()
     page3.insert()
