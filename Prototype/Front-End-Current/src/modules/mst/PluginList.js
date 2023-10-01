@@ -9,12 +9,16 @@ export default function PluginList() {
 
     //State
     /* Calls to the loader function defined in main.js */
-    const [plugins, setPlugins] = useState(useLoaderData());
-    const [refresh, setRefresh] = useState(true);
+    const [plugins, setPlugins] = useState(useLoaderData().Values);
+    const [refresh, setRefresh] = useState(false);
+    !plugins && setPlugins([])
     
     const refreshData = () =>{
         getPlugins().then(res => {
             setPlugins(res);
+            !res.Values && setPlugins([]);
+        }).catch(err => {
+            console.log(err);
         })
     }
 
@@ -24,10 +28,6 @@ export default function PluginList() {
             setRefresh(false);
         }
     }, [refresh]);
-
-    useEffect(() => {
-        refreshData();
-    }, [])
 
     return (
         <PluginTable refresh = {setRefresh} plugins={plugins} />
@@ -51,6 +51,7 @@ function PluginTable (props){
             accessor: "displayName",
         }
     ], []);
+    console.log(data)
 
     const tableInstance = useTable({columns, data});
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
