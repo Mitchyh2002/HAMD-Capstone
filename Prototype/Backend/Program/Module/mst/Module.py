@@ -123,7 +123,7 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
             for line in lines:
                 line = line.split(":")
                 if len(line) == 2:
-                    keys[line[0]] = PasswordHash.new(line[1]).hash
+                    keys[line[0]] = str(line[1].strip())
                 else:
                     on_error(21, "keys.txt lines be in the following format {moduleprefix}:{modulepassword}")
 
@@ -139,7 +139,11 @@ def scan_file(in_file, modulename, TableScan=False, update=True):
                 else:
                     db_module = split_module[3]
                     module = get_module(split_module[3])
-                    if module.moduleKey != module_key:
+                    storedHash = module.moduleKey
+                    storedHash = storedHash[2:-1]
+                    storedHash = storedHash.encode('utf8')
+                    inputBytes = module_key.encode('utf8')
+                    if not bcrypt.checkpw(inputBytes, storedHash):
                         return on_error(11, "Restricted Module found in application, incorrect password in keys.txt")
 
             elif split_module[0] not in whitelisted_modules:
@@ -445,11 +449,11 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
             Error 14 - Export Function Not Found in mst.JS
             Error 10 - Module Name is not appended to the front of export function
     """
-    if os.path.exists(f"{temp_dir}\Main.js") == False:
-        return on_error(15, "Front-End Missing mst.js file")
+    if os.path.exists(f"{temp_dir}\main.js") == False:
+        return on_error(15, "Front-End Missing main.js file")
     imports = []
     pages = []
-    with open(f"{temp_dir}\Main.js") as MainJS:
+    with open(f"{temp_dir}\main.js") as MainJS:
         content = MainJS.read()
         pattern = r'(?<=export default function).*(?=\()|(?<=export function ).*(?=\()'
         functionName = re.findall(pattern, content)
@@ -589,7 +593,7 @@ def back_end_installation(API_Files, temp_dir, modulename, backend_outdir, updat
 
     for file in API_Files:
         with open(file) as api_file:
-            scan_result = scan_file(api_file, modulename)
+            scan_result = scan_file(api_file, modulename, update=update)
             if scan_result:  # If Scan returns an Error
                 api_file.close()
                 shutil.rmtree(temp_dir)
@@ -891,10 +895,11 @@ def upload_module():
                 create_db(tables)
             os.chdir("../../")
         front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
-        frontEnd_outdir = rf"{front_end_dir}\modules\{modulename}"
+        frontEnd_outdir = rf"\Front-End-Current\src\modules\{modulename}"
         if update:
             shutil.rmtree(frontEnd_outdir)
-        shutil.move(rf"{master_dir}\Program\Temp_Module\{modulename}\Front End", frontEnd_outdir)
+        os.chdir("../")
+        shutil.move(rf"Backend\Program\Temp_Module\{modulename}\Front End", os.getcwd() + frontEnd_outdir)
         os.chdir(master_dir)
 
         # All Modules are Valid, now move to the correct directories, If they exist
