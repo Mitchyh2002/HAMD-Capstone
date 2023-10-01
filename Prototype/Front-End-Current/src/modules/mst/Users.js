@@ -227,6 +227,7 @@ function UserListModal(props) {
                 console.log(response);
             }
             setLoading(false);
+            props.refresh(true);
         }).catch(function (error) {
             console.log(error);
             setLoading(false);
@@ -249,6 +250,7 @@ function UserListModal(props) {
                 console.log(response);
             }
             setLoading(false);
+            props.refresh(true);
         }).catch(function (error) {
             console.log(error);
             setLoading(false);
