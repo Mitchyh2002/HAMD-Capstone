@@ -447,7 +447,7 @@ header li a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(320deg, #f28f3b, #ffe69a, #92b4ec);
+  background: linear-gradient(320deg, var(--navbar), var(--subnav), var(--header));
   height: 100vh;
 }
 
