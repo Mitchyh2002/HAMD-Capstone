@@ -10,12 +10,12 @@ export default function PluginList() {
     //State
     /* Calls to the loader function defined in main.js */
     const [plugins, setPlugins] = useState(useLoaderData().Values);
-    const [refresh, setRefresh] = useState(false);
+    const [refresh, setRefresh] = useState(true);
     !plugins && setPlugins([])
     
     const refreshData = () =>{
         getPlugins().then(res => {
-            setPlugins(res);
+            setPlugins(res.Values);
             !res.Values && setPlugins([]);
         }).catch(err => {
             console.log(err);
@@ -23,6 +23,7 @@ export default function PluginList() {
     }
 
     useEffect(() => {
+        console.log("refresh")
         if (refresh == true){
             refreshData();
             setRefresh(false);
@@ -69,13 +70,13 @@ function PluginTable (props){
         form.append('modulePrefix', prefix)
         if(status == false) {
             const response = activateModule(form).then(res => {
-                if(!res.Success){
+                if(res.Success){
                     props.refresh(true);
                 }
             })
             }else{
                 const response = deactivateModule(form).then(res =>{
-                    if(!res.Success){
+                    if(res.Success){
                         props.refresh(true);
                     }
                 })
