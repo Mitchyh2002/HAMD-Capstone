@@ -26,11 +26,12 @@ export default function Upload(props) {
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
+        let method = "POST"
         if(document.getElementById("update").checked){
-            const method = "UPDATE";
+            method = "UPDATE";
             formData.append("update", true);
         }else{
-            const method = "POST";
+            method = "POST";
             formData.append("update", false);
         }
 
