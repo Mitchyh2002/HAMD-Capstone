@@ -12,7 +12,7 @@ export async function getPlugins() {
         .then(res => {
             return res;
         }).catch(error => {
-            return error;
+            return [];
         })
 }
 
@@ -41,7 +41,7 @@ export async function getUsers() {
             return res;
         }).catch(error => {
             //if error return empty table
-            return [{userID: "", name: "", DOB: "", email: "", phoneNumber: "", adminLevel: ""}];
+            return [];
         })
 }
 

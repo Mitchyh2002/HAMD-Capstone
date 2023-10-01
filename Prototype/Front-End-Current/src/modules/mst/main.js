@@ -25,7 +25,7 @@ export const mst_pages = [{
 },{
     path: "Add User",
     pageCode: "3.1",
-    element: AddUser,
+    element: CreateUser,
     loader: adminCheck
 },{
     path: "User Account/:id",
