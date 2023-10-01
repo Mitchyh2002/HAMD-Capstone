@@ -25,6 +25,10 @@ def handle_options():
 @blueprint.route('/getAccount/', methods=['GET'])
 def getAccount():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+
+    if user_bearer == None or 'null' in user_bearer:
+        return on_error(400, "Auth Header Not Provided")
+    
     user = bearer_decode(user_bearer)['Values']
     selectedUser = User.query.filter_by(userID=user['userID']).first()
     user['totalKarma'] = selectedUser.totalKarma
