@@ -61,7 +61,6 @@ def login():
     inputBytes = inputPass.encode('utf-8')
     inputEmail = input.get('email')
 
-    print(inputPass)
     # Validating Inputs
     if inputEmail == "" or inputEmail is None:
         return on_error(10,"Email is empty, please enter your email.")
