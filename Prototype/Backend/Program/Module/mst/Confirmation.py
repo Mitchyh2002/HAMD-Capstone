@@ -37,7 +37,7 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
-@blueprint.route('/<token>')
+@blueprint.route('/<token>', methods=['POST'])
 def confirm_email(token):
     email = confirm_token(token)
     try:
