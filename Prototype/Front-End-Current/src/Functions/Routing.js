@@ -46,7 +46,9 @@ export function CreateAllPaths(Components) {
         element: <ConfirmEmail />,
         loader: async ({params}) => {
             try{
-                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id);
+                const response = await fetch("http://localhost:5000/mst/confirm/"+params.id, {
+                    method: "POST"
+                });
                 const json = await response.json();
                 console.log(json)
                 return json;
