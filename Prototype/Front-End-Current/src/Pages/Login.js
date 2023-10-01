@@ -4,6 +4,7 @@ import { login } from "Functions/User";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { baseUrl } from "config";
+import { EmailConfirmation } from "Components/EmailConfirmation";
 import { LoginErrors } from "errorCodes";
 
 export default function Login(props) {
@@ -249,7 +250,6 @@ function RegisterForm(props) {
         } else {
             setLoading(false);
         }
-    }
     return (
         <>
             <form className="login-form" id="Register">
@@ -291,45 +291,30 @@ function RegisterForm(props) {
             </form>
 
 
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
-            </div>
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                <p style={{ fontSize: "14px" }}>
-                    Already have an account?
-                </p>
-            </div>
-            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <Link
-                    to="/login"
-                    className="register-message"><button className="primaryButton create-account-button">Log In</button>
-                </Link>
-            </div>
-        </>
-    )
-}
-
-function EmailConfirmation(props) {
-    function handleResend() {
-        //resend props.email to endpoint
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
+                </div>
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                    <p style={{ fontSize: "14px" }}>
+                        Already have an account?
+                    </p>
+                </div>
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <Link
+                        to="/login"
+                        className="register-message"><button className="primaryButton create-account-button">Log In</button>
+                    </Link>
+                </div>
+            </>
+        )
     }
-    return (
-        <div>
-            <p>
-                Thank you for signing up. Please confirm your email address to get started.
-            </p>
-        </div>
-    )
 }
 
-/*        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-<button className="primaryButton sign-in-button" onClick={handleResend}>Resend</button>
-</div>*/
 
 //Validation Functions
 export function checkEmailValid(email) {
-    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    const checkValid = new RegExp(regEx);
+        const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const checkValid = new RegExp(regEx);
 
     if (email == "") {
         return "Email address is required.";
@@ -341,7 +326,7 @@ export function checkEmailValid(email) {
 export function checkDOB(dob) {
     const currentDate = new Date();
     if (!dob) {
-        return "Year of Birth can't be empty";
+        return "Birth year is required.";
     } else if (dob > currentDate.getFullYear() - 13) {
         return "You need to be over 13";
     }
@@ -371,7 +356,7 @@ export function FormInput(props) {
                     className={props.class}
                     placeholder={props.placeholder}
                 />
-                <p style={{ color: "red" }}>{props.error}</p>
+                <p className="error-message">{props.error}</p>
             </div>
         </div>
     )

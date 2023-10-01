@@ -5,6 +5,11 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { useState } from "react";
 
+/* Header component. 
+props.setLanding - sets landing page view to true/false. 
+props.breadcrumbs - breadcrumbs not displayed in the login/register screen.
+props.logoutButton & accountButton - not displayed in the login/register screen. */
+
 export default function Header (props) {
 
     return(
@@ -12,7 +17,7 @@ export default function Header (props) {
             <header>
                 <div className="breadcrumbs breadcrumbs1">
                     <Link to='/home' style={{ display: 'contents' }} onClick={() => props.setLanding(false)}>
-                        <img className="bee-logo" alt="logo"></img>
+                        <img className="logo" alt="logo"></img>
                     </Link>
                     {props.breadcrumbs}
                 </div>

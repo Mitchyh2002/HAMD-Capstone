@@ -10,6 +10,7 @@ from Program.ResponseHandler import on_error, on_success, bearer_decode, userFun
 
 
 from Program import reload, db
+from Program.DB.Models.mst.Setup import mst_Setup
 from Program.OS import dir_tree, convert_to_imports
 
 blueprint = Blueprint('setup', __name__, url_prefix="/mst/config")
@@ -263,6 +264,7 @@ def get_config_settings():
     if config_info == None:
         return on_success(None)
     else:
+        print(config_info.toJSON())
         return on_success(config_info.toJSON())
 
 

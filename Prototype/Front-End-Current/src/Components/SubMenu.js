@@ -12,8 +12,14 @@ import Breadcrumbs from "Components/Breadcrumbs.js";
 */
 
 export default function SubMenu(props) {
+    const subComponents =[];
     //Extract sub components from directory
-    const subComponents = Directory[props.prefix];
+    props.module.pages.map(e => {
+        const page = Directory[props.module.prefix].find(obj => obj.pageCode == e.pageCode);
+        if (page){
+            subComponents.push(page);
+        }
+    })
 
     //Creates the navlinks objects
     //Input: function
@@ -51,8 +57,6 @@ export default function SubMenu(props) {
 }
 
 /*
-    {subComponents.map(component, index => createNavLinks(component))}
-
     Sub Nav Button
     Links to a given location, know when it is active and changes classes accrodingly
     Props:

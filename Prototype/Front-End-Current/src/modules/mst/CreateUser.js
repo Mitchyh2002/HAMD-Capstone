@@ -4,13 +4,13 @@ import { checkEmailValid, checkDOB, checkName, checkPass } from "../../Pages/Log
 import { baseUrl } from "config";
 import { useLoaderData } from 'react-router';
 
-export default function AddUser() {
+export default function CreateUser() {
     const response = useLoaderData();
 
     return (
-    <>
-        {renderContent(response.StatusCode)}
-    </>
+        <>
+            {renderContent(response.StatusCode)}
+        </>
     )
 
 }
@@ -122,7 +122,7 @@ function AddUserForm() {
     }
 
     return (<>
-        <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1"}}>
+        <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
             <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>Add User</h3>
@@ -159,19 +159,20 @@ function AddUserForm() {
                             className="password"
                         />
                     </div>
-                    <div className="flexBoxRowGrow" style={{ alignItems: "center", justifyContent: "center", maxWidth: "500px", marginTop: "20px"}}>
-                {registered ? (
-                    <div className="flexBoxColumnGrow" style={{ justifyContent: "center" }}>
-                        <p>User successfully added!</p>
-                        <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
+                    <div className="flexBoxRowGrow" style={{ alignItems: "center", justifyContent: "center", maxWidth: "500px", marginTop: "20px" }}>
+                        {registered ? (
+                            <div className="flexBoxColumnGrow" style={{ justifyContent: "center" }}>
+                                <p>User successfully added!</p>
+                                <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
+                            </div>
+                        ) : (
+                            <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
+                        )}
                     </div>
-                ) : (
-                    <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
-                )}
-            </div>
                 </form>
             </div>
         </div>
+
 
     </>)
 }

@@ -1,15 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData, Link } from 'react-router-dom';
 import "./admin.css";
 import { getToken } from 'Functions/User';
 import { FormInput } from 'Pages/Login';
 import { baseUrl } from 'config';
+import { getUsers } from './loaderFunctions';
 
 export default function Users() {
 
     /* Calls to the loader function defined in main.js */
-    const users = useLoaderData();
+    const [users, setUsers] = useState(useLoaderData());
+    const [refresh, setRefresh] = useState(false);
+    console.log(users)
 
     /* Setting the state for the modal*/
     const [modal, setModal] = useState(false);
@@ -53,6 +56,16 @@ export default function Users() {
     const tableInstance = useTable({ columns, data });
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
+    //functions
+    const refreshData = () => {
+        setUsers(getUsers());
+    }
+
+    useEffect(() => {
+        refreshData();
+        setRefresh(false);
+    }, [refresh]);
+
     return (
         <>
             <div className="pluginPage">
@@ -94,9 +107,15 @@ export default function Users() {
                                                 Edit
                                             </button>
                                             |
-                                            <button onClick={() => toggleModal('remove', row.original)} className="btn-modal delete-btn">
-                                                Suspend
-                                            </button>
+                                            {row.original.adminLevel === 0 ? (
+                                                <button onClick={() => toggleModal('unsuspend', row.original)} className="btn-modal delete-btn">
+                                                    Unsuspend
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => toggleModal('remove', row.original)} className="btn-modal delete-btn">
+                                                    Suspend
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 )
@@ -106,7 +125,7 @@ export default function Users() {
                 </div>
             </div>
             {modal && (
-                <UserListModal show={show} toggleModal={toggleModal} type={modalType} user={user} />
+                <UserListModal show={show} toggleModal={toggleModal} type={modalType} user={user} refresh={setRefresh} />
             )}
         </>
     )
@@ -184,6 +203,7 @@ function UserListModal(props) {
                         setConsoleError(userDetailResponse.Success ? userLevelResponse : userDetailResponse);
                     }
                     setLoading(false);
+                    props.refresh(true);
                 })
                 .catch(error => {
                     console.log(error);
@@ -193,7 +213,7 @@ function UserListModal(props) {
     }
     const handleSuspend = (e) => {
         setLoading(true);
-        fetch(baseUrl + "/mst/admin/updateLevel/" + user.userID+ "?adminLevel=0", {
+        fetch(baseUrl + "/mst/admin/updateLevel/" + user.userID + "?adminLevel=0", {
             method: "POST",
             headers: {
                 'Authorization': "Bearer " + getToken(),
@@ -207,6 +227,30 @@ function UserListModal(props) {
                 console.log(response);
             }
             setLoading(false);
+            props.refresh(true);
+        }).catch(function (error) {
+            console.log(error);
+            setLoading(false);
+        })
+    }
+
+    const handleUnsuspend = (e) => {
+        setLoading(true);
+        fetch(baseUrl + "/mst/admin/updateLevel/" + user.userID + "?adminLevel=1", {
+            method: "POST",
+            headers: {
+                'Authorization': "Bearer " + getToken(),
+            },
+        }).then(response => (response.json()
+        )).then((response) => {
+            if (response.Success == true) {
+                console.log(response);
+                toggleModal(props);
+            } else {
+                console.log(response);
+            }
+            setLoading(false);
+            props.refresh(true);
         }).catch(function (error) {
             console.log(error);
             setLoading(false);
@@ -219,7 +263,7 @@ function UserListModal(props) {
             <div className='user-modal flexBoxColumnGrow' >
                 {type === 'edit' ? (<>
                     <h4 className='modal-heading'>Edit</h4>
-                    <form id="edit user" style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                    <form id="edit user" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <FormInput
                             label="Name:"
                             type="text"
@@ -263,9 +307,17 @@ function UserListModal(props) {
                     <button className='buttons confirm-button' onClick={handleEdit}>
                         Confirm Changes
                     </button>
-                </>) : (
+                </>) : type === 'unsuspend' ? (
                     <>
-                        <h4 className='modal-heading' style={{justifyContent:'center'}}>Suspend User</h4>
+                        <h4 className='modal-heading' style={{ justifyContent: 'center' }}>Unsuspend User</h4>
+                        <p>Are you sure you want to unsuspend this user, {user.email}?</p>
+                        <button className='buttons confirm-button' onClick={handleUnsuspend}>
+                            Unsuspend User
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <h4 className='modal-heading' style={{ justifyContent: 'center' }}>Suspend User</h4>
                         <p>Are you sure you want to suspend this user, {user.email}?</p>
                         <button className='buttons confirm-button' onClick={handleSuspend}>
                             Suspend User

@@ -11,15 +11,16 @@
   --navbar50: rgba(242, 143, 59, 0.5);
   --subnav: rgba(255, 230, 154);
   --subnav40: rgba(255, 230, 154, 0.4);
-  --logo: url("../public/bee2.png");
-  --loginImage: url("../public/login-image.jpg");
-  --bee: url("../public/bee3.png");
+  --logo: url("/public/bee2.png");
+  --loginImage: url("/public/login-image.jpg");
+  --bee: url("/public/bee3.png");
   --welcomeText: "Welcome to Bee Aware";
-  --landingImage: url("../public/landing-image.jpg");
+  --landingImage: url("/public/landing-image.jpg");
   --mainTitle: "Bee Aware";
 }
 
-/*Defaults*/
+/* DEFAULTS - default styling for plugin developers */
+/* Text */
 
 h1{
   font-family: var(--font1);
@@ -67,6 +68,44 @@ p{
   font-size: 16px;
 }
 
+a{
+  text-decoration: none;
+  font-size: 16px;
+}
+
+body{
+  font-family: var(--font2);
+  font-size: 16px;
+}
+
+/* Font Weights */
+
+.bold{
+  font-weight: bold;
+}
+
+.normal{
+  font-weight: normal;
+}
+
+/* Positioning */
+
+.left20px{
+  margin-left: 20px;
+}
+
+.left5px{
+  margin-left: 5px;
+}
+
+/* Error Message Colour */
+
+.error-message {
+  color: #cc0000;
+}
+
+/* Form */
+
 form{
   row-gap: 8px;
   font-family: var(--font2);
@@ -77,33 +116,106 @@ form{
 label{
   font-family: var(--font2);
   font-size: 18px;
+  padding-top: 10px;
 }
 
-a{
-  text-decoration: none;
-  font-size: 16px;
+.form-header{
+  background-color: var(--navbar);
+  border-radius: 20px, 20px, 0px, 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
 }
-.error-message {
-  color: red;
-}
-/*a tag*/
-/*Button*/
-/*Input*/
 
-body{
+/* Buttons */
+
+.primaryButton{
+  width: 250px;
+  height: 50px;
+  font-family: var(--font2);
+  font-size: 20px;
+  border-radius: 20px;
+  background-color: var(--navbar70);
+  cursor: pointer;
+  border: 1px;
+  text-shadow: 1.3px 1.3px #C0A080;
+  transition: all 0.3s ease 0s;
+}
+
+.primaryButton:hover{
+  background-color: var(--navbar)
+}
+
+.secondaryButton{
+  width: 250px;
+  height: 50px;
+  font-family: var(--font2);
+  font-size: 20px;
+  border-radius: 20px;
+  background-color: var(--navbar50);
+  cursor: pointer;
+  transition: all 0.3s ease 0s;
+}
+
+.formButton{
+  color: var(--black);
+  width: 150px;
+  height: 35px;
   font-family: var(--font2);
   font-size: 16px;
+  border-radius: 20px;
+  background-color: var(--header70);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease 0s;
 }
 
-.bold{
-  font-weight: bold;
+.formButton:hover{
+  background-color: var(--header);
 }
 
-.normal{
-  font-weight: normal;
+.text-button{
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
 
-/*Containers*/
+.text-button-underline{
+  color: var(--black);
+  text-decoration: underline;
+  text-decoration-color: var(--black);
+}
+
+/* Inputs */
+input{
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid var(--black);
+  font-family: var(--font2);
+  outline: 0px;
+  font-size: 20px;
+  width: 100%;
+}
+
+input:focus{
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1.5px solid;
+}
+
+/* Remove arrows from number input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* PLATFORM - styling specific componants and pages */
 /*Header CSS*/
 .header{
   box-sizing: border-box;
@@ -137,7 +249,7 @@ header li a:hover {
 }
 
 /* Header Logo */
-.bee-logo{
+.logo{
   content: var(--logo);
   padding-left: 10px;
   width: 45px;
@@ -194,9 +306,9 @@ header li a:hover {
 }
 
 .mainNavItem{
-  background-color: rgba(242, 143, 59, 0.0);
+  background-color: transparent;
   border: none;
-  height: 110px;
+  height: 130px;
   font-family: var(--font2);
   font-size: 20px;
 }
@@ -209,7 +321,7 @@ header li a:hover {
 .mainNavItemActive{
   background-color: var(--navbar);
   border: none;
-  height: 110px;
+  height: 130px;
   font-family: var(--font2);
   font-size: 20px;
 }
@@ -290,87 +402,7 @@ header li a:hover {
   border: none;
 }
 
-/* Buttons */
-.primaryButton{
-  width: 250px;
-  height: 50px;
-  font-family: var(--font2);
-  font-size: 20px;
-  border-radius: 20px;
-  background-color: var(--navbar70);
-  cursor: pointer;
-  border: 1px;
-  text-shadow: 1.3px 1.3px #C0A080;
-  transition: all 0.3s ease 0s;
-}
-
-.primaryButton:hover{
-  background-color: var(--navbar)
-}
-
-.secondaryButton{
-  width: 400px;
-  height: 70px;
-  font-family: var(--font2);
-  font-size: 30px;
-  border-radius: 20px;
-  background-color: var(--navbar50);
-  cursor: pointer;
-  transition: all 0.3s ease 0s;
-}
-
-.formButton{
-  color: var(--black);
-  width: 150px;
-  height: 35px;
-  font-family: var(--font2);
-  font-size: 16px;
-  border-radius: 20px;
-  background-color: var(--header70);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease 0s;
-}
-
-.formButton:hover{
-  background-color: var(--header);
-}
-
-.text-button{
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-}
-
-/* Inputs */
-input{
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1px solid var(--black);
-  font-family: var(--font2);
-  outline: 0px;
-  font-size: 20px;
-  width: 100%;
-}
-
-input:focus{
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1.5px solid;
-}
-
-/*Remove arrows from number input*/
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/*alignment*/
+/* Alignment */
 .flexBoxColumnGrow{
   display: flex;
   flex-direction: column;
@@ -392,7 +424,8 @@ input::-webkit-inner-spin-button {
   justify-self: stretch;
 }
 
-/*Account Div*/
+/* Account Page CSS */
+
 .accountContainer{
   display: flex;
   align-items: center;
@@ -409,18 +442,6 @@ input::-webkit-inner-spin-button {
   margin-bottom: 20px;
 }
 
-.bold{
-  font-weight: bold;
-}
-
-.left20px{
-  margin-left: 20px;
-}
-
-.left5px{
-  margin-left: 5px;
-}
-
 .personal-details{
   margin-top:20px;
   font-size: 30px;
@@ -429,3 +450,21 @@ input::-webkit-inner-spin-button {
 .account-details-form{
   margin-top:20px;
 }
+
+/* 404 Page CSS */
+
+.error-page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(320deg, var(--navbar), var(--subnav), var(--header));
+  height: 100vh;
+}
+
+.error-title{
+  color: var(--navbar);
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+

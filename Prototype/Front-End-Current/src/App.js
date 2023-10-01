@@ -2,12 +2,14 @@ import './App.css';
 import { BrowserRouter, RouterProvider, createBrowserRouter} from 'react-router-dom';
 import { AllRoutes, allRoutes } from 'Functions/Routing';
 import { useEffect,  useState} from 'react';
-import { getToken } from 'Functions/User';
+import { getToken, logout } from 'Functions/User';
 import { baseUrl } from 'config';
+import { AppLoader } from 'Components/loader';
 
 function App() {
   const [modules, setModules] = useState([]);
-  const [loaded, setLoaded] = useState(false);
+  const [pages, setPages] = useState([]);
+  const [router, setRouter] = useState();
 
   //Get all active modules from the server and store in state
   useEffect(() => {
@@ -22,15 +24,23 @@ function App() {
     }).then(data => {
       console.log(data)
       console.log("Modules")
-      setModules(data.Values)
+      if(data.StatusCode == 403){
+        logout();
+      }else{
+      setModules(data.Values);
+      setRouter(createBrowserRouter(allRoutes(data.Values, pages)));
+      console.log(router);
+      }
     }).then(() => {
-      setLoaded(true);
     })
   }, []);
 
   return (
     <>
-      <RouterProvider router={createBrowserRouter(allRoutes(modules))} />
+      {router &&
+      <RouterProvider 
+      router={router} 
+      fallbackElement={<AppLoader />} />}
     </>
   );
 }

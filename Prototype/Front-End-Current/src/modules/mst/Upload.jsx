@@ -2,6 +2,8 @@ import react, { useRef, useState } from "react";
 import axios from "axios";
 import "./admin.css";
 import { baseUrl } from "config";
+import { FormInput } from "Pages/Login";
+import { getToken } from "Functions/User";
 
 
 export default function Upload(props) {
@@ -12,6 +14,38 @@ export default function Upload(props) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(false);
     const [visible, setVisible] = useState(false);
+
+    //State for checking form input errors
+    const [prefixError, setPrefixError] = useState();
+    const [nameError, setNameError] = useState();
+    const [codeError, setCodeError] = useState();
+    const [passError, setPassError] = useState();
+
+    //Function for validating form and checking for any input errors
+    const validateForm = (formData) => {
+        setPrefixError(checkModulePrefix(formData.get("prefixName")));
+        setNameError(checkDisplayName(formData.get("pluginDisplayName")));
+        setCodeError(checkModuleCode(formData.get("pluginFile")));
+        setPassError(checkPassword(formData.get("modulePass")))
+
+        let valid = true;
+
+        if (prefixError) {
+            valid = false;
+        }
+        if (nameError){
+            valid = false;
+        }
+        if(codeError){
+            valid = false;
+        }
+        if(passError){
+            valid = false;
+        }
+
+        return (valid)
+
+    }
 
     const changeFile = (event) => {
         setSelectedFile(event.target.files[0]);
@@ -25,44 +59,64 @@ export default function Upload(props) {
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
-        const method = (document.getElementById("update").checked ? "UPDATE" : "POST")
+        let method = "POST"
+        const valid = validateForm(formData);
 
-        fetch(baseUrl + "/mst/module/upload", {
-            method: method,
-            body: formData,
-        }).then(response => (response.json()
-        )).then((response) => {
-            setResponse(response);
-            if (response.Success == true) {
-                setSuccess(true);
-                setError(false);
-            } else {
-                setSuccess(false);
-                setError(true);
-            }
-
-            console.log("success: " + success);
-            console.log("error :" + error);
-            console.log(response);
+        if (document.getElementById("update").checked) {
+            method = "UPDATE";
+            formData.append("update", true);
+        } else {
+            method = "POST";
+            formData.append("update", false);
         }
-        ).catch(function (error) {
-            console.log(error);
-        })
+
+        if (valid) {
+            fetch(baseUrl + "/mst/module/upload", {
+                method: method,
+                headers: {
+                    "Authorization": "Bearer " + getToken()
+                },
+                body: formData,
+            }).then(response => (response.json()
+            )).then((response) => {
+                setResponse(response);
+                if (response.Success == true) {
+                    setSuccess(true);
+                    setError(false);
+                } else {
+                    setSuccess(false);
+                    setError(true);
+                }
+            }
+            ).catch(function (error) {
+                console.log(error);
+            })
+        }
     };
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
             <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
-                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                <div className="form-header">
                     <h3>Add Plugin</h3>
                 </div>
                 <form id="upload">
                     <div style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
                         {(success == true) ? <p>Your file has been uploaded and installed.</p> : (error) && <p>{response.Message}</p>}
-                        <label>Module Prefix</label>
-                        <input className="uploadInput" type="text" id="prefixName" name="prefixName" />
-                        <label>Plugin Display Name</label>
-                        <input className="uploadInput" type="text" id="pluginDisplayName" name="displayName" />
+                        <FormInput
+                            label="Module Prefix"
+                            type="text"
+                            id="prefixName"
+                            name="prefixName"
+                            error={prefixError}
+                        />
+                        <FormInput
+                            label="Plugin Display Name"
+                            type="text"
+                            id="pluginDisplayName"
+                            name="displayName"
+                            error={nameError}
+                        />
                         <div style={{ justifyContent: "space-between" }} className="flexBoxRowGrow">
                             <label>Module Code</label>
                             <div className="formButton" onClick={handleFileClick}>
@@ -70,13 +124,14 @@ export default function Upload(props) {
                                 <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden />
                             </div>
                         </div>
-                        <label>Module Password</label>
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                            <input className="uploadInput" type={visible ? "text" : "password"} id="modulePass" name="modulePass" />
-                            <div onClick={() => setVisible(!visible)}>
-                                {visible ? <img className="visible-icon" src="/icons/visible.png" /> : <img className="visible-icon" src="/icons/invisible.png" />}
-                            </div>
-                        </div>
+                        <p className="error-message">{codeError}</p>
+                        <FormInput
+                            label="Module Password"
+                            type="password"
+                            id="modulePass"
+                            name="modulePass"
+                            error={passError}
+                        />
                         {isSelected ?
                             (<div>
                                 <p>Filename: {selectedFile.name}</p>
@@ -85,24 +140,42 @@ export default function Upload(props) {
                             </div>) : (
                                 <p> </p>
                             )}
+                    </div>
+                    <label>Update?</label>
+                    <input type="checkbox" id="update" />
+                </form >
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                    <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
                 </div>
-                <label>Module Password</label>
-                <input className="uploadInput" type="password" id="modulePass" name="modulePass" />
-                {isSelected ? 
-                (<div>
-                    <p>Filename: {selectedFile.name}</p>
-                    <p>Filetype: {selectedFile.type}</p>
-                    <p>Size in bytes: {selectedFile.size}</p>
-                </div>) : (
-                    <p> </p>
-                )}
-                <label>Update?</label>
-                <input type="checkbox" id="update" />
-            </form >
-        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-            <button className="primaryButton" onClick={uploadPlugin}>Submit</button>
-        </div>
-        </div >
+            </div >
         </div >
     )
-};
+}
+
+// Functions to check the upload form inputs for any errors.
+
+function checkModulePrefix(prefix) {
+    if (!prefix) {
+        return "Module prefix is required.";
+    } else if (prefix.length > 3) {
+        return "Module prefix should only be 3 characters.";
+    }
+}
+
+function checkDisplayName(displayName) {
+    if (!displayName) {
+        return "Plugin display name is required.";
+    }
+}
+
+function checkModuleCode(moduleCode) {
+    if (!moduleCode) {
+        return "Module code is required.";
+    }
+}
+
+function checkPassword(password) {
+    if (!password) {
+        return "Password is required.";
+    }
+}

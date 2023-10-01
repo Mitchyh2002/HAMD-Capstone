@@ -12,7 +12,7 @@ export default function LandingPage(props) {
                     <h2 className="main-title">Bee Aware</h2>
                 </div>
                 <div className='bottompage'>
-                    {props.modules.map(module => {
+                    {props.modules&& props.modules.map(module => {
                         console.log(module);
                         return (<ModuleContainer to={module.prefix} name={module.displayName} setModuleClick={props.setModuleClick} icon="/icons/mst.png" />)
                     })}
@@ -35,7 +35,7 @@ function ModuleContainer(props) {
         <>
             <div className="modulecontainer">
                 <button onClick={handleClick} className="modulebutton">
-                    <img src={props.icon} style={{width: "120px", height: "120px"}} />
+                    <img src={props.icon} style={{width: "90px", height: "90px"}} />
                     <br></br>
                     {props.name}
                 </button>

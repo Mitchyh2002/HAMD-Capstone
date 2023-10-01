@@ -126,7 +126,7 @@ export function CreateParentOutlet (props) {
     console.log(child);
     return(
         <>
-            <SubMenu prefix={props.module.prefix} />
+            {props.module.pages && <SubMenu module={props.module} /> }
             {child? <Outlet /> : React.createElement(Modules[props.module.prefix])}
         </>
     )
@@ -135,7 +135,7 @@ export function CreateParentOutlet (props) {
 
 function createHomeRoutes(modules){
     //generate child modules
-    const children = modules.map(e => createComponentRoutes(e));
+    const children = (modules) ? modules.map(e => createComponentRoutes(e)) : [];
     children.push(
         {
             path:"Account",

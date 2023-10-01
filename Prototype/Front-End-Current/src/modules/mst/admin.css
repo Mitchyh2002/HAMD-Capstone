@@ -70,7 +70,7 @@ body.active-modal {
   }
 
   .delete-btn{
-    color: red;
+    color: #cc0000;
   }
   
 .btn-modal:hover {
@@ -102,6 +102,7 @@ body.active-modal {
     border-radius: 15px;
     max-width: 300px;
     min-width: 300px;
+    max-height: 400px;
   }
   
 .modal-heading{
@@ -198,9 +199,10 @@ body.active-modal {
 
 .okay-button{
   background-color: var(--navbar);
-  position: absolute; 
-  bottom: 20px;
-  left: 110px;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  margin-top: 10px;
 }
 
 .remove-user-button,

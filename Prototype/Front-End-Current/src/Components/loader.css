@@ -1,0 +1,14 @@
+ .appLoader{
+        -webkit-animation: fadeinout 2s infinite linear alternate;
+        animation: fadeinout 2s infinite linear alternate;
+    }
+    
+    @-webkit-keyframes fadeinout {
+      0%,100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    
+    @keyframes fadeinout {
+      0%,100% { opacity: 0; }
+      50% { opacity: 1; }
+    }

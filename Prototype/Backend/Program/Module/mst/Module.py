@@ -814,7 +814,7 @@ def upload_module():
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
-            return on_error(17, 'No Module Uploaded, please Upload a File')
+            return on_error(17, 'No module uploaded, please upload a file.')
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
