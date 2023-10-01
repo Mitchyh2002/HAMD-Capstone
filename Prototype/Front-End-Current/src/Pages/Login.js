@@ -1,8 +1,8 @@
 import Header from "Components/Header";
 import './Login.css';
 import { login } from "Functions/User";
-import { Link, useEffect } from "react-router-dom";
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
 import { LoginErrors } from "errorCodes";
@@ -223,25 +223,31 @@ function ForgotPasswordForm(props) {
 
         }
 
-        const valid = validateForm(formData);
-        if (valid) {
-            fetch(baseUrl + "/mst/user/register", {
-                method: "POST",
-                body: formData,
-            }).then(response => (response.json()
-            )).then((response) => {
-                if (response.Success == true) {
-                    props.setEmail(formData.get("email"));
-                } else {
-                    console.log(response);
-                    window.alert(response.error)
-                }}
-                ).catch(function (error) {
-                    console.log(error);
+        const handleRegister = (e) => {
+            setLoading(true);
+            const form = document.getElementById("Register");
+            const formData = new FormData(form);
+
+            const valid = validateForm(formData);
+            if (valid) {
+                fetch(baseUrl + "/mst/user/register", {
+                    method: "POST",
+                    body: formData,
+                }).then(response => (response.json()
+                )).then((response) => {
+                    if (response.Success == true) {
+                        props.setEmail(formData.get("email"));
+                    } else {
+                        console.log(response);
+                        window.alert(response.error)
+                    }}
+                    ).catch(function (error) {
+                        console.log(error);
+                        setLoading(false);
+                    })
+            } else {
                     setLoading(false);
-                })
-        } else {
-                setLoading(false);
+            }
         }
     return (
         <>

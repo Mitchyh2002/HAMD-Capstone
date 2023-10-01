@@ -267,6 +267,7 @@ def get_config_settings():
     if config_info == None:
         return on_success(None)
     else:
+        print(config_info.toJSON())
         return on_success(config_info.toJSON())
 
 

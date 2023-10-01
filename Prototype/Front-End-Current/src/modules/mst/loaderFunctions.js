@@ -40,7 +40,8 @@ export async function getUsers() {
         .then(res => {
             return res;
         }).catch(error => {
-            return error;
+            //if error return empty table
+            return [{userID: "", name: "", DOB: "", email: "", phoneNumber: "", adminLevel: ""}];
         })
 }
 
@@ -98,4 +99,20 @@ export async function getUser({ params }) {
         }).catch(error => {
             return error;
         })
+}
+
+export async function getConfig() {
+    try{
+    const res = await fetch(baseUrl + "/mst/config/", {
+        method: 'GET',
+        headers: {
+            'Authorization': "Bearer " + getToken(),
+        }
+    })
+    const resJson = await res.json();
+
+    return resJson;
+    } catch {
+        return {values: [], Success: false}
+    }
 }

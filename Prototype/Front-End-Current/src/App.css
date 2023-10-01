@@ -11,34 +11,15 @@
   --navbar50: rgba(242, 143, 59, 0.5);
   --subnav: rgba(255, 230, 154);
   --subnav40: rgba(255, 230, 154, 0.4);
-  --logo: url("../public/logo.png");
-  --loginImage: url("../public/login-image.jpg");
-  --bee: url("../public/misc.png");
-  --welcomeText: "1";
-}
-/*Setting Variables*/
-:root {
-  --font1: Merriweather, serif;
-  --font2: Lato, sans-serif;
-  --black: rgba(0, 0, 0);
-  --white: rgba(255, 255, 255);
-  --header: rgba(146, 180, 236);
-  --header70: rgba(146, 180, 236, 0.7);
-  --navbar: rgba(242, 143, 59);
-  --navbar70: rgba(242, 143, 59, 0.7);
-  --navbar50: rgba(242, 143, 59, 0.5);
-  --subnav: rgba(255, 230, 154);
-  --subnav40: rgba(255, 230, 154, 0.4);
-  --logo: url("../public/logo.png");
-  --loginImage: url("../public/login-image.jpg");
-  --bee: url("../public/misc.png");
-  --welcomeText: "1";
+  --logo: url("/public/bee2.png");
+  --loginImage: url("/public/login-image.jpg");
+  --bee: url("/public/bee3.png");
+  --welcomeText: "Welcome to Bee Aware";
+  --landingImage: url("/public/landing-image.jpg");
+  --mainTitle: "Bee Aware";
 }
 
 /*Defaults*/
-body{
-  font-family: var(--font1);
-}
 
 h1{
   font-family: var(--font1);
@@ -81,6 +62,11 @@ h5{
   font-weight: normal;
 }
 
+p{
+  font-family: var(--font2);
+  font-size: 16px;
+}
+
 form{
   row-gap: 8px;
   font-family: var(--font2);
@@ -96,6 +82,9 @@ label{
 a{
   text-decoration: none;
   font-size: 16px;
+}
+.error-message {
+  color: red;
 }
 /*a tag*/
 /*Button*/
@@ -149,7 +138,7 @@ header li a:hover {
   margin-right: auto;
 }
 
-/* Breadcrumb Nav CSS */
+/* Breadcrumb Nav CSS */ 
 .breadcrumbs{
   margin-right: auto;
   justify-content: center;
@@ -242,7 +231,7 @@ header li a:hover {
   flex: 1;
 }
 
-.subNavHighlight {
+.subNavHighlight {  
   width: 160px;
   height: 60px;
   font-size: 15px;
@@ -360,6 +349,13 @@ input:focus{
   border-bottom: 1.5px solid;
 }
 
+/*Remove arrows from number input*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /*alignment*/
 .flexBoxColumnGrow{
   display: flex;
@@ -391,4 +387,30 @@ input:focus{
 
 .accountContainer h3 {
   margin: 12px
+}
+
+.account-header{
+  font-weight: normal;
+}
+
+.change-password-button{
+  border: none;
+  margin-bottom: 20px;
+}
+
+.account-title{
+  font-weight: bold;
+}
+
+.left20px{
+  margin-left: 20px;
+}
+
+.personal-details{
+  margin-top:20px;
+  font-size: 30px;
+}
+
+.account-details-form{
+  margin-top:20px;
 }

@@ -21,7 +21,7 @@ export default function NavMenu(props) {
             <div style={{height: "auto",  display: "flex", justifyContent: "center"}}>
                 <h3 style={{color: "white", margin: "5px"}}>Modules</h3>
             </div>
-            {props.module&& props.modules.map(module  => {
+            {props.modules&& props.modules.map(module  => {
                 console.log(module);
                 return (<NavMenuButton activeClass="mainNavItemActive" passiveClass="mainNavItem" to={module.prefix} name={module.displayName} icon="/icons/mst.png"/>)})}
 

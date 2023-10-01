@@ -12,8 +12,14 @@ import Breadcrumbs from "Components/Breadcrumbs.js";
 */
 
 export default function SubMenu(props) {
+    const subComponents =[];
     //Extract sub components from directory
-    const subComponents = Directory[props.prefix];
+    props.module.pages.map(e => {
+        const page = Directory[props.module.prefix].find(obj => obj.pageCode == e.pageCode);
+        if (page){
+            subComponents.push(page);
+        }
+    })
 
     //Creates the navlinks objects
     //Input: function

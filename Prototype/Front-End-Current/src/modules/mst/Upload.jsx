@@ -2,6 +2,7 @@ import react, { useRef, useState } from "react";
 import axios from "axios";
 import "./admin.css";
 import { baseUrl } from "config";
+import { getToken } from "Functions/User";
 
 
 export default function Upload(props) {
@@ -25,10 +26,19 @@ export default function Upload(props) {
     const uploadPlugin = () => {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
-        const method = (document.getElementById("update").checked ? "UPDATE" : "POST")
+        if(document.getElementById("update").checked){
+            const method = "UPDATE";
+            formData.append("update", true);
+        }else{
+            const method = "POST";
+            formData.append("update", false);
+        }
 
         fetch(baseUrl + "/mst/module/upload", {
             method: method,
+            headers: {
+                "Authorization": "Bearer " + getToken()
+            },
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {

@@ -11,7 +11,7 @@ export default function LandingPage(props) {
                     <h2 className="main-title">Bee Aware</h2>
                 </div>
                 <div className='bottompage'>
-                    {props.modules.map(module => {
+                    {props.modules&& props.modules.map(module => {
                         console.log(module);
                         return (<ModuleContainer to={module.prefix} name={module.displayName} setModuleClick={props.setModuleClick} icon="/icons/mst.png" />)
                     })}
