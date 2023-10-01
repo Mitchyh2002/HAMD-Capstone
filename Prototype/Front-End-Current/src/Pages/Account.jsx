@@ -7,7 +7,7 @@ export default function Account() {
     return (<>
         <div className="flexBoxColumnGrow">
             <div>
-                <h2 className="account-header">{renderHeader(response.StatusCode)}</h2>
+                <h2 className="normal account-header">{renderHeader(response.StatusCode)}</h2>
 
             </div>
             <div style={{ display: "flex", flexDirection: "column", justifyContent: "left" }}>
@@ -48,7 +48,7 @@ function renderBody(responseCode, responseValues) {
                     <body className="bold left20px account-title">Karma:</body>
                     <body style={{ marginLeft: '5px' }}>{responseValues.totalKarma}</body>
                 </div>
-                <body className=" left20px bold personal-details">Personal Details</body>
+                <body className=" left20px normal personal-details">Personal Details</body>
                 <div className="accountContainer left20px">
                     <body className="bold">First Name:</body>
                     <body className='left5px'>{responseValues.firstName}</body>

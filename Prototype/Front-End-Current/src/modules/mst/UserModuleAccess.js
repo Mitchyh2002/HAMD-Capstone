@@ -7,9 +7,9 @@ export default function UserModuleAccess() {
     const response = useLoaderData();
 
     return (<>
-        <div>
-            {renderContent(response.StatusCode)}
-        </div>
+
+        {renderContent(response.StatusCode)}
+
     </>)
 }
 
@@ -94,7 +94,7 @@ function AddUsertoModuleForm() {
 
     return (<>
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
-            <div className="flexBoxColumnGrow" style={{ padding: "32px", width: "500px" }}>
+            <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>User Module Access</h3>
                 </div>
@@ -114,34 +114,34 @@ function AddUsertoModuleForm() {
                             placeholder="Module for access"
                         />
                     </div>
+                    <div className="flexBoxRowGrow" style={{ justifyContent: "center"}}>
+                        {response && response.StatusCode === 200 ? (
+                            <div>
+                                <p>User access successfully modified.</p>
+                                <button onClick={resetForm} className="primaryButton">Reset Form</button>
+                            </div>
+                        ) : (
+                            <div>
+                                <div>
+                                    {response && [ModuleAccessErrors.missingFields, ModuleAccessErrors.missingFields, GiveUserAccessErrors.permissionsInsufficient].includes(response.StatusCode)
+                                        && (
+                                            <div className="error-message">
+                                                {response.Message}
+                                            </div>
+                                        )}
+                                </div>
+                                <div className="flexBoxColumnGrow" style={{ alignItems: "center", justifyContent: "center"}}>
+                                    <button onClick={handleAdd} className="primaryButton" style={{ marginTop: "10px" }}>Give Access</button>
+                                    <button onClick={handleDelete} className="primaryButton" style={{ marginTop: "10px" }}>Remove Access</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-            {response && response.StatusCode === 200 ? (
-                <div>
-                    <p>User access successfully modified</p>
-                    <button onClick={resetForm} className="primaryButton">Reset Form</button>
-                </div>
-            ) : (
-                <div>
-                    <div>
-                        {response && [ModuleAccessErrors.missingFields, ModuleAccessErrors.missingFields, GiveUserAccessErrors.permissionsInsufficient].includes(response.StatusCode)
-                            && (
-                                <div className="error-message">
-                                    {response.Message}
-                                </div>
-                            )}
-                    </div>
-                    <div>
 
-                        <button onClick={handleAdd} className="primaryButton" style={{ marginRight: "20px" }}>Give Access</button>
-                        <button onClick={handleDelete} className="primaryButton">Remove Access</button>
-                    </div>
-                </div>
-            )}
-        </div>
     </>)
 }
 

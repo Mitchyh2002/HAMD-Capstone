@@ -60,39 +60,44 @@ export default function Upload(props) {
         const form = document.getElementById("upload");
         const formData = new FormData(form);
         let method = "POST"
-        if(document.getElementById("update").checked){
+        const valid = validateForm(formData);
+
+        if (document.getElementById("update").checked) {
             method = "UPDATE";
             formData.append("update", true);
-        }else{
+        } else {
             method = "POST";
             formData.append("update", false);
         }
 
-        fetch(baseUrl + "/mst/module/upload", {
-            method: method,
-            headers: {
-                "Authorization": "Bearer " + getToken()
-            },
-            body: formData,
-        }).then(response => (response.json()
-        )).then((response) => {
-            setResponse(response);
-            if (response.Success == true) {
-                setSuccess(true);
-                setError(false);
-            } else {
-                setSuccess(false);
-                setError(true);
-            }}
+        if (valid) {
+            fetch(baseUrl + "/mst/module/upload", {
+                method: method,
+                headers: {
+                    "Authorization": "Bearer " + getToken()
+                },
+                body: formData,
+            }).then(response => (response.json()
+            )).then((response) => {
+                setResponse(response);
+                if (response.Success == true) {
+                    setSuccess(true);
+                    setError(false);
+                } else {
+                    setSuccess(false);
+                    setError(true);
+                }
+            }
             ).catch(function (error) {
                 console.log(error);
             })
-      };
+        }
+    };
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignContent: "center", flexGrow: "1" }}>
             <div className="flexBoxColumnGrow" style={{ padding: "32px", maxWidth: "500px" }}>
-                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                <div className="form-header">
                     <h3>Add Plugin</h3>
                 </div>
                 <form id="upload">
@@ -116,7 +121,7 @@ export default function Upload(props) {
                             <label>Module Code</label>
                             <div className="formButton" onClick={handleFileClick}>
                                 <p>{!isSelected ? "Upload A File" : selectedFile.name}</p>
-                                <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden />  
+                                <input type="file" accept=".zip" id="pluginFile" name="fileToUpload" onChange={changeFile} hidden />
                             </div>
                         </div>
                         <p className="error-message">{codeError}</p>
@@ -160,17 +165,17 @@ function checkModulePrefix(prefix) {
 function checkDisplayName(displayName) {
     if (!displayName) {
         return "Plugin display name is required.";
-    } 
+    }
 }
 
 function checkModuleCode(moduleCode) {
     if (!moduleCode) {
         return "Module code is required.";
-    } 
+    }
 }
 
-function checkPassword(password){
+function checkPassword(password) {
     if (!password) {
         return "Password is required.";
-    } 
+    }
 }

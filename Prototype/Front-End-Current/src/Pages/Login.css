@@ -189,6 +189,7 @@ input::placeholder{
     row-gap: 10px;
     width: 100%;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 .login-form-group{

@@ -39,7 +39,7 @@ export default function Configure() {
         ).catch(err => {
             setError(true);
             setSuccess(false);
-            setErrorMessage("Looks like something went wrong with the request. Please try again");
+            setErrorMessage("Looks like something went wrong with the request. Please try again.");
             console.log(err)
         })
         

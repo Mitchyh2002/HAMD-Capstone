@@ -116,6 +116,16 @@ form{
 label{
   font-family: var(--font2);
   font-size: 18px;
+  padding-top: 10px;
+}
+
+.form-header{
+  background-color: var(--navbar);
+  border-radius: 20px, 20px, 0px, 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
 }
 
 /* Buttons */

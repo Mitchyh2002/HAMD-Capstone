@@ -15,6 +15,8 @@ export default function Breadcrumbs({ prefix, moduleName }) {
         .map(crumb => {
             currentLink += `/${crumb}` 
             crumb = crumb.replace("%20", " ");
+            crumb = crumb.replace("%20", " ");
+            crumb = crumb.replace("%20", " ");
             crumb = crumb.charAt(0).toUpperCase() + crumb.slice(1);
             crumb = crumb.replace(prefix, moduleName);
             return(
