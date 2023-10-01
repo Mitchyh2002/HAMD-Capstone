@@ -371,7 +371,7 @@ export function FormInput(props) {
                     className={props.class}
                     placeholder={props.placeholder}
                 />
-                <p style={{ color: "red" }}>{props.error}</p>
+                <p className="error-message">{props.error}</p>
             </div>
         </div>
     )
