@@ -64,6 +64,8 @@ def changePassword():
             user.set_id()
             login_user(user)
             return on_success(user.get_id())
+        else:
+            return on_error(21, "Login details are incorrect")
     
 @blueprint.route('/login', methods=['POST'])
 def login():
