@@ -48,6 +48,8 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
                 if module.module_prefix == modulePrefix and group.securityLevel == adminLvl:
                     return True
     if adminLvl >= 5:
+        if adminLvl >= 9:
+            return True
         visibleModules = moduleAccess.query.filter_by(userID=user['userID'], modulePrefix=modulePrefix).first()
         if visibleModules == None:
             return on_error(401, "You do not have access to the function")
