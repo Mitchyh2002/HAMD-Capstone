@@ -124,7 +124,9 @@ def updateUserLevel(ID):
         
         targetUser = User.query.filter(User.userID == ID).first()
         desired_level = int(request.values.get('adminLevel'))
-        
+        if desired_level < 0 or desired_level > 9:
+            return on_error(408, "Permission levels must be in range 0-9.") 
+
         if ID == adminUser['userID']:
 
             return on_error(406, "Cannot modify your own permissions")
