@@ -158,17 +158,6 @@ export default function Configure() {
                                 id="landingImage"
                                 name="landingImage"
                             />
-                               <UploadFile
-                                tooltipText="This file will be available for users of your website to download. Please upload a .txt file only."
-                                label="Terms & Conditions"
-                                className="formButton"
-                                buttonName="Upload File"
-                                type="file"
-                                accept=".txt"
-                                id="terms&conditions"
-                                name="terms&conditions"
-                            />
-                            
                             <UploadFile
                                 tooltipText="Upload a text file with the current terms and conditions"
                                 label="Terms & Conditions"

@@ -29,7 +29,7 @@ def getAllUsers():
 
     adminUser = adminReturn(user_bearer)
     if len(adminUser) == 3:
-        return on_error(402, "User does not have access to make changes")
+        return on_error(402, "User does not have access")
     
     return [User.toJSON() for User in User.query.filter(User.adminLevel < adminUser['adminLevel']).all()]
 

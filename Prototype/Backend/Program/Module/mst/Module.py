@@ -240,7 +240,7 @@ def get_active_plugins():
     '''
 
     configurations = mst_Setup.query.all()
-    if configurations is None:
+    if configurations == []:
         return not_configured()
 
     added_modules = {}
