@@ -20,7 +20,7 @@ export default function Login(props) {
                 <div className="thirddiv">
                     <div className="form-header">
                         <img className="bee-image" alt="small-bee-image" />
-                        <h3>{register ? "Create Account" : "Sign In"}</h3>
+                        <h3>{register ? "Create Account" : forgotPassword ? "Forgot your Password" : "Sign In"}</h3>
                     </div>
                     {forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword} /> :
                         email ? <EmailConfirmation email={email} /> :
@@ -251,6 +251,7 @@ function RegisterForm(props) {
             setLoading(false);
         }
     }
+
     return (
         <>
             <form className="login-form" id="Register">
