@@ -45,7 +45,7 @@ def getUser(userID):
     if len(adminUser) == 3:
         return on_error(402, "User does not have access to make changes")
 
-    user = User.toJSON() for User in Select(User).where(User.userID == userID).first()
+    user = [User.toJSON() for User in Select(User).where(User.userID == userID).first()]
     
     if type(user).__name__ == "User":
         return on_success(user)
