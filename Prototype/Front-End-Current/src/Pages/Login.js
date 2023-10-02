@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
 import { LoginErrors } from "errorCodes";
+import { ToolTip } from "modules/mst/Components";
 
 export default function Login(props) {
     const register = props.register;
@@ -160,17 +161,27 @@ function ForgotPasswordForm(props) {
     }
     return (<>
         {submitted ?
-            <p>If your email is registered, then please check your email for a link to reset your password</p>
+            <p>If your email is registered, then please check your email for a link to reset your password.</p>
             : <form className="login-form" id="Forgot">
                 <div className="login-form-content">
-                    <FormInput
-                        label="Email"
-                        error={emailError}
-                        type="email"
-                        name="email"
-                        className="emailAddress"
-                        placeholder="Email Address"
-                    />
+                    <div className="form-group">
+                        <label style={{ display: "flex", flexDirection: "row" }}>Email Address   <ToolTip text="Please enter your email address to receive a reset password email.">
+                            <img
+                                className="tooltipIcon"
+                                alt="tooltipIcon"
+                                src="/Icons/info.png"
+                                style={{ paddingLeft: "10px" }}
+                            />
+                        </ToolTip></label>
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                className="emailAddress"
+                            />
+                            <p className="error-message">{emailError}</p>
+                        </div>
+                    </div>
                 </div>
             </form>}
         <div className="flexBoxColumnGrow" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>

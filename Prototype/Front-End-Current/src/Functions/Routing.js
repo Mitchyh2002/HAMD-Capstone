@@ -10,6 +10,7 @@ import { ConfirmEmail } from "Pages/Confirm";
 import Account from "Pages/Account";
 import { baseUrl } from "config";
 import ChangePassword from "Pages/ChangePassword";
+import { ResetPassword } from "Pages";
 
 
 /*All Routes
@@ -48,6 +49,21 @@ export function CreateAllPaths(Components) {
             try{
                 const response = await fetch("http://localhost:5000/mst/confirm/"+params.id, {
                     method: "POST"
+                });
+                const json = await response.json();
+                console.log(json)
+                return json;
+            }catch{
+                return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
+            }
+        }
+    },{
+        path:"/resetPassword/:id",
+        element: <ResetPassword />,
+        loader: async ({params}) => {
+            try{
+                const response = await fetch("http://localhost:5000/mst/user/resetPassword/"+params.id, {
+                    method: "GET"
                 });
                 const json = await response.json();
                 console.log(json)
