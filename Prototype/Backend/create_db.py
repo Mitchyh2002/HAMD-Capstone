@@ -23,7 +23,7 @@ def sys_create():
     grp_module = create_module("grp", "Group management", PasswordHash.new("GroupMDL").hash, False, '')
 
     masterUser = create_user('sysAdmin@BeeAware.com', 'SYSAdmin', "@SySadmin!", '2000', None, 9)
-    testUser = create_user('test@test.com', 'testUser', 'testUser', '2000', None, 1)
+    testUser = create_user('test@test.com', 'testUser', 'testUser', '2000', "0412345678", 1)
     testUser2 = create_user('test2@test.com', 'testUser', 'testUser', '2000', None, 5)
     testUser2.confirmed = True
     testUser2.confirmedDate = datetime.date.today()

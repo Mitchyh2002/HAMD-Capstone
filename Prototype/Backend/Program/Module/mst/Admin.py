@@ -24,7 +24,7 @@ def getAllUsers():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
 
-    if not accessGranted:
+    if accessGranted != True:
         return accessGranted
 
     adminUser = adminReturn(user_bearer)
@@ -38,7 +38,7 @@ def getUser(userID):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
      
-    if not accessGranted:
+    if accessGranted != True:
         return accessGranted
     
     adminUser = adminReturn(user_bearer, userID)
@@ -55,7 +55,7 @@ def updateUser(ID):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
 
-    if not accessGranted:
+    if accessGranted != True:
         return accessGranted
 
     adminUser = adminReturn(user_bearer, ID)
@@ -114,7 +114,7 @@ def updateUserLevel(ID):
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
         accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
         
-        if not accessGranted:
+        if accessGranted != True:
             return accessGranted
 
         adminUser = adminReturn(user_bearer, ID)
