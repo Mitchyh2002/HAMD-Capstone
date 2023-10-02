@@ -40,6 +40,10 @@ def changePassword():
         return handle_options()
     else:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+
+        if user_bearer == None or 'null' in user_bearer:
+            return on_error(400, "Auth Header Not Provided")
+
         user = bearer_decode(user_bearer)['Values']
         user = User.query.filter_by(userID=user['userID']).first()
 
