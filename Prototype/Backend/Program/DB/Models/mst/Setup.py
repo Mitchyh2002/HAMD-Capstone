@@ -66,7 +66,7 @@ def JSONtoConfig(json):
         new_setup.logo = json["logo"]
         new_setup.MiscImage = json["MiscImage"]
         new_setup.loginImage = json["loginImage"]
-
+        new_setup.terms = json["terms"]
         return new_setup
 
     except KeyError:

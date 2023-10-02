@@ -10,7 +10,8 @@ from Program.ResponseHandler import on_error, on_success, bearer_decode, userFun
 
 
 from Program import reload, db
-from Program.DB.Models.mst.Setup import mst_Setup
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
 from Program.OS import dir_tree, convert_to_imports
 
 blueprint = Blueprint('setup', __name__, url_prefix="/mst/config")
@@ -174,7 +175,7 @@ def update_config_settings(request):
                 return logo_success
             logo_dir = f'Front-End-Current/public/{logo.filename.lower()}'
             logo_dir2 = f'../public/{logo.filename.lower()}'
-            pattern = '--logo: url\("..\/public\/.*.png"\);'
+            pattern = '--logo: url\("\/public\/.*"\);'
             replace_str = f'--logo: url("{logo_dir2}");'
             content = re.sub(pattern, replace_str, content)
             logo.save(logo_dir)
@@ -209,7 +210,7 @@ def update_config_settings(request):
             bee_dir2 = f'../public/{bee.filename.lower()}'
             bee_dir = f'Front-End-Current/public/{bee.filename.lower()}'
 
-            pattern = '--bee: url\("..\/public\/.*"\);'
+            pattern = '--bee: url\("\/public\/.*"\);'
             replace_str = f'--bee: url("{bee_dir2}");'
             content = re.sub(pattern, replace_str, content)
             bee.save(bee_dir)
