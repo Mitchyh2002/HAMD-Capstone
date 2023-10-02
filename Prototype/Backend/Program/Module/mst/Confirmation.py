@@ -37,7 +37,7 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
-@blueprint.route('/<token>')
+@blueprint.route('/<token>', methods=['POST'])
 def confirm_email(token):
     email = confirm_token(token)
     try:
@@ -48,7 +48,7 @@ def confirm_email(token):
         pass
 
     user = QuerySelectUser(email)
-    if user.confirmed and user.confirmedDate != date.today():
+    if user.confirmed:
         return on_error(61, "Account has already been confirmed. Please Login.")
     else:
         user.confirmed = True

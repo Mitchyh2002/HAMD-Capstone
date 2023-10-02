@@ -40,6 +40,10 @@ def changePassword():
         return handle_options()
     else:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+
+        if user_bearer == None or 'null' in user_bearer:
+            return on_error(400, "Auth Header Not Provided")
+
         user = bearer_decode(user_bearer)['Values']
         user = User.query.filter_by(userID=user['userID']).first()
 
@@ -155,7 +159,7 @@ def register():
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
-    return on_success("Potentially email for resend endpoint but security")
+    return on_success(token)
 
 
 def emailIsValid(email):
