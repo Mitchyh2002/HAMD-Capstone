@@ -45,7 +45,12 @@ def getUser(userID):
     if len(adminUser) == 3:
         return on_error(402, "User does not have access to make changes")
 
-    return [User.toJSON() for User in Select(User).where(User.userID == userID).first()]
+    user = User.toJSON() for User in Select(User).where(User.userID == userID).first()
+    
+    if type(user).__name__ == "User":
+        return on_success(user)
+    else:
+        return on_error(62, "Account is not valid")
     
 @blueprint.route('/updateUser/<ID>', methods=['POST', 'OPTIONS'])
 def updateUser(ID):
@@ -72,7 +77,7 @@ def updateUser(ID):
     if inputEmail is not None and inputEmail != "" and emailIsValid(inputEmail):
         inputEmail = inputEmail.lower()
         uniqueEmail = QuerySelectUser(inputEmail)
-        if type(uniqueEmail).__name__ == "user" and uniqueEmail.userID != ID:
+        if type(uniqueEmail).__name__ == "User" and uniqueEmail.userID != ID:
             return on_error(14, "Email is already taken")
 
         targetUser.email = inputEmail
@@ -94,7 +99,7 @@ def updateUser(ID):
     if inputPhoneNumber is not None and inputPhoneNumber != "" and phoneNumberIsValid(inputPhoneNumber):
 
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
-        if type(uniquePhone).__name__ == "user" and uniqueEmail.userID != ID:
+        if type(uniquePhone).__name__ == "User" and uniqueEmail.userID != ID:
             return on_error(54, "Phone Number is already taken.")
 
         targetUser.phoneNumber = inputPhoneNumber
@@ -155,7 +160,7 @@ def resetUserPassword(ID):
         return on_error(402, "User does not have access to make changes")
 
     targetUser = Select(User).where(userID = ID)
-    if type(targetUser).__name__ == "user":
+    if type(targetUser).__name__ == "User":
         input = request.values
         inputPass = input.get('password')
 
