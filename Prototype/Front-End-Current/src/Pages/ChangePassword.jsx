@@ -78,7 +78,7 @@ function ChangePasswordForm(props) {
                     props.setChanged(true);
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             }).catch(function (error) {

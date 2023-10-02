@@ -10,7 +10,7 @@ import { ConfirmEmail } from "Pages/Confirm";
 import Account from "Pages/Account";
 import { baseUrl } from "config";
 import ChangePassword from "Pages/ChangePassword";
-import { ResetPassword } from "Pages";
+import ResetPassword from "Pages/ResetPassword";
 
 
 /*All Routes
