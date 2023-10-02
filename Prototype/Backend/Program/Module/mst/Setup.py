@@ -159,7 +159,10 @@ def update_config_settings(request):
             final_configs["websiteName"] = websiteName
 
         terms = request.files.get("terms")
-        if terms.filename == '':
+        if terms is None:
+            if current_settings is None:
+                final_configs['terms'] = ''
+        elif terms.filename == '':
             if current_settings is None:
                 final_configs['terms'] = ''
         else:
@@ -179,7 +182,10 @@ def update_config_settings(request):
         final_configs["loginImage"] = ''
         final_configs["landingImage"] = ''
 
-        if logo.filename == '':
+        if logo is None:
+            if current_settings is None:
+                final_configs["logo"] = ''
+        elif logo.filename == '':
             if current_settings is None:
                 final_configs["logo"] = ''
         else:
@@ -195,7 +201,10 @@ def update_config_settings(request):
             logo.save(logo_dir)
             final_configs["logoImage"] = logo_dir
 
-        if loginImage.filename == '':
+        if loginImage is None:
+            if current_settings is None:
+                final_configs["loginImage"] = ''
+        elif loginImage.filename == '':
              if current_settings is None:
                  final_configs["loginImage"] = ''
         else:
@@ -211,7 +220,10 @@ def update_config_settings(request):
             loginImage.save(login_dir)
             final_configs["loginImage"] = login_dir
 
-        if bee.filename == '':
+        if bee is None:
+            if current_settings is None:
+                final_configs["landingImage"] = ''
+        elif bee.filename == '':
             if current_settings is None:
                 final_configs["landingImage"] = ''
         else:
