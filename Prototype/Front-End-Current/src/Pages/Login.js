@@ -57,7 +57,7 @@ function LoginForm(props) {
         const formData = new FormData(form);
 
         setResponse(await login(formData));
-        
+
     };
 
     return (
@@ -70,19 +70,19 @@ function LoginForm(props) {
                         placeholder="Email Address"
                     />
                     {response &&
-                     [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode) 
-                     &&(
-                        <div className="error-message">
-                            {response.Message}
-                        </div>
-                    )}
-                        <FormInput
-                            type={"password"}
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                        />
-                    {response && response.StatusCode == LoginErrors.passwordEmpty &&(
+                        [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode)
+                        && (
+                            <div className="error-message">
+                                {response.Message}
+                            </div>
+                        )}
+                    <FormInput
+                        type={"password"}
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                    />
+                    {response && response.StatusCode == LoginErrors.passwordEmpty && (
                         <div className="error-message">
                             {response.Message}
                         </div>
@@ -97,13 +97,13 @@ function LoginForm(props) {
                 </div>
             </form>
 
-            {response && 
-            [LoginErrors.accountSuspended, LoginErrors.accountUncomfirmed, LoginErrors.passwordWrong].includes(response.StatusCode) 
-            && (
-                <div className="error-message">
-                    {response.Message}
-                </div>
-            )}
+            {response &&
+                [LoginErrors.accountSuspended, LoginErrors.accountUncomfirmed, LoginErrors.passwordWrong].includes(response.StatusCode)
+                && (
+                    <div className="error-message">
+                        {response.Message}
+                    </div>
+                )}
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
                 <Link
                     to="/Home">
@@ -261,6 +261,7 @@ function RegisterForm(props) {
         } else {
             setLoading(false);
         }
+    }
     return (
         <>
             <form className="login-form" id="Register">
@@ -290,42 +291,42 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
-                        <FormInput
-                            label="Password"
-                            error={passError}
-                            type={"password"}
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                        />
+                    <FormInput
+                        label="Password"
+                        error={passError}
+                        type={"password"}
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                    />
                 </div>
             </form>
 
 
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                    <p style={{ fontSize: "14px" }}>
-                        Already have an account?
-                    </p>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <Link
-                        to="/login"
-                        className="register-message"><button className="primaryButton create-account-button">Log In</button>
-                    </Link>
-                </div>
-            </>
-        )
-    }
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
+            </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                <p style={{ fontSize: "14px" }}>
+                    Already have an account?
+                </p>
+            </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <Link
+                    to="/login"
+                    className="register-message"><button className="primaryButton create-account-button">Log In</button>
+                </Link>
+            </div>
+        </>
+    )
 }
+
 
 
 //Validation Functions
 export function checkEmailValid(email) {
-        const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        const checkValid = new RegExp(regEx);
+    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const checkValid = new RegExp(regEx);
 
     if (email == "") {
         return "Email address is required.";
