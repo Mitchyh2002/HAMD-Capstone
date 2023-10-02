@@ -49,6 +49,8 @@ def changePassword():
 
         input = request.values
         oldPassword = input.get('currentPassword')
+        if oldPassword == "" or oldPassword is None:
+            return on_error(20, "Password is required, please enter a password")
         inputBytes = oldPassword.encode('utf-8')
 
         storedHash = user.passwordHash.hash[2:-1]
@@ -56,6 +58,8 @@ def changePassword():
         
         if bcrypt.checkpw(inputBytes, storedHash):
             newPassword = input.get('newPassword')
+            if newPassword == "" or newPassword is None:
+                return on_error(20, "Password is required, please enter a password")
             user.changePassword(newPassword)
             user.set_id()
             login_user(user)
