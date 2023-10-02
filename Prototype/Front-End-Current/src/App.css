@@ -15,8 +15,8 @@
   --loginImage: url("/public/login-image.jpg");
   --bee: url("../public/misc.png");
   --welcomeText: "1";
-  --landingImage: url("../public/login-image.jpg");
-  --mainTitle: "BeeAware";
+  --landingImage: url("/public/landing-image.jpg");
+  --mainTitle: "Bee Aware";
 }
 
 /* DEFAULTS - default styling for plugin developers */
