@@ -153,11 +153,11 @@ function ForgotPasswordForm(props) {
                     console.log(response);
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             })
-        }
+        } else{setLoading(false);}
     }
     return (<>
         {submitted ?
@@ -250,7 +250,7 @@ function RegisterForm(props) {
                     props.setEmail(formData.get("email"));
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             }
