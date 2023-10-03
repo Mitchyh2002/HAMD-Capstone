@@ -77,7 +77,7 @@ def updateUser(ID):
     if inputEmail is not None and inputEmail != "" and emailIsValid(inputEmail):
         inputEmail = inputEmail.lower()
         uniqueEmail = QuerySelectUser(inputEmail)
-        
+
         if type(uniqueEmail).__name__ == "User" and uniqueEmail.userID != int(ID):
             return on_error(14, "Email is already taken")
 
@@ -133,7 +133,7 @@ def updateUserLevel(ID):
         if desired_level < 0 or desired_level > 9:
             return on_error(408, "Permission levels must be in range 0-9.") 
 
-        if ID == adminUser['userID']:
+        if int(ID) == adminUser['userID']:
 
             return on_error(406, "Cannot modify your own permissions")
 
