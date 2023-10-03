@@ -372,6 +372,7 @@ export function FormInput(props) {
                     name={props.name}
                     className={props.class}
                     placeholder={props.placeholder}
+                    defaultValue = {props.value}
                 />
                 <p className="error-message">{props.error}</p>
             </div>

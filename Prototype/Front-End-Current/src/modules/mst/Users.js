@@ -57,8 +57,8 @@ export default function Users() {
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
 
     //functions
-    const refreshData = () => {
-        setUsers(getUsers());
+    const refreshData = async () => {
+        setUsers(await getUsers());
     }
 
     useEffect(() => {
