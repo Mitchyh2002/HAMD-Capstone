@@ -9,6 +9,7 @@ import { AppLoader } from 'Components/loader';
 function App() {
   const [modules, setModules] = useState([]);
   const [pages, setPages] = useState([]);
+  const [configured, setConfigured] = useState(true)
   const [router, setRouter] = useState();
 
   //Get all active modules from the server and store in state
@@ -26,13 +27,15 @@ function App() {
         logout();
       }else if(data.StatusCode == 1001){
         setModules();
+        setConfigured(false);
+        setRouter(createBrowserRouter(allRoutes(modules, true)));
       }else{
       setModules(data.Values);
+      setRouter(createBrowserRouter(allRoutes(data.Values, false)));
       }
-      setRouter(createBrowserRouter(allRoutes(modules, pages)));
     }).catch(err => {
       console.log(err);
-      setRouter(createBrowserRouter(allRoutes(modules, pages)));
+      setRouter(createBrowserRouter(allRoutes(modules, configured)));
     })
   }, []);
 

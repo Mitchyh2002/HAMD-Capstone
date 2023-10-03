@@ -11,6 +11,7 @@ import Account from "Pages/Account";
 import { baseUrl } from "config";
 import ChangePassword from "Pages/ChangePassword";
 import ResetPassword from "Pages/ResetPassword";
+import Configure from "modules/mst/Configure";
 
 
 /*All Routes
@@ -18,8 +19,8 @@ import ResetPassword from "Pages/ResetPassword";
     Input: Modules
     Output: List of Routes
 */
-export function allRoutes(Modules){
-    return(CreateAllPaths(Modules));
+export function allRoutes(Modules, config){
+    return(CreateAllPaths(Modules, config));
 }
 
 /*Create All Paths
@@ -27,9 +28,11 @@ export function allRoutes(Modules){
     Input: Components
     Output: An Array of all paths for the application with a all children Routes
 */
-export function CreateAllPaths(Components) {
-    console.log("Building routes....")
-    console.log(Components);
+export function CreateAllPaths(Components, config) {
+    const homeElement = () => {
+        return config == true? <Configure /> : <Main modules={Components}/>
+    }
+
     //Create Route Directory
     const Routes = [{
         path: "/",
@@ -79,7 +82,7 @@ export function CreateAllPaths(Components) {
 
     const Home = {
         path: "/Home",
-        element: <Main modules={Components}/>,
+        element: homeElement(),
         loader: async ()  => {
             const token = getToken();
             console.log(token);

@@ -31,6 +31,3 @@ export default function Main(props) {
     }
     </>)
 }
-
-/* <LandingPage modules={props.modules}/> <Content modules={props.modules}/> */
-/* prefix={props.module.prefix} moduleName={props.module.moduleName} */
