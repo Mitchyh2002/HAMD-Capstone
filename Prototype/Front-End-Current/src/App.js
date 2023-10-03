@@ -31,7 +31,9 @@ function App() {
       setRouter(createBrowserRouter(allRoutes(data.Values, pages)));
       console.log(router);
       }
-    }).then(() => {
+    }).catch(err => {
+      console.log();
+      setRouter(createBrowserRouter(allRoutes(modules, pages)));
     })
   }, []);
 
