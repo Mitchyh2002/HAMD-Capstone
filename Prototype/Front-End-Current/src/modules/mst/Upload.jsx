@@ -69,7 +69,7 @@ export default function Upload(props) {
         const valid = validateForm(formData);
 
         if (document.getElementById("update").checked) {
-            method = "UPDATE";
+            method = "POST";
             formData.append("update", true);
         } else {
             method = "POST";

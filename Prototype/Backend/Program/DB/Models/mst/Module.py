@@ -20,6 +20,8 @@ class Module(db.Model):
             Dict Representation of OBJ
         '''
         if is_query:
+            if self.displayName == None:
+                self.displayName = ''
             json =  {"prefix": self.prefix,
                     "displayName": self.displayName.strip()}
             if isall:
