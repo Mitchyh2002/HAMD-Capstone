@@ -36,7 +36,7 @@ def get_user_karma():
         return on_error(4, f"Selected User {user_id}, cannot be found, please try again")
     if accessingUser['Values']['adminLevel'] < 5:
         if selectedUser.userID != accessingUser['Values']['userID']:
-            return on_error(6, "User Credentials >5 can only view their own Karma")
+            return on_error(6, "User Credentials <5 can only view their own Karma")
 
     if module_prefix is None:
         return on_success({
@@ -84,7 +84,7 @@ def assign_user_karma():
 
     modulePrefix = request.values.get('modulePrefix')
     if modulePrefix == None:
-        return on_error(2, "Request is missing modulePrefix key, please ensure you are sending a valid userID")
+        return on_error(2, "Request is missing modulePrefix key, please ensure you are sending a valid module prefix")
     selectedModule = Module.query.filter_by(prefix=modulePrefix).first()
     if selectedModule is None:
         return on_error(5, f"Selected Module {modulePrefix}, cannot be found, please try again")
