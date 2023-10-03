@@ -16,7 +16,7 @@ export default function Header (props) {
         <div className="header">
             <header>
                 <div className="breadcrumbs breadcrumbs1">
-                    <Link to='/home' style={{ display: 'contents' }} onClick={() => props.setLanding(false)}>
+                    <Link to='/home' style={{ display: 'contents' }}>
                         <img className="logo" alt="logo"></img>
                     </Link>
                     {props.breadcrumbs}

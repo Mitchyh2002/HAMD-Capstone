@@ -64,6 +64,8 @@ def changePassword():
             user.set_id()
             login_user(user)
             return on_success(user.get_id())
+        else:
+            return on_error(21, "Login details are incorrect")
     
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -207,7 +209,7 @@ def forgotPassword():
         html = render_template('reset.html', forgot_url=forgot_url)
         subject = "BeeAware Password Reset"
         send_email(user.email, subject, html)
-        return on_success("Email sent")
+        return on_success(token)
     else:
         return on_success("Account is not valid")
     
@@ -229,7 +231,6 @@ def resetPassword(token):
         if request.method == 'POST':
             input = request.values
             inputPass = input.get('password')
-            print(input)
 
             if inputPass == "" or inputPass is None:
                 return on_error(20, "Password is required, please enter a password")

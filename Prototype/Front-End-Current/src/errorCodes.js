@@ -5,7 +5,8 @@ export const AuthorizationErrors = {
     permissionsInsufficient: 402,
     tokenInvalid: 403,
     permissionsSelf: 406,
-    permissionsLimit: 407
+    permissionsLimit: 407,
+    permissionRange: 408
 };
 
 // Admin Errors

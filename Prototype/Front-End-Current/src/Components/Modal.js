@@ -18,21 +18,21 @@ export default function MessageModal(props){
     return(
         <>
          {show && (
-                <div className="modal">
+                <div className="modal" style={{display: "flex"}}>
                     <div onClick={toggleModal} className='overlay'></div>
-                    <div className='modal-content'>
-                        <button className='close-modal' onClick={toggleModal}>
-                            x
-                        </button>
-                        <h4 className='message-modal-heading'>{props.title}</h4>
-                        <p className='modal-text-message'>
-                            {props.message}
-                        </p>
-                        <br></br>
-                        <br></br>
-                        <button className='buttons okay-button' onClick={toggleModal}>
-                            Okay
-                        </button>
+                    <div className='modal-content flexBoxColumnGrow' style={props.style&& props.style}>
+                        <div style={{width: "100%", height: "100%", paddingRight: "20px", overflowY: "scroll"}}>
+                            <button className='close-modal' onClick={toggleModal}>
+                                x
+                            </button>
+                            <h4 className='message-modal-heading'>{props.title}</h4>
+                            <p className='modal-text-message' dangerouslySetInnerHTML={{__html: props.message}} />
+                            <br></br>
+                            <br></br>
+                            <button className='buttons okay-button' onClick={toggleModal}>
+                                Okay
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

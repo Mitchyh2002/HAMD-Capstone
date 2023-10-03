@@ -1,11 +1,13 @@
 import Header from "Components/Header"
-import { Link, useParams } from "react-router-dom"
+import { useLoaderData, Link, useParams } from "react-router-dom"
 import { useState } from "react";
 import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
 
 
 export default function ResetPassword() {
+    const response = useLoaderData();
+    
     const [changed, setChanged] = useState();
     const { id } = useParams();
 
@@ -14,10 +16,10 @@ export default function ResetPassword() {
         <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
             <div className="flexBoxGrow" style={{ maxWidth: "65%" }}>
                 <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
-                    <h3>{changed ? "Password Changed" : "Change Password"}</h3>
+                    <h3>{response.StatusCode == 200 ? changed ? "Password Changed" : "Change Password" : "Invalid Token"}</h3>
                 </div>
                 <div style={{ justifyContent: "center" }}>
-                    {changed ? (
+                    {response.StatusCode == 200 ? changed ? (
                         <div>
                             <p>You have successfully changed your password! Please click below to login</p>
                             <Link
@@ -28,7 +30,7 @@ export default function ResetPassword() {
                     ) : (
                         <ChangePasswordForm setChanged={setChanged} id={id} />
 
-                    )}
+                    ) :<p>The token provided is either invalid or expired</p>}
                 </div>
             </div>
         </div>
