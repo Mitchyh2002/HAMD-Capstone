@@ -31,7 +31,8 @@ def getAllUsers():
     if len(adminUser) == 3:
         return on_error(402, "User does not have access")
     
-    return [User.toJSON() for User in User.query.filter(User.adminLevel < adminUser['adminLevel']).all()]
+    users = [User.toJSON() for User in User.query.filter(User.adminLevel < adminUser['adminLevel']).all()]
+    return on_success(users)
 
 @blueprint.route('/getUser/<userID>', methods=['GET'])
 def getUser(userID):
