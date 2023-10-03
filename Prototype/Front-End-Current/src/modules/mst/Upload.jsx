@@ -25,9 +25,10 @@ export default function Upload(props) {
     const validateForm = (formData) => {
         //Check Errors
         const prefix = checkModulePrefix(formData.get("prefixName"));
-        const name = checkDisplayName(formData.get("pluginDisplayName"));
-        const code = checkModuleCode(formData.get("fileToUpload"))
-        const pass = checkPassword(formData.get("modulePass"))
+        const name = checkDisplayName(formData.get("displayName"));
+        const code = checkModuleCode(formData.get("fileToUpload"));
+        const pass = checkPassword(formData.get("modulePass"));
+
         setPrefixError(prefix);
         setNameError(name);
         setCodeError(code);
@@ -118,8 +119,8 @@ export default function Upload(props) {
                         <FormInput
                             label="Plugin Display Name"
                             type="text"
-                            id="pluginDisplayName"
-                            name="pluginDisplayName"
+                            id="displayName"
+                            name="displayName"
                             error={nameError}
                         />
                         <div style={{ justifyContent: "space-between" }} className="flexBoxRowGrow">
