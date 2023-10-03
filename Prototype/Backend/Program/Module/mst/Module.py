@@ -187,11 +187,24 @@ def QueryInsertModule(new_module: Module):
         if Module exists delete itself if gotten this far into system
     """
     # If Module Exists Drop it
-    existing_modules = Module.query.filter_by(prefix=new_module.prefix).delete()
+    existing_modules = Module.query.filter_by(prefix=new_module.prefix).update(new_module.toJSON())
     from Program import db
 
     db.session.add(new_module)
     db.session.commit()
+
+def QueryInsertModule(new_module: Module):
+    """ Function to Update Module in DB
+        if Module exists delete itself if gotten this far into system
+    """
+    # If Module Exists Drop it
+
+    existingModule = Module.query.filter_by(prefix = new_module.prefix)
+    existingModule.displayName = new_module.displayName
+
+    existingModule.update()
+
+
 
 
 @blueprint.route('/getModule', methods=['POST'])
@@ -407,6 +420,11 @@ def check_files(temp_dir, module_prefix):
             return on_error(4, "Tables Are Missing From Module, Please ensure existing plugin content is in .zip file")
         existing_content = [x.split(f'Program/DB/Models/{module_prefix}')[1] for x in
                             dir_tree(f'Program/DB/Models/{module_prefix}', True)]
+
+        for i, filename in enumerate(existing_content):
+            if ".pyc" in filename:
+                existing_content.pop(i)
+
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
 
         if list(set(existing_content).difference(set(new_content))) != []:
@@ -460,17 +478,17 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     pages = []
     with open(f"{temp_dir}\main.js") as MainJS:
         content = MainJS.read()
-        pattern = r'(?<=export default function).*(?=\()|(?<=export function ).*(?=\()'
+        pattern = r'(?<=export function).*(?=\()|(?<=export function ).*(?=\()'
         functionName = re.findall(pattern, content)
         if functionName is None:
-            return on_error(14, "Cannot Find Default Export Function Name in main.js file")
+            return on_error(14, "Cannot Find export Function Name in main.js file")
         pattern_2 = fr'(?<=const ){module_name}_pages(?= )'
         page_name = re.findall(pattern_2, content)
         imports = ", ".join(functionName + page_name)
         if f"{module_name}_" not in functionName[0]:
             return on_error(10, "Module Name not in main Front-End Function Name")
         if page_name is not None:
-            page_list_pattern = 'export const ' + module_name + '_pages = (.*?);'
+            page_list_pattern = 'export const ' + page_name[0] + ' = (.*|\n)}]'
             pages_match = re.search(page_list_pattern, content, re.DOTALL)
 
             if pages_match:
@@ -481,7 +499,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                     pageName = re.findall(pageName_pattern, page)
                     page_code_pattern = '(?<=pageCode: ").+(?=")'
                     pageCode = re.findall(page_code_pattern, page)
-                    description_pattern = '(?<=Desciption: ").+(?=")'
+                    description_pattern = '(?<=Description: ").+(?=")'
                     descripton = re.findall(description_pattern, page)
                     if descripton == []:
                         descripton = ''
@@ -526,7 +544,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
             if update and module_name in line:
                 pattern = "(?<=import { ).*(?= } from)"
                 old_functionName = re.findall(pattern, line)[0]
-                if functionName[0] != old_functionName:
+                if functionName[0].strip() != old_functionName.strip():
                     os.chdir(master_dir)
                     return on_error(15,
                                     f"mst.js Export default function name changed, please change back to {old_functionName}")
@@ -717,42 +735,53 @@ def remove_user_access(user, modulePrefix):
 
 @blueprint.route('updatereference', methods=['POST'])
 def update_module_ref():
-    """ API Endpoint to update display name & Logo for database
+        """ API Endpoint to update display name & Logo for database
 
-        Returns Updated Module
+            Returns Updated Module
 
-        On Error:
-            Error Code 16 - Incorrect Password Given
-    """
-    user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 7, 'mst')
-    if accessGranted != True:
-        return accessGranted
-    from Program import db
-    save_dir = os.getcwd()
-    modulePrefix = request.values.get('modulePrefix')
+            On Error:
+                Error Code 16 - Incorrect Password Given
+        """
+        user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+        accessGranted = userFunctionAuthorisations(user_bearer, 7, 'mst')
+        if accessGranted != True:
+            return accessGranted
+        from Program import db
+        save_dir = os.getcwd()
+        modulePrefix = request.values.get('modulePrefix')
 
-    displayName = request.values.get('displayName')
-    if displayName == None or modulePrefix == None:
-        return on_error(1, "Missing Key Inputs, please check request is sending correct parameters")
-    if len(displayName) > 200:
-        return on_error(2, "Display Name Must be less than 200 Characters")
-    dl_file = ''
-    if len(request.files) != 0:
-        dl_file = request.files['logo']
-    old_module = Module.query.filter(Module.prefix == modulePrefix).first()
-    if old_module == None:
-        return on_error(3, "Specified Module Does Not Exist")
-    values = {"displayName": displayName}
-    if dl_file != '':
-        os.chdir("../")
-        os.chdir("./Front-End-Current/src/")
-        dl_file.save(f'./logo/{modulePrefix}.svg')
-        values["logo"] = f"./logo/{modulePrefix}.svg"
-    Module.query.filter(Module.prefix == modulePrefix).update(values)
-    db.session.commit()
-    os.chdir(save_dir)  # Reset to Base CWD
-    return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
+        displayName = request.values.get('displayName')
+        if displayName == None or modulePrefix == None:
+            return on_error(1, "Missing Key Inputs, please check request is sending correct parameters")
+        if len(displayName) > 200:
+            return on_error(2, "Display Name Must be less than 200 Characters")
+        dl_file = ''
+        if len(request.files) != 0:
+            dl_file = request.files['logo']
+        old_module = Module.query.filter(Module.prefix == modulePrefix).first()
+        if old_module == None:
+            return on_error(3, "Specified Module Does Not Exist")
+        values = {"displayName": displayName}
+        if dl_file != '':
+            os.chdir("../")
+            os.chdir("./Front-End-Current/src/")
+            dl_file.save(f'./logo/{modulePrefix}.svg')
+            values["logo"] = f"./logo/{modulePrefix}.svg"
+
+        modulePass = request.values.get('modulePass')
+
+        selectedModule = Module.query.filter(Module.prefix == modulePrefix).first()
+        storedHash = selectedModule.moduleKey
+        storedHash = storedHash[2:-1]
+        storedHash = storedHash.encode('utf-8')
+        inputBytes = modulePass.encode('utf-8')
+
+        if not bcrypt.checkpw(inputBytes, storedHash):
+            return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
+        Module.query.filter(Module.prefix == modulePrefix).update(values)
+        db.session.commit()
+        os.chdir(save_dir)  # Reset to Base CWD
+        return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
 @blueprint.route('activate', methods=["POST"])
@@ -891,24 +920,30 @@ def upload_module():
         if TableFiles != []:
             from Program.DB.Builder import create_db, add_column
             if update:
-                if new_rows != []:
+                if new_rows not in [[], [{}]]:
                     success = add_column(new_rows)
                     if success != None:
                         return on_error(1, success)
+                if os.path.exists(Table_outdir) and update:
+                    old_tables = dir_tree(Table_outdir)
+                    old_tables = convert_to_imports(old_tables)
+                else:
+                    old_tables = []
                 if os.path.exists(Table_outdir):
                     shutil.rmtree(Table_outdir)
-
             shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
             Table_outdir = dir_tree(Table_outdir)
             tables = convert_to_imports(Table_outdir)
-            if not update:
-                create_db(tables)
-            os.chdir("../../")
+            print(list(set(tables).difference(set(old_tables))))
+            if old_tables != tables:
+                create_db(list(set(tables).difference(set(old_tables))))
+            os.chdir(master_dir)
+
+        os.chdir("../")
         front_end_dir = os.getcwd() + "\\Front-End-Current\\src"
         frontEnd_outdir = rf"\Front-End-Current\src\modules\{modulename}"
         if update:
-            shutil.rmtree(frontEnd_outdir)
-        os.chdir("../")
+            shutil.rmtree(os.getcwd() + frontEnd_outdir)
         shutil.move(rf"Backend\Program\Temp_Module\{modulename}\Front End", os.getcwd() + frontEnd_outdir)
         os.chdir(master_dir)
 
@@ -920,8 +955,12 @@ def upload_module():
             shutil.move(f"{temp_dir}{modulename}\Backend", API_outdir.strip(modulename))
             os.rename(f"{API_outdir.strip(modulename)}\Backend", f"{API_outdir.strip(modulename)}/{modulename}")
 
-        new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
-        QueryInsertModule(new_Module)
+        if update:
+            Module.query.filter(Module.prefix == str(modulename)).update({"displayName": DisplayName})
+            new_Module = Module.query.filter(Module.prefix == str(modulename)).first()
+        else:
+            new_Module = create_module(str(modulename), DisplayName, ModulePass.hash, True, logo_path)
+            QueryInsertModule(new_Module)
         for page in front_end_success:
             if update:
                 #Remove Old Pages & before adding new_ones
