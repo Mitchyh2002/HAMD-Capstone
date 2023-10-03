@@ -145,13 +145,13 @@ def register():
     inputEmail = inputEmail.lower()
     # Checking email is Unique
     uniqueEmail = QuerySelectUser(inputEmail)
-    if type(uniqueEmail).__name__ == "user":
+    if type(uniqueEmail).__name__ == "User":
         return on_error(14, "Email is already registered, would you like to sign in?")
     
     # Validating optional inputs
     if inputPhoneNumber != "" and inputPhoneNumber is not None:
         uniquePhone = QuerySelectUser(inputPhoneNumber, False)
-        if type(uniquePhone).__name__ == "user":
+        if type(uniquePhone).__name__ == "User":
             return on_error(54, "Phone Number is already registered, would you like to sign in?")
         if not phoneNumberIsValid(inputPhoneNumber):
             return on_error(51, "Phone number entered is invalid, please enter a valid phone number.")
@@ -255,7 +255,7 @@ def QueryInsertUser(new_user: User):
 
         existing_user = User.query.filter_by(email=new_user.email)
 
-        if type(existing_user).__name__ == "user":
+        if type(existing_user).__name__ == "User":
             raise Exception
         db.session.add(new_user)
         db.session.commit()
