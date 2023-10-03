@@ -16,7 +16,7 @@
   --bee: url("../public/misc.png");
   --welcomeText: "1";
   --landingImage: url("/public/landing-image.jpg");
-  --mainTitle: "Bee Aware";
+  --mainTitle: "BeeAware";
 }
 
 /* DEFAULTS - default styling for plugin developers */

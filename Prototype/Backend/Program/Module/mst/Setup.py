@@ -120,7 +120,7 @@ def update_config_settings(request):
                 os.chdir(mst_dir)
                 return on_error(2, f"Missing Setting for font1")
         else:
-            pattern = f'--font1: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
+            pattern = f'--font1: [A-Za-z0-9]+, [a-zA-Z0-9\-\_]+;'
             replace_str = f"--font1: {font1}, serif;"
             content = re.sub(pattern, replace_str, content)
             final_configs["font1"] = font1
@@ -129,10 +129,10 @@ def update_config_settings(request):
                 os.chdir(mst_dir)
                 return on_error(2, f"Missing Setting for font2")
         else:
-            pattern = f'--font2: \'[A-Za-z0-9]+\', [a-zA-Z0-9\-\_]+;'
+            pattern = f'--font2: [A-Za-z0-9]+, [a-zA-Z0-9\-\_]+;'
             replace_str = f"--font2: {font2}, sans-serif;"
             content = re.sub(pattern, replace_str, content)
-            final_configs["font2"] = font1
+            final_configs["font2"] = font2
 
         if welcomeText is None:
             if current_settings is None:
@@ -193,12 +193,12 @@ def update_config_settings(request):
             if logo_success != True:
                 os.chdir(mst_dir)
                 return logo_success
-            logo_dir = f'Front-End-Current/public/{logo.filename.lower()}'
-            logo_dir2 = f'../public/{logo.filename.lower()}'
+            logo_dir = f'/Front-End-Current/public/logo.png'
+            logo_dir2 = f'../public/logo.png'
             pattern = '--logo: url\("\/public\/.*"\);'
             replace_str = f'--logo: url("{logo_dir2}");'
             content = re.sub(pattern, replace_str, content)
-            logo.save(logo_dir)
+            logo.save(os.getcwd() + logo_dir)
             final_configs["logoImage"] = logo_dir
 
         if loginImage is None:
@@ -212,12 +212,12 @@ def update_config_settings(request):
             if loginImage_success != True:
                 os.chdir(mst_dir)
                 return loginImage_success
-            login_dir = f'Front-End-Current/public/{loginImage.filename.lower()}'
-            login_dir2 = f'../public/{loginImage.filename.lower()}'
+            login_dir = f'/Front-End-Current/public/login-image.jpg'
+            login_dir2 = f'../public/login-image.jpg'
             pattern = '--loginImage: url\("..\/public\/.*"\);'
             replace_str = f'--loginImage: url("{login_dir2}");'
             content = re.sub(pattern, replace_str, content)
-            loginImage.save(login_dir)
+            loginImage.save(os.getcwd() + login_dir)
             final_configs["loginImage"] = login_dir
 
         if bee is None:
@@ -231,13 +231,12 @@ def update_config_settings(request):
             if bee_success != True:
                 os.chdir(mst_dir)
                 return bee_success
-            bee_dir2 = f'../public/{bee.filename.lower()}'
-            bee_dir = f'Front-End-Current/public/{bee.filename.lower()}'
-
+            bee_dir2 = f'../public/landing-image.jpg'
+            bee_dir = f'/Front-End-Current/public/landing-image.jpg'
             pattern = '--landingImage: url\("..\/public\/.*"\);'
             replace_str = f'--landingImage: url("{bee_dir2}");'
             content = re.sub(pattern, replace_str, content)
-            bee.save(os.getcwd()+'/Front-End-Current/public/login-image.jpg')
+            bee.save(os.getcwd() + bee_dir)
             final_configs["landingImage"] = bee_dir
 
     with open('Front-End-Current/src/App.css', "w") as Styling:
