@@ -149,20 +149,16 @@ function UserListModal(props) {
     }
 
     const validateForm = (formData) => {
-        setEmailError(checkEmailValid(formData.get("email")));
-        setDobError(checkDOB(formData.get("dateOfBirth")));
-        setAdminLevelError(checkAdminLevel(formData.get("adminLevel")));
+        const emailErr = setEmailError(checkEmailValid(formData.get("email")));
+        const dobErr = setDobError(checkDOB(formData.get("dateOfBirth")));
+        const adminErr = setAdminLevelError(checkAdminLevel(formData.get("adminLevel")));
+
+        setEmailError(emailErr);
+        setDobError(dobErr);
+        setAdminLevelError(adminErr);
 
         let valid = true;
-        if (emailError) {
-            valid = false;
-        }
-
-        if (dobError) {
-            valid = false;
-        }
-
-        if (adminLevelError) {
+        if (emailErr || dobErr || adminErr) {
             valid = false;
         }
 
