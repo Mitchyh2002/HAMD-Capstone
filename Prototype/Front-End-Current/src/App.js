@@ -22,17 +22,16 @@ function App() {
     .then( response => {
         return response.json();
     }).then(data => {
-      console.log(data)
-      console.log("Modules")
       if(data.StatusCode == 403){
         logout();
+      }else if(data.StatusCode == 1001){
+        setModules();
       }else{
       setModules(data.Values);
-      setRouter(createBrowserRouter(allRoutes(data.Values, pages)));
-      console.log(router);
       }
+      setRouter(createBrowserRouter(allRoutes(modules, pages)));
     }).catch(err => {
-      console.log();
+      console.log(err);
       setRouter(createBrowserRouter(allRoutes(modules, pages)));
     })
   }, []);
