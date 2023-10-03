@@ -23,10 +23,11 @@ export default function Upload(props) {
 
     //Function for validating form and checking for any input errors
     const validateForm = (formData) => {
+        //Check Errors
         setPrefixError(checkModulePrefix(formData.get("prefixName")));
         setNameError(checkDisplayName(formData.get("pluginDisplayName")));
         setCodeError(checkModuleCode(formData.get("pluginFile")));
-        setPassError(checkPassword(formData.get("modulePass")))
+        setPassError(checkPassword(formData.get("modulePass")));
 
         let valid = true;
 
