@@ -421,8 +421,13 @@ def check_files(temp_dir, module_prefix):
 
         blueprints = []
         for file in existing_content:
+            if ".pyc" in file:
+                continue
             with open(file) as check_file:
-                content = check_file.read()
+                try:
+                    content = check_file.read()
+                except UnicodeDecodeError:
+                    return on_error(-1, f"Error Reading file {file}, charachter cannot be decoded in file")
                 blueprintPattern = f'blueprint = Blueprint'
                 matches = re.findall(blueprintPattern, content)
                 if matches != []:
@@ -786,7 +791,7 @@ def deactivate_module():
     return on_success((Module.query.filter(Module.prefix == modulePrefix).first()).toJSON(True))
 
 
-@blueprint.route('/upload', methods=['POST', 'OPTIONS'])
+@blueprint.route('/upload', methods=['POST'])
 def upload_module():
     '''
     API Endpoint to process a Module in a compressed zip file.
@@ -810,7 +815,7 @@ def upload_module():
         accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
         if accessGranted != True:
             return accessGranted
-        update = request.values.get('update') == True
+        update = request.values.get('update') == 'true'
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
@@ -818,15 +823,20 @@ def upload_module():
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')
-        ModulePass = PasswordHash.new(ModulePass)
-        if '' in [DisplayName, ModulePass.hash]:
-            return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
+        if not update:
+            ModulePass = PasswordHash.new(ModulePass)
+            if '' in [DisplayName, ModulePass.hash]:
+                return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
 
         if module != None and not update:
             return on_error(1, f"Module {modulename}, Already Exists")
         elif update and module != []:
-            if module.moduleKey.strip() != ModulePass:
+            storedHash = module.moduleKey
+            storedHash = storedHash[2:-1]
+            storedHash = storedHash.encode('utf-8')
+            inputBytes = ModulePass.encode('utf-8')
+            if not bcrypt.checkpw(inputBytes, storedHash):
                 return on_error(16, "Error Updating Module, Module Pass Is Incorrect")
 
         if splitext(dl_file.filename)[1] != ".zip":
