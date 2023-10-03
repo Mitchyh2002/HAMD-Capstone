@@ -15,16 +15,17 @@ export default function ResetPassword() {
         <Header />
         <div className="mainContainerCentre" style={{ flexDirection: "column", height: "100vh", width: "100vw", flexWrap: "wrap", justifyContent: "flex-start", paddingTop: "100px" }}>
             <div className="flexBoxGrow" style={{ maxWidth: "65%" }}>
-                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
+                <div className="subNav" style={{ borderRadius: "20px 20px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px", width: "400px" }}>
                     <h3>{response.StatusCode == 200 ? changed ? "Password Changed" : "Change Password" : "Invalid Token"}</h3>
                 </div>
-                <div style={{ justifyContent: "center" }}>
+                <div>
                     {response.StatusCode == 200 ? changed ? (
-                        <div>
-                            <p>You have successfully changed your password! Please click below to login</p>
+                        <div className="flexBoxColumnGrow" style={{alignItems:"center"}}>
+                            <p>You have successfully changed your password!</p>
+                            <p>Please click below to login.</p>
                             <Link
                                 to="/Home">
-                                <button className="formButton home-button">Login</button>
+                                <button style={{border: "none", marginTop:"20px"}}className="formButton home-button">Login</button>
                             </Link>
                         </div>
                     ) : (
@@ -79,7 +80,7 @@ function ChangePasswordForm(props) {
                     props.setChanged(true);
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             }).catch(function (error) {
@@ -98,14 +99,12 @@ function ChangePasswordForm(props) {
                         error={new1PassError}
                         type={"password"}
                         name="password"
-                        placeholder="New Password"
                     />
                     <FormInput
                         label="Confirm New Password"
                         error={[new2PassError, confPassError]}
                         type={"password"}
                         name="confPassword"
-                        placeholder="Confirm New Password"
                     />
 
             </div>
