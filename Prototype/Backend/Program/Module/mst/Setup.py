@@ -140,7 +140,7 @@ def update_config_settings(request):
                 return on_error(2, f"Missing Setting for welcomeText")
         else:
             if len(welcomeText) > 200:
-                return on_error(8, "welcomeText Cannot be more than 200 charachters.")
+                return on_error(8, "welcomeText Cannot be more than 200 characters.")
             pattern = '--welcomeText: ".+";'
             replace_str = f'--welcomeText: "{welcomeText}";'
             content = re.sub(pattern, replace_str, content)
@@ -152,7 +152,7 @@ def update_config_settings(request):
                 return on_error(2, f"Missing Setting for websiteName")
         else:
             if len(websiteName) > 200:
-                return on_error(8, "Website Name Cannot be more than 200 charachters.")
+                return on_error(8, "Website Name Cannot be more than 200 characters.")
             pattern = '--mainTitle: ".+";'
             replace_str = f'--mainTitle: "{websiteName}";'
             content = re.sub(pattern, replace_str, content)
