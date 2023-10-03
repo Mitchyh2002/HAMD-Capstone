@@ -35,8 +35,8 @@ export function Modal(props) {
                     <div onClick={toggleModal} className='overlay'></div>
                     <div className='modal-content flexBoxColumnGrow'>
                         <h4 className='modal-heading'>Edit</h4>
-                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
-                        {error == true && <label className="modal-label" style={{color: 'Red'}}>Something went wrong! Check your module key is correct</label>}
+                        {success == true && <label className="modal-label" style={{display:"flex", color: 'Green', justifyContent:"center"}}>Your module has been updated.</label>}
+                        {error == true && <label className="modal-label error-message" style={{ display:"flex", justifyContent:"center"}}>Something went wrong! Check your module key is correct.</label>}
                         <form id="modalForm">
                             <label className='modal-label'>{props.label1}
                                 <input className='modal-input' type="text" name="displayName"/>
@@ -121,6 +121,7 @@ export function ActivateModal(props) {
                         <button className='buttons cancel-button' onClick={toggleModal}>
                             Cancel
                         </button>
+                        
                     </div>
                 </div>
             )}
