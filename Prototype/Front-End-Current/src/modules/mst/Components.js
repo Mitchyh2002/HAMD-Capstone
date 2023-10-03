@@ -33,10 +33,7 @@ export function Modal(props) {
             {show && (
                 <div className="modal">
                     <div onClick={toggleModal} className='overlay'></div>
-                    <div className='modal-content'>
-                        <button className='close-modal' onClick={toggleModal}>
-                            x
-                        </button>
+                    <div className='modal-content flexBoxColumnGrow'>
                         <h4 className='modal-heading'>Edit</h4>
                         {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
                         {error == true && <label className="modal-label" style={{color: 'Red'}}>Something went wrong! Check your module key is correct</label>}
@@ -51,12 +48,6 @@ export function Modal(props) {
                                 <input disabled className='modal-input' type="text" name="modulePrefix" value={props.prefix}/>
                             </label>
                         </form>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <br></br>
                         <button className='buttons confirm-button' onClick={updatePlugin}>
                             Confirm Changes
                         </button>

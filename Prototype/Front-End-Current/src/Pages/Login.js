@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
 import { LoginErrors } from "errorCodes";
+import { ToolTip } from "modules/mst/Components";
 
 export default function Login(props) {
     const register = props.register;
@@ -20,7 +21,7 @@ export default function Login(props) {
                 <div className="thirddiv">
                     <div className="form-header">
                         <img className="bee-image" alt="small-bee-image" />
-                        <h3>{register ? "Create Account" : "Sign In"}</h3>
+                        <h3>{register ? "Create Account" : forgotPassword ? "Forgot your Password" : "Sign In"}</h3>
                     </div>
                     {forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword} /> :
                         email ? <EmailConfirmation email={email} /> :
@@ -56,7 +57,7 @@ function LoginForm(props) {
         const formData = new FormData(form);
 
         setResponse(await login(formData));
-        
+
     };
 
     return (
@@ -69,19 +70,19 @@ function LoginForm(props) {
                         placeholder="Email Address"
                     />
                     {response &&
-                     [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode) 
-                     &&(
-                        <div className="error-message">
-                            {response.Message}
-                        </div>
-                    )}
-                        <FormInput
-                            type={"password"}
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                        />
-                    {response && response.StatusCode == LoginErrors.passwordEmpty &&(
+                        [LoginErrors.emailEmpty, LoginErrors.emailInvalid, LoginErrors.emailUnregistered].includes(response.StatusCode)
+                        && (
+                            <div className="error-message">
+                                {response.Message}
+                            </div>
+                        )}
+                    <FormInput
+                        type={"password"}
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                    />
+                    {response && response.StatusCode == LoginErrors.passwordEmpty && (
                         <div className="error-message">
                             {response.Message}
                         </div>
@@ -96,13 +97,13 @@ function LoginForm(props) {
                 </div>
             </form>
 
-            {response && 
-            [LoginErrors.accountSuspended, LoginErrors.accountUncomfirmed, LoginErrors.passwordWrong].includes(response.StatusCode) 
-            && (
-                <div className="error-message">
-                    {response.Message}
-                </div>
-            )}
+            {response &&
+                [LoginErrors.accountSuspended, LoginErrors.accountUncomfirmed, LoginErrors.passwordWrong].includes(response.StatusCode)
+                && (
+                    <div className="error-message">
+                        {response.Message}
+                    </div>
+                )}
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
                 <Link
                     to="/Home">
@@ -152,25 +153,35 @@ function ForgotPasswordForm(props) {
                     console.log(response);
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             })
-        }
+        } else{setLoading(false);}
     }
     return (<>
         {submitted ?
-            <p>If your email is registered, then please check your email for a link to reset your password</p>
+            <p>If your email is registered, then please check your email for a link to reset your password.</p>
             : <form className="login-form" id="Forgot">
                 <div className="login-form-content">
-                    <FormInput
-                        label="Email"
-                        error={emailError}
-                        type="email"
-                        name="email"
-                        className="emailAddress"
-                        placeholder="Email Address"
-                    />
+                    <div className="form-group">
+                        <label style={{ display: "flex", flexDirection: "row" }}>Email Address   <ToolTip text="Please enter your email address to receive a reset password email.">
+                            <img
+                                className="tooltipIcon"
+                                alt="tooltipIcon"
+                                src="/Icons/info.png"
+                                style={{ paddingLeft: "10px" }}
+                            />
+                        </ToolTip></label>
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                className="emailAddress"
+                            />
+                            <p className="error-message">{emailError}</p>
+                        </div>
+                    </div>
                 </div>
             </form>}
         <div className="flexBoxColumnGrow" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
@@ -239,7 +250,7 @@ function RegisterForm(props) {
                     props.setEmail(formData.get("email"));
                 } else {
                     console.log(response);
-                    window.alert(response.error)
+                    //window.alert(response.error)
                 }
                 setLoading(false);
             }
@@ -250,6 +261,8 @@ function RegisterForm(props) {
         } else {
             setLoading(false);
         }
+    }
+
     return (
         <>
             <form className="login-form" id="Register">
@@ -279,42 +292,42 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
-                        <FormInput
-                            label="Password"
-                            error={passError}
-                            type={"password"}
-                            name="password"
-                            className="password"
-                            placeholder="Password"
-                        />
+                    <FormInput
+                        label="Password"
+                        error={passError}
+                        type={"password"}
+                        name="password"
+                        className="password"
+                        placeholder="Password"
+                    />
                 </div>
             </form>
 
 
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
-                    <p style={{ fontSize: "14px" }}>
-                        Already have an account?
-                    </p>
-                </div>
-                <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                    <Link
-                        to="/login"
-                        className="register-message"><button className="primaryButton create-account-button">Log In</button>
-                    </Link>
-                </div>
-            </>
-        )
-    }
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <button className="primaryButton sign-in-button" onClick={handleRegister} disabled={loading}>Register</button>
+            </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
+                <p style={{ fontSize: "14px" }}>
+                    Already have an account?
+                </p>
+            </div>
+            <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
+                <Link
+                    to="/login"
+                    className="register-message"><button className="primaryButton create-account-button">Log In</button>
+                </Link>
+            </div>
+        </>
+    )
 }
+
 
 
 //Validation Functions
 export function checkEmailValid(email) {
-        const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        const checkValid = new RegExp(regEx);
+    const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const checkValid = new RegExp(regEx);
 
     if (email == "") {
         return "Email address is required.";

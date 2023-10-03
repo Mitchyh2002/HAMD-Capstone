@@ -240,7 +240,7 @@ def get_active_plugins():
     '''
 
     configurations = mst_Setup.query.all()
-    if configurations is None:
+    if configurations == []:
         return not_configured()
 
     added_modules = {}
@@ -356,11 +356,11 @@ def updatePageLevel():
     selectedPage.SecurityLevel = securityLevel
     if pageName is not None:
         if len(pageName) > 100:
-            return on_error(4, "Page name is greater than 100 charachters")
+            return on_error(4, "Page name is greater than 100 characters")
         selectedPage.pageName = pageName
     if pageDesc is not None:
         if len (pageDesc) > 255:
-            return on_error(5, "Page Description is greater than 255 charachters")
+            return on_error(5, "Page Description is greater than 255 characters")
         selectedPage.description = pageDesc
     db.session.commit()
 
@@ -485,17 +485,17 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                     UAC_pattern = '(?<=userAccessLevel: )[0-9]'
                     UAC_Level = re.findall(UAC_pattern, page)
                     if len(pageName) == 0:
-                        return on_error(10, 'Page Name Not Specified Please confirm your routes have a valid PageName')
+                        return on_error(10, 'Page Name Not Specified. Please confirm your routes have a valid PageName')
                     if len(pageCode) == 0:
-                        return on_error(10, 'pageCode Not Specified Please confirm your routes have a valid pageCode')
+                        return on_error(10, 'pageCode Not Specified. Please confirm your routes have a valid pageCode')
                     if len(UAC_Level) == 0:
-                        return on_error(10, 'User Access Level Not Specifed Please ensure each page has an assigned UAC')
+                        return on_error(10, 'User Access Level Not Specifed. Please ensure each page has an assigned UAC')
                     if len(pageName) > 1:
-                        return on_error(10, 'Page Name is Specified more than Once Please confirm your routes have a one PageName')
+                        return on_error(10, 'Page Name is Specified more than Once. Please confirm your routes have one PageName')
                     if len(pageCode) > 1:
-                        return on_error(10, 'pageCode is Specified more than Once Please confirm your routes have a one pageCode')
+                        return on_error(10, 'pageCode is Specified more than Once. Please confirm your routes have one pageCode')
                     if len(UAC_Level) > 1:
-                        return on_error(10, 'User Access Level is Specified more than Once Please confirm your routes have a one UAC')
+                        return on_error(10, 'User Access Level is Specified more than Once. Please confirm your routes have one UAC')
                     pages.append({
                         "modulePrefix": module_name,
                         "pageName": pageName[0],
@@ -664,7 +664,7 @@ def Module_Access_Control():
     if modulePrefix is None:
         return on_error(1, "modulePrefix is not specified")
     elif len(modulePrefix) > 3:
-        return on_error(2, "ModulePrefix Cannot be more than 3 charachters")
+        return on_error(2, "ModulePrefix Cannot be more than 3 characters")
     selected_user = User.query.filter_by(userID=userID).first()
     selected_module = Module.query.filter_by(prefix=modulePrefix).first()
     if selected_module == None:
@@ -814,7 +814,7 @@ def upload_module():
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
-            return on_error(17, 'No Module Uploaded, please Upload a File')
+            return on_error(17, 'No module uploaded, please upload a file.')
         modulename = dl_file.filename.strip(".zip")
         DisplayName = request.values.get('displayName')
         ModulePass = request.values.get('modulePass')

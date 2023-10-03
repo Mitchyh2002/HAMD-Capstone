@@ -10,7 +10,8 @@ from Program.ResponseHandler import on_error, on_success, bearer_decode, userFun
 
 
 from Program import reload, db
-from Program.DB.Models.mst.Setup import mst_Setup
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
+from Program.DB.Models.mst.Setup import mst_Setup, JSONtoConfig
 from Program.OS import dir_tree, convert_to_imports
 
 blueprint = Blueprint('setup', __name__, url_prefix="/mst/config")
@@ -138,35 +139,55 @@ def update_config_settings(request):
                 os.chdir(mst_dir)
                 return on_error(2, f"Missing Setting for welcomeText")
         else:
+            if len(welcomeText) > 200:
+                return on_error(8, "welcomeText Cannot be more than 200 characters.")
             pattern = '--welcomeText: ".+";'
             replace_str = f'--welcomeText: "{welcomeText}";'
             content = re.sub(pattern, replace_str, content)
             final_configs["welcomeText"] = welcomeText
+        websiteName = request.values.get('websiteName')
+        if websiteName is None:
+            if current_settings is None:
+                os.chdir(mst_dir)
+                return on_error(2, f"Missing Setting for websiteName")
+        else:
+            if len(websiteName) > 200:
+                return on_error(8, "Website Name Cannot be more than 200 characters.")
+            pattern = '--mainTitle: ".+";'
+            replace_str = f'--mainTitle: "{websiteName}";'
+            content = re.sub(pattern, replace_str, content)
+            final_configs["websiteName"] = websiteName
+
         terms = request.files.get("terms")
         if terms is None:
             if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Terms & Conditions")
+                final_configs['terms'] = ''
+        elif terms.filename == '':
+            if current_settings is None:
+                final_configs['terms'] = ''
         else:
             if check_image(terms, '.txt') != True:
+                os.chdir(mst_dir)
                 return check_image(terms, '.txt')
             terms_dir = 'Front-End-Current/public/terms.txt'
             final_configs['terms'] = terms_dir
             terms.save(terms_dir)
 
 
-        logo = request.files.get("logo")
+        logo = request.files.get("logoImage")
         loginImage = request.files.get("loginImage")
-        bee = request.files.get("miscImage")
+        bee = request.files.get("landingImage")
 
-        final_configs["logo"] = ''
+        final_configs["logoImage"] = ''
         final_configs["loginImage"] = ''
-        final_configs["MiscImage"] = ''
+        final_configs["landingImage"] = ''
 
         if logo is None:
             if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Logo Image")
+                final_configs["logo"] = ''
+        elif logo.filename == '':
+            if current_settings is None:
+                final_configs["logo"] = ''
         else:
             logo_success = check_image(logo,'.png')
             if logo_success != True:
@@ -174,16 +195,18 @@ def update_config_settings(request):
                 return logo_success
             logo_dir = f'Front-End-Current/public/{logo.filename.lower()}'
             logo_dir2 = f'../public/{logo.filename.lower()}'
-            pattern = '--logo: url\("..\/public\/.*.png"\);'
+            pattern = '--logo: url\("\/public\/.*"\);'
             replace_str = f'--logo: url("{logo_dir2}");'
             content = re.sub(pattern, replace_str, content)
             logo.save(logo_dir)
-            final_configs["logo"] = logo_dir
+            final_configs["logoImage"] = logo_dir
 
         if loginImage is None:
+            if current_settings is None:
+                final_configs["loginImage"] = ''
+        elif loginImage.filename == '':
              if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Login Image")
+                 final_configs["loginImage"] = ''
         else:
             loginImage_success = check_image(loginImage,'.jpg')
             if loginImage_success != True:
@@ -199,21 +222,23 @@ def update_config_settings(request):
 
         if bee is None:
             if current_settings is None:
-                os.chdir(mst_dir)
-                return on_error(2, f"Missing Miscellaneous Image")
+                final_configs["landingImage"] = ''
+        elif bee.filename == '':
+            if current_settings is None:
+                final_configs["landingImage"] = ''
         else:
-            bee_success = check_image(bee, '.png')
+            bee_success = check_image(bee, '.jpg')
             if bee_success != True:
                 os.chdir(mst_dir)
                 return bee_success
             bee_dir2 = f'../public/{bee.filename.lower()}'
             bee_dir = f'Front-End-Current/public/{bee.filename.lower()}'
 
-            pattern = '--bee: url\("..\/public\/.*"\);'
-            replace_str = f'--bee: url("{bee_dir2}");'
+            pattern = '--landingImage: url\("..\/public\/.*"\);'
+            replace_str = f'--landingImage: url("{bee_dir2}");'
             content = re.sub(pattern, replace_str, content)
-            bee.save(bee_dir)
-            final_configs["MiscImage"] = bee_dir
+            bee.save(os.getcwd()+'/Front-End-Current/public/login-image.jpg')
+            final_configs["landingImage"] = bee_dir
 
     with open('Front-End-Current/src/App.css', "w") as Styling:
         Styling.write(content)

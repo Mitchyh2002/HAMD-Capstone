@@ -40,11 +40,17 @@ def changePassword():
         return handle_options()
     else:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
+
+        if user_bearer == None or 'null' in user_bearer:
+            return on_error(400, "Auth Header Not Provided")
+
         user = bearer_decode(user_bearer)['Values']
         user = User.query.filter_by(userID=user['userID']).first()
 
         input = request.values
         oldPassword = input.get('currentPassword')
+        if oldPassword == "" or oldPassword is None:
+            return on_error(20, "Password is required, please enter a password")
         inputBytes = oldPassword.encode('utf-8')
 
         storedHash = user.passwordHash.hash[2:-1]
@@ -52,10 +58,14 @@ def changePassword():
         
         if bcrypt.checkpw(inputBytes, storedHash):
             newPassword = input.get('newPassword')
+            if newPassword == "" or newPassword is None:
+                return on_error(20, "Password is required, please enter a password")
             user.changePassword(newPassword)
             user.set_id()
             login_user(user)
             return on_success(user.get_id())
+        else:
+            return on_error(21, "Login details are incorrect")
     
 @blueprint.route('/login', methods=['POST'])
 def login():
@@ -155,7 +165,7 @@ def register():
     html = render_template('activate.html', confirm_url=confirm_url)
     subject = "Please confirm your email"
     send_email(user.email, subject, html)
-    return on_success("Potentially email for resend endpoint but security")
+    return on_success(token)
 
 
 def emailIsValid(email):
@@ -199,7 +209,7 @@ def forgotPassword():
         html = render_template('reset.html', forgot_url=forgot_url)
         subject = "BeeAware Password Reset"
         send_email(user.email, subject, html)
-        return on_success("Email sent")
+        return on_success(token)
     else:
         return on_success("Account is not valid")
     
@@ -221,7 +231,6 @@ def resetPassword(token):
         if request.method == 'POST':
             input = request.values
             inputPass = input.get('password')
-            print(input)
 
             if inputPass == "" or inputPass is None:
                 return on_error(20, "Password is required, please enter a password")

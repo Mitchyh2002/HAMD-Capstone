@@ -7,11 +7,11 @@ import { useLoaderData } from 'react-router';
 export default function CreateUser() {
     const response = useLoaderData();
 
-    return (<>
-        <div>
+    return (
+        <>
             {renderContent(response.StatusCode)}
-        </div>
-    </>)
+        </>
+    )
 
 }
 
@@ -133,7 +133,6 @@ function AddUserForm() {
                             label="First Name"
                             type="text"
                             name="firstName"
-                            placeholder="First Name"
                             error={nameError}
                         />
                         <FormInput
@@ -143,7 +142,6 @@ function AddUserForm() {
                             min="1910"
                             max="2099"
                             name="dateOfBirth"
-                            placeholder="Birth Year"
                         />
 
                         <FormInput
@@ -152,7 +150,6 @@ function AddUserForm() {
                             type="email"
                             name="email"
                             className="emailAddress"
-                            placeholder="Email Address"
                         />
                         <FormInput
                             label="Password"
@@ -160,23 +157,23 @@ function AddUserForm() {
                             type="password"
                             name="password"
                             className="password"
-                            placeholder="Password"
                         />
+                    </div>
+                    <div className="flexBoxRowGrow" style={{ alignItems: "center", justifyContent: "center", maxWidth: "500px", marginTop: "20px" }}>
+                        {registered ? (
+                            <div className="flexBoxColumnGrow" style={{ justifyContent: "center" }}>
+                                <p>User successfully added!</p>
+                                <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
+                            </div>
+                        ) : (
+                            <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
+                        )}
                     </div>
                 </form>
             </div>
         </div>
 
-        <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-            {registered ? (
-                <div>
-                    <p>User successfully added</p>
-                    <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
-                </div>
-            ) : (
-                <button onClick={addUser} className="primaryButton" disabled={loading}>Add User</button>
-            )}
-        </div>
+
     </>)
 }
 

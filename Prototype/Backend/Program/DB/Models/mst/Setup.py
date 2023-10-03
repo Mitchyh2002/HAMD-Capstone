@@ -14,8 +14,9 @@ class mst_Setup(db.Model):
     subnav = db.Column(db.String(7))
     terms = db.Column(db.String(1000))
     welcomeText = db.Column(db.String(200))
+    websiteName = db.Column(db.String(200))
     logo = db.Column(db.String(200))
-    MiscImage = db.Column(db.String(200))
+    landingImage = db.Column(db.String(200))
     loginImage = db.Column(db.String(200))
 
     def toJSON(self):
@@ -31,8 +32,9 @@ class mst_Setup(db.Model):
             "welcomeText": self.welcomeText,
             "terms": self.terms,
             "logo": self.logo,
-            "MiscImage": self.MiscImage,
-            "loginImage": self.loginImage
+            "landingImage": self.landingImage,
+            "loginImage": self.loginImage,
+            'websiteName': self.websiteName
         }
     def insert(self):
         db.session.add(self)
@@ -63,10 +65,11 @@ def JSONtoConfig(json):
         new_setup.navbar = json["navbar"]
         new_setup.subnav = json["subnav"]
         new_setup.welcomeText = json["welcomeText"]
-        new_setup.logo = json["logo"]
-        new_setup.MiscImage = json["MiscImage"]
+        new_setup.logo = json["logoImage"]
+        new_setup.landingImage = json["landingImage"]
         new_setup.loginImage = json["loginImage"]
-
+        new_setup.terms = json["terms"]
+        new_setup.websiteName = json['websiteName']
         return new_setup
 
     except KeyError:

@@ -1,7 +1,7 @@
 /*Setting Variables*/
 :root {
-  --font1: 'Merriweather', serif;
-  --font2: 'Lato', sans-serif;
+  --font1: Merriweather, serif;
+  --font2: Lato, sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
   --header: rgba(146, 180, 236);
@@ -11,9 +11,9 @@
   --navbar50: rgba(242, 143, 59, 0.5);
   --subnav: rgba(255, 230, 154);
   --subnav40: rgba(255, 230, 154, 0.4);
-  --logo: url("/public/bee2.png");
+  --logo: url("../public/logo.png");
   --loginImage: url("/public/login-image.jpg");
-  --bee: url("/public/bee3.png");
+  --bee: url("../public/misc.png");
   --welcomeText: "Welcome to Bee Aware";
   --landingImage: url("/public/landing-image.jpg");
   --mainTitle: "Bee Aware";
@@ -116,6 +116,16 @@ form{
 label{
   font-family: var(--font2);
   font-size: 18px;
+  padding-top: 10px;
+}
+
+.form-header{
+  background-color: var(--navbar);
+  border-radius: 20px, 20px, 0px, 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
 }
 
 /* Buttons */

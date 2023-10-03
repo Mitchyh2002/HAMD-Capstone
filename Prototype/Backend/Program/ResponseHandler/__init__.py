@@ -38,7 +38,10 @@ def userFunctionAuthorisations(Auth_Header, adminLvl, modulePrefix):
         return on_error(400, str(e))
     if user['Success'] == False:
         return user
+
     user = user['Values']
+    if user['adminLevel'] >= 9:
+        return True
     userGroupsIDS = [group.groupID for group in userGroup.query.filter_by(userID=user['userID']).all()]
     if userGroupsIDS != []:
         groups = Group.query.filter(Group.groupID.in_(userGroupsIDS)).all()
