@@ -29,7 +29,7 @@ export default function Users() {
     }
 
     /* Getting the data from the database  */
-    const data = useMemo(() => users, []);
+    const data = useMemo(() => users, [users]);
     const columns = useMemo(() => [
         {
             Header: "ID",
@@ -223,11 +223,12 @@ function UserListModal(props) {
             if (response.Success == true) {
                 console.log(response);
                 toggleModal(props);
+                props.refresh(true);
+                console.log("update")
             } else {
                 console.log(response);
             }
             setLoading(false);
-            props.refresh(true);
         }).catch(function (error) {
             console.log(error);
             setLoading(false);
@@ -246,11 +247,11 @@ function UserListModal(props) {
             if (response.Success == true) {
                 console.log(response);
                 toggleModal(props);
+                props.refresh(true);
             } else {
                 console.log(response);
             }
             setLoading(false);
-            props.refresh(true);
         }).catch(function (error) {
             console.log(error);
             setLoading(false);
@@ -268,7 +269,6 @@ function UserListModal(props) {
                             label="Name:"
                             type="text"
                             name="firstName"
-                            value={user.firstName}
                             placeholder={user.firstName}
                             className="edit-user-input"
                         />
@@ -277,7 +277,6 @@ function UserListModal(props) {
                             error={dobError}
                             type="number"
                             name="dateOfBirth"
-                            value={user.dateOfBirth}
                             placeholder={user.dateOfBirth}
                         />
                         <FormInput
@@ -285,14 +284,12 @@ function UserListModal(props) {
                             error={emailError}
                             type="text"
                             name="email"
-                            value={user.email}
                             placeholder={user.email}
                         />
                         <FormInput
                             label="Phone Number:"
                             type="text"
                             name="phoneNumber"
-                            value={user.phoneNumber}
                             placeholder={user.phoneNumber}
                         />
                         <FormInput
@@ -300,7 +297,6 @@ function UserListModal(props) {
                             error={adminLevelError}
                             type="number"
                             name="adminLevel"
-                            value={user.adminLevel}
                             placeholder={user.adminLevel}
                         />
                     </form>
