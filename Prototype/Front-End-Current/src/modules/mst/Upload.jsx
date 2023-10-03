@@ -23,23 +23,28 @@ export default function Upload(props) {
 
     //Function for validating form and checking for any input errors
     const validateForm = (formData) => {
-        setPrefixError(checkModulePrefix(formData.get("prefixName")));
-        setNameError(checkDisplayName(formData.get("pluginDisplayName")));
-        setCodeError(checkModuleCode(formData.get("fileToUpload")));
-        setPassError(checkPassword(formData.get("modulePass")));
+        //Check Errors
+        const prefix = checkModulePrefix(formData.get("prefixName"));
+        const name = checkDisplayName(formData.get("pluginDisplayName"));
+        const code = checkModuleCode(formData.get("fileToUpload"))
+        const pass = checkPassword(formData.get("modulePass"))
+        setPrefixError(prefix);
+        setNameError(name);
+        setCodeError(code);
+        setPassError(pass);
 
         let valid = true;
 
-        if (prefixError) {
+        if (prefix) {
             valid = false;
         }
-        if (nameError){
+        if (name){
             valid = false;
         }
-        if(codeError){
+        if(code){
             valid = false;
         }
-        if(passError){
+        if(pass){
             valid = false;
         }
 

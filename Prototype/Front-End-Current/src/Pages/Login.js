@@ -206,26 +206,31 @@ function RegisterForm(props) {
     const [loading, setLoading] = useState(false);
 
     const validateForm = (formData) => {
-        setNameError(checkName(formData.get("firstName")));
-        setEmailError(checkEmailValid(formData.get("email")));
-        setDobError(checkDOB(formData.get("dateOfBirth")));
-        setPassError(checkPass(formData.get("password")));
+        const isNameError = checkName(formData.get("firstName"));
+        const isEmailError =checkEmailValid(formData.get("email"));
+        const isDOBError = checkDOB(formData.get("dateOfBirth"));
+        const isPassError = checkPass(formData.get("password"));
+
+        setNameError(isNameError);
+        setEmailError(isEmailError);
+        setDobError(isDOBError);
+        setPassError(isPassError);
 
         let valid = true;
 
-        if (nameError) {
+        if (isNameError) {
             valid = false;
         }
 
-        if (emailError) {
+        if (isEmailError) {
             valid = false;
         }
 
-        if (dobError) {
+        if (isDOBError) {
             valid = false;
         }
 
-        if (passError) {
+        if (isPassError) {
             valid = false;
         }
 
@@ -240,6 +245,7 @@ function RegisterForm(props) {
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
+        console.log(valid)
         if (valid) {
             fetch(baseUrl + "/mst/user/register", {
                 method: "POST",
@@ -250,7 +256,6 @@ function RegisterForm(props) {
                     props.setEmail(formData.get("email"));
                 } else {
                     console.log(response);
-                    //window.alert(response.error)
                 }
                 setLoading(false);
             }
