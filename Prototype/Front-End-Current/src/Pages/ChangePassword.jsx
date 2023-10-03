@@ -40,18 +40,23 @@ function ChangePasswordForm(props) {
     const [loading, setLoading] = useState(false);
 
     const validateForm = (formData) => {
-        setCurrentPassError(checkPass(formData.get("currentPassword")))
-        setNew1PassError(checkPass(formData.get("newPassword")))
-        setNew2PassError(checkPass(formData.get("confPassword")))
-        setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")))
+        const currPass =checkPass(formData.get("currentPassword"));
+        const newPass1 =checkPass(formData.get("newPassword"));
+        const newPass2 = checkPass(formData.get("confPassword"));
+        const newConf = comparePass(formData.get("newPassword"), formData.get("confPassword"));
+
+        setCurrentPassError(currPass);
+        setNew1PassError(newPass1);
+        setNew2PassError(newPass2);
+        setConfPassError(newConf);
 
         let valid = true;
 
-        if (currentPassError || new1PassError || new2PassError || confPassError) {
+        if (currPass || newPass1 || newPass2 || newConf) {
             valid = false;
         }
 
-        if (new2PassError && confPassError) {
+        if (newPass2 && newConf) {
             setConfPassError(null); // Clear the second error so only one is displayed
         }
 
