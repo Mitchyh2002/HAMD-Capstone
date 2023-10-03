@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
-import { LoginErrors } from "errorCodes";
+import { LoginErrors, RegisterErrors } from "errorCodes";
 import { ToolTip } from "modules/mst/Components";
 
 export default function Login(props) {
@@ -157,7 +157,7 @@ function ForgotPasswordForm(props) {
                 }
                 setLoading(false);
             })
-        } else{setLoading(false);}
+        } else { setLoading(false); }
     }
     return (<>
         {submitted ?
@@ -205,9 +205,15 @@ function RegisterForm(props) {
     const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
 
+    const [response, setResponse] = useState(null);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response]);
+
     const validateForm = (formData) => {
         const isNameError = checkName(formData.get("firstName"));
-        const isEmailError =checkEmailValid(formData.get("email"));
+        const isEmailError = checkEmailValid(formData.get("email"));
         const isDOBError = checkDOB(formData.get("dateOfBirth"));
         const isPassError = checkPass(formData.get("password"));
 
@@ -245,7 +251,6 @@ function RegisterForm(props) {
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
-        console.log(valid)
         if (valid) {
             fetch(baseUrl + "/mst/user/register", {
                 method: "POST",
@@ -256,6 +261,7 @@ function RegisterForm(props) {
                     props.setEmail(formData.get("email"));
                 } else {
                     console.log(response);
+                    setResponse(response);
                 }
                 setLoading(false);
             }
@@ -297,6 +303,12 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
+                    {response && [RegisterErrors.emailTaken].includes(response.StatusCode)
+                        && (
+                            <div className="error-message">
+                                {response.Message}
+                            </div>
+                        )}
                     <FormInput
                         label="Password"
                         error={passError}
@@ -362,7 +374,7 @@ export function checkName(name) {
 export function checkPass(pass) {
     if (!pass) {
         return "Password is required. "
-    } else if (pass.length < 4){
+    } else if (pass.length < 4) {
         return "Minimum password length of 4 characters."
     }
 }
@@ -377,7 +389,7 @@ export function FormInput(props) {
                     name={props.name}
                     className={props.class}
                     placeholder={props.placeholder}
-                    defaultValue = {props.value}
+                    defaultValue={props.value}
                 />
                 <p className="error-message">{props.error}</p>
             </div>

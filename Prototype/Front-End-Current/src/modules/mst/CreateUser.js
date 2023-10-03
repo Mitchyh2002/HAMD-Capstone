@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./admin.css";
 import { checkEmailValid, checkDOB, checkName, checkPass } from "../../Pages/Login.js";
 import { baseUrl } from "config";
 import { useLoaderData } from 'react-router';
+import { RegisterErrors } from 'errorCodes';
 
 export default function CreateUser() {
     const response = useLoaderData();
@@ -42,27 +43,26 @@ function AddUserForm() {
     const [registered, setRegistered] = useState();
     const [loading, setLoading] = useState(false);
 
+    const [response, setResponse] = useState(null);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response]);
+
     const validateForm = (formData) => {
-        setNameError(checkName(formData.get("firstName")));
-        setEmailError(checkEmailValid(formData.get("email")));
-        setDobError(checkDOB(formData.get("dateOfBirth")));
-        setPassError(checkPass(formData.get("password")));
+        const nameErr = setNameError(checkName(formData.get("firstName")));
+        const emailErr = setEmailError(checkEmailValid(formData.get("email")));
+        const dobErr = setDobError(checkDOB(formData.get("dateOfBirth")));
+        const passErr = setPassError(checkPass(formData.get("password")));
+
+        setNameError(nameErr);
+        setEmailError(emailErr);
+        setDobError(dobErr);
+        setPassError(passErr);
 
         let valid = true;
 
-        if (nameError) {
-            valid = false;
-        }
-
-        if (emailError) {
-            valid = false;
-        }
-
-        if (dobError) {
-            valid = false;
-        }
-
-        if (passError) {
+        if (nameErr || emailErr || dobErr || passErr) {
             valid = false;
         }
 
@@ -151,6 +151,12 @@ function AddUserForm() {
                             name="email"
                             className="emailAddress"
                         />
+                        {response && [RegisterErrors.emailTaken].includes(response.StatusCode)
+                        && (
+                            <div className="error-message">
+                                {response.Message}
+                            </div>
+                        )}
                         <FormInput
                             label="Password"
                             error={passError}
