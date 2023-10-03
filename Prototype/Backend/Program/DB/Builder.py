@@ -76,9 +76,10 @@ def add_column(table_rows):
                 if str(column_type) == 'DATETIME':
                     column_type = 'TIMESTAMP'
                 try:
-                    conn.execute(text('ALTER TABLE %s ADD COLUMN %s %s %s' % (table_name, column_name, column_type, default)))
+                    conn.execute(text('ALTER TABLE "%s" ADD COLUMN "%s" %s %s' % (table_name, column_name, column_type, default)))
                 except:
                     return "An Unknown Error Occured when addign Column to table please Check you Table Files in Module"
+
                 if len(foreign_keys) == 0:
                     foreign_keys = ''
                 else:
