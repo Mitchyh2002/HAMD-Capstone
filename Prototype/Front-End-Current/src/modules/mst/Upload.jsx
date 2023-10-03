@@ -24,23 +24,27 @@ export default function Upload(props) {
     //Function for validating form and checking for any input errors
     const validateForm = (formData) => {
         //Check Errors
-        setPrefixError(checkModulePrefix(formData.get("prefixName")));
-        setNameError(checkDisplayName(formData.get("pluginDisplayName")));
-        setCodeError(checkModuleCode(formData.get("pluginFile")));
-        setPassError(checkPassword(formData.get("modulePass")));
+        const prefix = checkModulePrefix(formData.get("prefixName"));
+        const name = checkDisplayName(formData.get("pluginDisplayName"));
+        const code = checkModuleCode(formData.get("fileToUpload"))
+        const pass = checkPassword(formData.get("modulePass"))
+        setPrefixError(prefix);
+        setNameError(name);
+        setCodeError(code);
+        setPassError(pass);
 
         let valid = true;
 
-        if (prefixError) {
+        if (prefix) {
             valid = false;
         }
-        if (nameError){
+        if (name){
             valid = false;
         }
-        if(codeError){
+        if(code){
             valid = false;
         }
-        if(passError){
+        if(pass){
             valid = false;
         }
 
@@ -115,7 +119,7 @@ export default function Upload(props) {
                             label="Plugin Display Name"
                             type="text"
                             id="pluginDisplayName"
-                            name="displayName"
+                            name="pluginDisplayName"
                             error={nameError}
                         />
                         <div style={{ justifyContent: "space-between" }} className="flexBoxRowGrow">
