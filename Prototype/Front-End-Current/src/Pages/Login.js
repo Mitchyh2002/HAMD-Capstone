@@ -342,6 +342,8 @@ export function checkDOB(dob) {
         return "Birth year is required.";
     } else if (dob > currentDate.getFullYear() - 13) {
         return "You need to be over 13";
+    } else if (dob.length !== 4) {
+        return "Invalid birth year.";
     }
 
 }
