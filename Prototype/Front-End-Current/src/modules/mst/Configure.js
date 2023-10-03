@@ -62,7 +62,7 @@ export default function Configure() {
                                 type="text"
                                 id="font1"
                                 name="font1"
-                                initial={initialValues.font1 && initialValues.font1}
+                                initial={initialValues&& initialValues.font1}
                             />
                             <FormInput
                                 tooltipText="This font will be used for all other text. A sans serif font will work best here. Please enter font name. E.g. 'Lato'."
@@ -71,7 +71,7 @@ export default function Configure() {
                                 type="text"
                                 id="font2"
                                 name="font2"
-                                initial={initialValues.font2&& initialValues.font2}
+                                initial={initialValues&& initialValues.font2}
                             />
                             <FormInput
                                 tooltipText="This colour will be used for the header and some form buttons. Please choose a colour that works well with black text. Enter hex code only. E.g. #FFFFFF"
@@ -80,7 +80,7 @@ export default function Configure() {
                                 type="text"
                                 id="headerColour"
                                 name="header"
-                                initial={initialValues.header&& initialValues.header}
+                                initial={initialValues&& initialValues.header}
                             />
                             <FormInput
                                 tooltipText="This colour will be used for the main navigation bar, and on some buttons. Please choose a colour that works well with black and white text. Enter hex code only. E.g. #FFFFFF"
@@ -89,7 +89,7 @@ export default function Configure() {
                                 type="text"
                                 id="navbarColour"
                                 name="navbar"
-                                initial={initialValues.navbar&& initialValues.navbar}
+                                initial={initialValues&& initialValues.navbar}
                             />
                             <FormInput
                                 tooltipText="This colour will be used for the sub navigation bar, and form headers. Please choose a colour that works well with black text. Enter hex code only. E.g. #FFFFFF"
@@ -98,7 +98,7 @@ export default function Configure() {
                                 type="text"
                                 id="subnavColour"
                                 name="subnav"
-                                initial={initialValues.subnav&& initialValues.subnav}
+                                initial={initialValues&& initialValues.subnav}
                             />
                             <FormInput
                                 tooltipText="This text will be displayed on the login and register pages to welcome visitors.  E.g. 'Welcome to Bee Aware'."
@@ -107,7 +107,7 @@ export default function Configure() {
                                 type="text"
                                 id="welcomeText"
                                 name="welcomeText"
-                                initial={initialValues.welcomeText&& initialValues.welcomeText}
+                                initial={initialValues&& initialValues.welcomeText}
                             />
                              <FormInput
                                 tooltipText="This text will be displayed on the landing page. E.g. 'Bee Aware'."
@@ -116,7 +116,7 @@ export default function Configure() {
                                 type="text"
                                 id="websiteName"
                                 name="websiteName"
-                                initial={initialValues.websiteName&& initialValues.websiteName}
+                                initial={initialValues&& initialValues.websiteName}
                             />
                               <FormInput
                                 tooltipText="Please enter the database connection URL in string format."
@@ -125,7 +125,7 @@ export default function Configure() {
                                 type="text"
                                 id="databaseURL"
                                 name="databaseURL"
-                                initial={initialValues.databaseURL&& initialValues.databaseURL}
+                                initial={initialValues&& initialValues.databaseURL}
                             />
                             <UploadFile
                                 tooltipText="This logo image will appear in the header bar. Please upload a .png file only."
