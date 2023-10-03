@@ -87,6 +87,7 @@ function AddUserForm() {
                     setRegistered(true);
                 } else {
                     console.log(response);
+                    setResponse(response);
                 }
                 setLoading(false);
             }
