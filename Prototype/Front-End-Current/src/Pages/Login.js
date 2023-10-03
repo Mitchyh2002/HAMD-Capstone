@@ -332,7 +332,7 @@ export function checkEmailValid(email) {
     if (email == "") {
         return "Email address is required.";
     } else if (!checkValid.exec(email)) {
-        return "Please check the email format";
+        return "Please check the email format.";
     }
 }
 
@@ -356,7 +356,9 @@ export function checkName(name) {
 
 export function checkPass(pass) {
     if (!pass) {
-        return "Password is required."
+        return "Password is required. "
+    } else if (pass.length < 4){
+        return "Minimum password length of 4 characters."
     }
 }
 
