@@ -38,10 +38,14 @@ export async function getUsers() {
     })
         .then(res => res.json())
         .then(res => {
-            return res;
+            if(res.Success){
+             return res.Values;
+            }else{
+             return [];
+            }
         }).catch(error => {
             //if error return empty table
-            return [{userID: "", name: "", DOB: "", email: "", phoneNumber: "", adminLevel: ""}];
+            return [];
         })
 }
 
