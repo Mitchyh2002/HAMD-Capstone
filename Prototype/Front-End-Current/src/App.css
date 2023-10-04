@@ -1,70 +1,70 @@
 /*Setting Variables*/
 :root {
-  --font1: Merriweather, serif;
-  --font2: Lato, sans-serif;
+  --font1: ms-Cursive, serif;
+  --font2: ms-Cursive, sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
-  --header: rgba(146, 180, 236);
-  --header70: rgba(146, 180, 236, 0.7);
-  --navbar: rgba(242, 143, 59);
-  --navbar70: rgba(242, 143, 59, 0.7);
-  --navbar50: rgba(242, 143, 59, 0.5);
-  --subnav: rgba(255, 230, 154);
-  --subnav40: rgba(255, 230, 154, 0.4);
+  --header: rgba(94, 252, 92);
+  --header70: rgba(94, 252, 92, 0.7);
+  --navbar: rgba(116, 92, 252);
+  --navbar70: rgba(116, 92, 252, 0.7);
+  --navbar50: rgba(116, 92, 252, 0.5);
+  --subnav: rgba(252, 92, 92);
+  --subnav40: rgba(252, 92, 92, 0.4);
   --logo: url("../public/logo.png");
   --loginImage: url("/public/login-image.jpg");
   --bee: url("../public/misc.png");
-  --welcomeText: "1";
+  --welcomeText: "Sup Bruh";
   --landingImage: url("/public/landing-image.jpg");
-  --mainTitle: "BeeAware";
+  --mainTitle: "Big D";
 }
 
 /* DEFAULTS - default styling for plugin developers */
 /* Text */
 
 h1{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 80px;
 }
 
 h2{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 60px;
 }
 
 h3{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 30px;
   font-weight: normal;
 }
 
 h3-bold{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 30px;
   font-weight: bold;
   margin-right: 10px;
 }
 
 h3-bolder{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 30px;
   font-weight: bolder;
 }
 
 h4{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 25px;
   font-weight: bold;
 }
 
 h5{
-  font-family: var(--font1);
+  font-family: var(--font1)!important;
   font-size: 18px;
   font-weight: normal;
 }
 
 p{
-  font-family: var(--font2);
+  font-family: var(--font2)!important;
   font-size: 16px;
 }
 
@@ -74,7 +74,7 @@ a{
 }
 
 body{
-  font-family: var(--font2);
+  font-family: var(--font2)!important;
   font-size: 16px;
 }
 
@@ -114,7 +114,7 @@ form{
 }
 
 label{
-  font-family: var(--font2);
+  font-family: var(--font2)!important;
   font-size: 18px;
   padding-top: 10px;
 }
@@ -130,13 +130,17 @@ label{
 
 /* Buttons */
 
+button{
+  font-family: var(--font2)!important;
+}
+
 .primaryButton{
   width: 250px;
   height: 50px;
-  font-family: var(--font2);
+  font-family: var(--font2)!;
   font-size: 20px;
   border-radius: 20px;
-  background-color: var(--navbar70);
+  background-color: var(--navbar70)!;
   cursor: pointer;
   border: 1px;
   text-shadow: 1.3px 1.3px #C0A080;
@@ -194,8 +198,8 @@ input{
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 1px solid var(--black);
-  font-family: var(--font2);
+  border-bottom: 1px solid var(--black)!important;
+  font-family: var(--font2)!important;
   outline: 0px;
   font-size: 20px;
   width: 100%;
@@ -465,6 +469,14 @@ header li a:hover {
   color: var(--navbar);
   margin-top: 0;
   margin-bottom: 0;
+}
+/*Title*/
+.Name {
+  content: var(--mainTitle);
+}
+
+.icon{
+  content: var(--logo);
 }
 
 

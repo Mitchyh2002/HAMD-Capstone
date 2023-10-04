@@ -32,7 +32,8 @@ function renderContent(responseCode) {
 }
 
 function AddUsertoModuleForm() {
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState();
+    const [error, setError] = useState();
 
     useEffect(() => {
         console.log(response);
@@ -51,9 +52,11 @@ function AddUsertoModuleForm() {
             if (response.Success == true) {
                 console.log(response);
                 setResponse(response);
+                setError(false);
             } else {
                 console.log(response);
                 setResponse(response);
+                setError(true);
             }
         }
         ).catch(function (error) {
@@ -92,7 +95,8 @@ function AddUsertoModuleForm() {
         if (moduleField) moduleField.value = "";
 
         // Reset any error messages if needed
-        setResponse(null);
+        setResponse();
+        setError(false);
     };
 
     return (<>
@@ -103,6 +107,7 @@ function AddUsertoModuleForm() {
                 </div>
                 <form className="add-user-form" id="addUsertoModule">
                     <div className="login-form-content" style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
+                        {response&& <p style={error? {color: "red"} : {color: "green"}}>{response}</p>}
                         <FormInput
                             label="User ID"
                             type="number"
