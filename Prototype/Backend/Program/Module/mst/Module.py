@@ -534,9 +534,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     # Write new Module Def Files
     with open(front_end_dir + r".\\moduledefs.js", "r") as file:
         content = file.read()
-        pattern = r"\/\/REGEX_START\n([\s\S]*?)\/\/REGEX_END"
-        module_definitions = re.search(pattern, content).group(1)
-        module_definitions = module_definitions.splitlines()
+        module_definitions = content.splitlines()
         i = 0
         module_flag = False
         Directory_flag = False
@@ -545,17 +543,10 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         importCheck2 = False
         for line in module_definitions:
             if update and module_name in line and not importCheck1:
-                pattern = "(?<=import { ).*(?= } from)"
-                old_functionName = re.findall(pattern, line)[0]
-                if functionName[0].strip() != old_functionName.strip():
-                    os.chdir(master_dir)
-                    return on_error(15,
-                                    f"mst.js Export default function name changed, please change back to {old_functionName}")
-                else:
-                    importCheck1 = True
-                    importLine1 = i
-                    i += 1
-                    continue
+                importCheck1 = True
+                importLine1 = i
+                i += 1
+                continue
             elif module_name in line and update and importCheck1 and not importCheck2:
                 importLine2 = i
                 importCheck2 = True
@@ -621,7 +612,7 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
 
     if not update:
         with open(front_end_dir + r".\\moduledefs.js", "w") as file:
-            file.writelines(line + '\n' for line in (module_definitions + new_content.splitlines()))
+            file.writelines(line + '\n' for line in (module_definitions))
     else:
         with open(front_end_dir + r".\\moduledefs.js", "w") as file:
             file.writelines([line + '\n' for line in module_definitions])
@@ -700,7 +691,7 @@ def Module_Access_Control():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
-        return accessGranted
+        return on_success("TEST")
 
     userID = request.values.get("userID")
     try:
@@ -751,7 +742,7 @@ def give_user_access(user, modulePrefix):
         if page.SecurityLevel <= user.adminLevel:
             accessGranted = True
             break
-    if not accessGranted:
+    if not accessGranted and pages != []:
         return on_error(5, "User Doesn't Have a High enough Access Level to be Added to this Function")
     created_module_access = create_moduleAccess(user.userID, modulePrefix)
     created_module_access.insert()
@@ -819,7 +810,7 @@ def update_module_ref():
 def activate_module():
     from Program import db
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -836,12 +827,14 @@ def activate_module():
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
     if modulePrefix is None:
         return on_error(1, "Module Key is Not Specified")
+    if modulePrefix == 'mst':
+        return on_error(3, 'MST module is system critical and cannot be deactivated')
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
         return on_error(2, "Specified Module Does Not Exist")
 
@@ -872,7 +865,7 @@ def upload_module():
     '''
     if request.method in ['POST', 'OPTIONS']:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+        accessGranted = userFunctionAuthorisations(user_bearer, 9, 'mst')
         if accessGranted != True:
             return accessGranted
         update = request.values.get('update') == 'true'

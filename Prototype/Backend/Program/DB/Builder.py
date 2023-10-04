@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, delete, text, TIMESTAMP, DATETIME
 import re
 from Program import db
 
-url = ''
+url = 'postgresql+psycopg2://postgres:root@127.0.0.1:5432/CapstoneTestDB'
 
 def create_db(modules=None):
 
