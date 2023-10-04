@@ -1,8 +1,7 @@
 import mst_master from "./modules/mst/main.js";
 import { mst_pages } from "./modules/mst/main.js";
 import { grp_Main } from "./modules/grp/main.js";
-
-    //IMPORT_END
+//IMPORT_END
 
 //Defintion of components, correlates the module id of the database to the component
 export const Modules = {

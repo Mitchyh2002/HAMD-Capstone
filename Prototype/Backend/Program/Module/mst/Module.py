@@ -810,7 +810,7 @@ def update_module_ref():
 def activate_module():
     from Program import db
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
@@ -827,12 +827,14 @@ def activate_module():
 @blueprint.route('deactivate', methods=["POST"])
 def deactivate_module():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-    accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+    accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
         return accessGranted
     modulePrefix = request.values.get('modulePrefix')
     if modulePrefix is None:
         return on_error(1, "Module Key is Not Specified")
+    if modulePrefix == 'mst':
+        return on_error(3, 'MST module is system critical and cannot be deactivated')
     if Module.query.filter(Module.prefix == modulePrefix).first() is None:
         return on_error(2, "Specified Module Does Not Exist")
 
@@ -863,7 +865,7 @@ def upload_module():
     '''
     if request.method in ['POST', 'OPTIONS']:
         user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
-        accessGranted = userFunctionAuthorisations(user_bearer, 2, 'mst')
+        accessGranted = userFunctionAuthorisations(user_bearer, 9, 'mst')
         if accessGranted != True:
             return accessGranted
         update = request.values.get('update') == 'true'
