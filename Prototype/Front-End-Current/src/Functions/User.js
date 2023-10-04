@@ -1,7 +1,9 @@
 import { baseUrl } from "config";
+import jwt from 'jwt-decode';
 
 //Storage keys
 const token = "BAtoken";
+const exp = "EXP"
 
 //Register User
 
@@ -13,8 +15,9 @@ export async function login(formData){
     }).then(response => (response.json()
     )).then((response) => {
         if (response.Success == true) {
-                console.log(response)
                 localStorage.setItem(token, response.Values);
+                const t = jwt(response.Values)
+                localStorage.setItem(exp, t.exp);
             }
             return response;
         }
@@ -29,7 +32,14 @@ export async function login(formData){
 export function getToken(){
     const JWT = localStorage.getItem(token)
     if(JWT){
-        return JWT
+        const unixNow = Date.now() / 1000;
+        const expUnix = localStorage.getItem(exp);
+        if (unixNow < expUnix){
+            return JWT
+        }else{
+            logout();
+            return null;
+        }
     } else {
         return null
     }
@@ -38,6 +48,13 @@ export function getToken(){
 
 //Log user out
 export async function logout(){
+    try{
+        fetch(baseUrl + "/mst/user/logout", {
+            method: "POST"
+        })
+    } catch (error){
+        console.log(error);
+    }
     localStorage.clear();
 }
 
