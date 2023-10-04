@@ -98,16 +98,17 @@ def updateUser(ID):
     elif inputDateOfBirth is not None and inputDateOfBirth != "" and not dateOfBirthIsValid(inputDateOfBirth):
         return on_error(41, "Birth year is invalid")
 
-    if inputPhoneNumber is not None and inputPhoneNumber != "" and phoneNumberIsValid(inputPhoneNumber):
+    if inputPhoneNumber is not None and inputPhoneNumber != "":
+        if phoneNumberIsValid(inputPhoneNumber):
 
-        uniquePhone = QuerySelectUser(inputPhoneNumber, False)
-        if type(uniquePhone).__name__ == "User" and uniquePhone.userID != int(ID):
-            return on_error(54, "Phone Number is already taken.")
+            uniquePhone = QuerySelectUser(inputPhoneNumber, False)
+            if type(uniquePhone).__name__ == "User" and uniquePhone.userID != int(ID):
+                return on_error(54, "Phone Number is already taken.")
 
-        targetUser.phoneNumber = inputPhoneNumber
-    elif inputPhoneNumber is not None and inputPhoneNumber != "" and not phoneNumberIsValid(inputPhoneNumber):
-        return on_error(51, "Phone number is invalid")
-
+            targetUser.phoneNumber = inputPhoneNumber
+        else:
+            return on_error(51, "Phone number is invalid")
+        
     db.session.add(targetUser)
     db.session.commit()
     return on_success("User has been updated")
