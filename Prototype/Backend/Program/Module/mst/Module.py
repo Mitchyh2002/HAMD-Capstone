@@ -545,17 +545,10 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         importCheck2 = False
         for line in module_definitions:
             if update and module_name in line and not importCheck1:
-                pattern = "(?<=import { ).*(?= } from)"
-                old_functionName = re.findall(pattern, line)[0]
-                if functionName[0].strip() != old_functionName.strip():
-                    os.chdir(master_dir)
-                    return on_error(15,
-                                    f"mst.js Export default function name changed, please change back to {old_functionName}")
-                else:
-                    importCheck1 = True
-                    importLine1 = i
-                    i += 1
-                    continue
+                importCheck1 = True
+                importLine1 = i
+                i += 1
+                continue
             elif module_name in line and update and importCheck1 and not importCheck2:
                 importLine2 = i
                 importCheck2 = True

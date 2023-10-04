@@ -66,6 +66,9 @@ def update_config_settings(request):
 
     final_configs = {}
     db_url = configs.get("databaseURL")
+    if db_url in ['', None]:
+        db_url = configs.get("DatabaseURL")
+
     if db_url not in [None, '']:
         db_valid = check_db_url(db_url)
         if db_valid is not None:

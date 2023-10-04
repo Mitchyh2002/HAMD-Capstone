@@ -1,22 +1,22 @@
 /*Setting Variables*/
 :root {
-  --font1: Arial, serif;
-  --font2: Arial, sans-serif;
+  --font1: Merriweather, serif;
+  --font2: Lato, sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
-  --header: rgba(0, 0, 0);
-  --header70: rgba(0, 0, 0, 0.7);
-  --navbar: rgba(0, 0, 0);
-  --navbar70: rgba(0, 0, 0, 0.7);
-  --navbar50: rgba(0, 0, 0, 0.5);
-  --subnav: rgba(0, 0, 0);
-  --subnav40: rgba(0, 0, 0, 0.4);
+  --header: rgba(146, 180, 236);
+  --header70: rgba(146, 180, 236, 0.7);
+  --navbar: rgba(242, 143, 59);
+  --navbar70: rgba(242, 143, 59, 0.7);
+  --navbar50: rgba(242, 143, 59, 0.5);
+  --subnav: rgba(255, 230, 154);
+  --subnav40: rgba(255, 230, 154, 0.4);
   --logo: url("../public/logo.png");
   --loginImage: url("/public/login-image.jpg");
   --bee: url("../public/misc.png");
-  --welcomeText: "Test";
+  --welcomeText: "1";
   --landingImage: url("/public/landing-image.jpg");
-  --mainTitle: "TESt";
+  --mainTitle: "BeeAware";
 }
 
 /* DEFAULTS - default styling for plugin developers */
