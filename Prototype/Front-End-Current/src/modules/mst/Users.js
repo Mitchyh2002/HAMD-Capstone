@@ -261,6 +261,7 @@ function UserListModal(props) {
                 {type === 'edit' ? (<>
                     <h4 className='modal-heading'>Edit</h4>
                     <form id="edit user" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        {consoleError&& <p style={{color: "red"}}>{consoleError.Message}</p>}
                         <FormInput
                             label="Name:"
                             type="text"
