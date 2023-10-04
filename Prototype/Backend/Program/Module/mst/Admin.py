@@ -38,17 +38,18 @@ def getAllUsers():
 def getUser(userID):
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
-     
+
     if accessGranted != True:
         return accessGranted
     
-    adminUser = adminReturn(user_bearer, userID)
-    if len(adminUser) == 3:
-        return on_error(402, "User does not have access to make changes")
-
-    user = [User.toJSON() for User in Select(User).where(User.userID == userID).first()]
+    user = User.query.filter(User.userID == userID).first()
     
     if type(user).__name__ == "User":
+        user = user.toJSON()
+        adminUser = adminReturn(user_bearer, userID)
+        if len(adminUser) == 3:
+            return on_error(402, "User does not have access to make changes")
+
         return on_success(user)
     else:
         return on_error(62, "Account is not valid")
@@ -75,6 +76,10 @@ def updateUser(ID):
     inputPhoneNumber = input.get('phoneNumber')
 
     targetUser = User.query.filter(User.userID == ID).first()
+
+    if type(targetUser).__name__ != "User": 
+        return on_error(62, "Account is not valid")
+    
     if inputEmail is not None and inputEmail != "" and emailIsValid(inputEmail):
         inputEmail = inputEmail.lower()
         uniqueEmail = QuerySelectUser(inputEmail)
@@ -157,13 +162,15 @@ def resetUserPassword(ID):
 
     if accessGranted == False:
         return accessGranted
-
-    adminUser = adminReturn(user_bearer, ID)
-    if len(adminUser) == 3:
-        return on_error(402, "User does not have access to make changes")
-
-    targetUser = Select(User).where(userID = ID)
+    
+    targetUser = User.query.filter(User.userID == ID).first()
     if type(targetUser).__name__ == "User":
+
+        adminUser = adminReturn(user_bearer, ID)
+        if len(adminUser) == 3:
+            return on_error(402, "User does not have access to make changes")
+
+    
         input = request.values
         inputPass = input.get('password')
 
@@ -182,7 +189,7 @@ def adminCheck():
     
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     auth = userFunctionAuthorisations(user_bearer, 5, 'mst')
-    if (auth):
+    if (auth == True):
         return on_success("Admin level satisfied")
     else:
         return auth
@@ -190,6 +197,7 @@ def adminCheck():
 
 def adminReturn(auth_header, targetUser=0):
     user = bearer_decode(auth_header)
+    print(user)
     user = user['Values']
 
     if targetUser != 0:
