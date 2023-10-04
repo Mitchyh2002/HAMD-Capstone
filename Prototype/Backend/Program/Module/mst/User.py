@@ -190,7 +190,7 @@ def dateOfBirthIsValid(dateOfBirth:str):
         return False
 
 def phoneNumberIsValid(phoneNumber):
-    if len(phoneNumber) == 10 and phoneNumber[0] != "0" and all(chr.isdigit() for chr in phoneNumber):
+    if len(phoneNumber) == 10 and phoneNumber[0] == "0" and all(chr.isdigit() for chr in phoneNumber):
         return True
     elif len(phoneNumber) == 12 and phoneNumber[:3] == "+61" and all(chr.isdigit() for chr in phoneNumber[3:]):
         return True
