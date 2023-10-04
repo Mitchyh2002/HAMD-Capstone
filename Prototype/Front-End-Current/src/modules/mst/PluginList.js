@@ -114,13 +114,14 @@ function PluginTable (props){
                                     </td>
                                 ))}
                                 <td>
-                                    <button onClick={() => {toggleModal(row.values.prefix)}} className="btn-modal">
+                                    <button disabled={row.values.prefix == "mst"} onClick={() => {toggleModal(row.values.prefix)}} className="btn-modal">
                                         Edit
                                     </button>
                                     |
-                                    <button className="btn-modal delete-btn" onClick={() => {toggleModuleActivation(row.original.status, row.original.prefix)}}>
+                                    <button disabled={row.values.prefix == "mst"} className="btn-modal delete-btn" onClick={() => {toggleModuleActivation(row.original.status, row.original.prefix)}}>
                                         {row.original.status == true ? "Deactivate" : "Activate"}
                                     </button>
+                                    
                                 </td>
                             </tr>
                         )
