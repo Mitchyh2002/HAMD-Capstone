@@ -1,11 +1,11 @@
 import Header from "Components/Header";
 import './Login.css';
 import { login } from "Functions/User";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
-import { LoginErrors } from "errorCodes";
+import { LoginErrors, RegisterErrors } from "errorCodes";
 import { ToolTip } from "modules/mst/Components";
 
 export default function Login(props) {
@@ -26,7 +26,7 @@ export default function Login(props) {
                     {forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword} /> :
                         email ? <EmailConfirmation email={email} /> :
                             register ?
-                                <RegisterForm setEmail={setEmail} /> : <LoginForm setForgotPassword={setForgotPassword} />}
+                                <RegisterForm setEmail={setEmail} /> : <LoginForm setForgotPassword={setForgotPassword} refresh={props.refresh}/>}
                 </div>
             </div>
         </>
@@ -47,6 +47,7 @@ function WelcomeMessage(props) {
 //Login Form
 function LoginForm(props) {
     const [response, setResponse] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log(response);
@@ -55,8 +56,14 @@ function LoginForm(props) {
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
+        const res = await login(formData);
 
-        setResponse(await login(formData));
+        setResponse(res);
+
+        if(res.Success){
+            props.refresh(true);
+            navigate("/home");
+        }
 
     };
 
@@ -105,10 +112,7 @@ function LoginForm(props) {
                     </div>
                 )}
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <Link
-                    to="/Home">
                     <button className="primaryButton sign-in-button" onClick={handleLogin}>Sign In</button>
-                </Link>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
                 <p style={{ fontSize: "14px" }}>Don't have an account?</p>
@@ -157,7 +161,7 @@ function ForgotPasswordForm(props) {
                 }
                 setLoading(false);
             })
-        } else{setLoading(false);}
+        } else { setLoading(false); }
     }
     return (<>
         {submitted ?
@@ -205,9 +209,15 @@ function RegisterForm(props) {
     const [passError, setPassError] = useState();
     const [loading, setLoading] = useState(false);
 
+    const [response, setResponse] = useState(null);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response]);
+
     const validateForm = (formData) => {
         const isNameError = checkName(formData.get("firstName"));
-        const isEmailError =checkEmailValid(formData.get("email"));
+        const isEmailError = checkEmailValid(formData.get("email"));
         const isDOBError = checkDOB(formData.get("dateOfBirth"));
         const isPassError = checkPass(formData.get("password"));
 
@@ -245,7 +255,6 @@ function RegisterForm(props) {
         const formData = new FormData(form);
 
         const valid = validateForm(formData);
-        console.log(valid)
         if (valid) {
             fetch(baseUrl + "/mst/user/register", {
                 method: "POST",
@@ -256,6 +265,7 @@ function RegisterForm(props) {
                     props.setEmail(formData.get("email"));
                 } else {
                     console.log(response);
+                    setResponse(response);
                 }
                 setLoading(false);
             }
@@ -297,6 +307,12 @@ function RegisterForm(props) {
                         className="emailAddress"
                         placeholder="Email Address"
                     />
+                    {response && [RegisterErrors.emailTaken].includes(response.StatusCode)
+                        && (
+                            <div className="error-message">
+                                {response.Message}
+                            </div>
+                        )}
                     <FormInput
                         label="Password"
                         error={passError}
@@ -362,7 +378,7 @@ export function checkName(name) {
 export function checkPass(pass) {
     if (!pass) {
         return "Password is required. "
-    } else if (pass.length < 4){
+    } else if (pass.length < 4) {
         return "Minimum password length of 4 characters."
     }
 }
@@ -377,7 +393,7 @@ export function FormInput(props) {
                     name={props.name}
                     className={props.class}
                     placeholder={props.placeholder}
-                    defaultValue = {props.value}
+                    defaultValue={props.value}
                 />
                 <p className="error-message">{props.error}</p>
             </div>

@@ -286,7 +286,22 @@ def get_config_settings():
         return accessGranted
     config_info = mst_Setup.query.first()
     if config_info == None:
-        return on_success(None)
+        return on_success( {
+            "DatabaseURL": '',
+            "font1": '',
+            "font2": '',
+            "black": '',
+            "white": '',
+            "header": '',
+            "navbar": '',
+            "subnav": '',
+            "welcomeText": '',
+            "terms": '',
+            "logo": '',
+            "landingImage": '',
+            "loginImage": '',
+            'websiteName': ''
+        })
     else:
         print(config_info.toJSON())
         return on_success(config_info.toJSON())
