@@ -45,21 +45,21 @@ function ChangePasswordForm(props) {
     const [loading, setLoading] = useState(false);
   
     const validateForm = (formData) => {
-        const new1error = setNew1PassError(checkPass(formData.get("newPassword")));
-        const new2error = setNew2PassError(checkPass(formData.get("confPassword")));
-        const confpasserror = setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")));
+        const new1err = setNew1PassError(checkPass(formData.get("newPassword")));
+        const new2err = setNew2PassError(checkPass(formData.get("confPassword")));
+        const confpasserr = setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")));
 
-        setNew1PassError(new1error);
-        setNew2PassError(new2error);
-        setConfPassError(confpasserror);
+        setNew1PassError(new1err);
+        setNew2PassError(new2err);
+        setConfPassError(confpasserr);
 
         let valid = true;
 
-        if (new1error || new2error || confpasserror) {
+        if (new1err || new2err || confpasserr) {
             valid = false;
         }
 
-        if (new2error && confpasserror) {
+        if (new2err && confpasserr) {
             setConfPassError(null); // Clear the second error
         }
 
