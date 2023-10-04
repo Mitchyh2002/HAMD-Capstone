@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Directory } from "moduleDefs";
-import { NavLink, useHref, useMatch, useMatches, useNavigate } from "react-router-dom";
+import { useHref, useNavigate } from "react-router-dom";
 import "../App.css"
-import Breadcrumbs from "Components/Breadcrumbs.js";
 
 /*Sub Menu
     Description: SubMenu for all sub components of and corresponding links based on the values defined in modulesDefs.js
@@ -17,6 +16,7 @@ export default function SubMenu(props) {
     props.module.pages.map(e => {
         const page = Directory[props.module.prefix].find(obj => obj.pageCode == e.pageCode);
         if (page){
+            page.DBName = e.pageName
             subComponents.push(page);
         }
     })
@@ -27,7 +27,7 @@ export default function SubMenu(props) {
     function createNavLinks(component) {
         return (
             <div style={{ display: "flex", alignItems: "center" }}>
-                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.path} />
+                <SubNavButton activeClass="subNavHighlight" passiveClass="navButton" to={component.path} name={component.DBName} />
             </div>
         )
     }

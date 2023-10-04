@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTable } from "react-table";
 import { useLoaderData } from 'react-router-dom';
 import { getPlugins, activateModule, deactivateModule } from "./loaderFunctions";
-import {Modal, ActivateModal} from './Components.js';
+import {Modal, ActivateModal, PagesModal} from './Components.js';
 import "./admin.css";
 
 export default function PluginList() {
@@ -38,6 +38,7 @@ export default function PluginList() {
 function PluginTable (props){
     const [modal, setModal] = useState(false);
     const [prefix, setPrefix] = useState();
+    const [pagesModal, setPagesModal] = useState(false)
 
 
     /* Getting the data from the database  */
@@ -62,6 +63,11 @@ function PluginTable (props){
     const toggleModal = (prefix) => {
         setPrefix(prefix);
         setModal(!modal);
+    }
+
+    const togglePagesModal = (prefix) => {
+        setPrefix(prefix);
+        setPagesModal(!modal);
     }
 
     const toggleModuleActivation = (status, prefix) => {
@@ -116,12 +122,15 @@ function PluginTable (props){
                                 <td>
                                     <button disabled={row.values.prefix == "mst"} onClick={() => {toggleModal(row.values.prefix)}} className="btn-modal">
                                         Edit
+                                    </button>                                    | 
+                                    <button  className="btn-modal " onClick={() => {togglePagesModal(row.original.prefix)}}>
+                                        Pages
                                     </button>
                                     |
                                     <button disabled={row.values.prefix == "mst"} className="btn-modal delete-btn" onClick={() => {toggleModuleActivation(row.original.status, row.original.prefix)}}>
                                         {row.original.status == true ? "Deactivate" : "Activate"}
                                     </button>
-                                    
+
                                 </td>
                             </tr>
                         )
@@ -132,6 +141,9 @@ function PluginTable (props){
     </div>
     {modal && (
         <Modal label1="Change Display Name:" show={modal} change={setModal} prefix={prefix} refresh={props.refresh}/>
+    )}
+    {pagesModal&& (
+        <PagesModal show={pagesModal} change={setPagesModal} prefix={prefix} />
     )}
 </>
     )
