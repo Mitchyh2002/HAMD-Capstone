@@ -1,9 +1,4 @@
-/*Setting Variables
-
-Bee Aware Hex Codes:
-header - #92b4ec
-navbar - #f28f3b
-subnav - #ffe69a */
+/*Setting Variables*/
 :root {
   --font1: Merriweather, serif;
   --font2: Lato, sans-serif;
@@ -19,9 +14,9 @@ subnav - #ffe69a */
   --logo: url("../public/logo.png");
   --loginImage: url("/public/login-image.jpg");
   --bee: url("../public/misc.png");
-  --welcomeText: "Welcome to Bee Aware";
+  --welcomeText: "1";
   --landingImage: url("/public/landing-image.jpg");
-  --mainTitle: "Bee Aware";
+  --mainTitle: "BeeAware";
 }
 
 /* DEFAULTS - default styling for plugin developers */
@@ -144,6 +139,7 @@ label{
   background-color: var(--navbar70);
   cursor: pointer;
   border: 1px;
+  text-shadow: 1.3px 1.3px #C0A080;
   transition: all 0.3s ease 0s;
 }
 

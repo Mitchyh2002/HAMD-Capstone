@@ -194,8 +194,10 @@ def phoneNumberIsValid(phoneNumber):
         return False
     elif (len(phoneNumber) == 12 and phoneNumber[0,3] != "+61"):
         return False
-    elif (any(not(chr.isDigit() for chr in phoneNumber[1:]))):
+    elif any(not chr.isdigit() for chr in phoneNumber[1:]):
         return False
+    else:
+        return True
 
 @blueprint.route('/forgotPassword', methods=['POST'])
 def forgotPassword():
