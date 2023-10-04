@@ -36,7 +36,7 @@ export default function Footer() {
                 <div className='left20px'>
                     <h4 className="account-header" style={{ marginBottom: "10px" }}>About</h4>
                     <div className="flexBoxColumnGrow" style={{ maxWidth: "170px" }}>
-                        <ToolTip style={{ fontSize: "10px" }} text="Click here to download terms & conditions file.">
+                        <ToolTip style={{ fontSize: "10px" }} text="Click here to view terms & conditions file.">
                             <button className="text-button" onClick={handleTerms}> - Terms & Conditions</button>
                         </ToolTip>
                     </div>

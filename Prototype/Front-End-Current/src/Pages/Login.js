@@ -1,7 +1,7 @@
 import Header from "Components/Header";
 import './Login.css';
 import { login } from "Functions/User";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { baseUrl } from "config";
 import { EmailConfirmation } from "Components/EmailConfirmation";
@@ -26,7 +26,7 @@ export default function Login(props) {
                     {forgotPassword ? <ForgotPasswordForm setForgotPassword={setForgotPassword} /> :
                         email ? <EmailConfirmation email={email} /> :
                             register ?
-                                <RegisterForm setEmail={setEmail} /> : <LoginForm setForgotPassword={setForgotPassword} />}
+                                <RegisterForm setEmail={setEmail} /> : <LoginForm setForgotPassword={setForgotPassword} refresh={props.refresh}/>}
                 </div>
             </div>
         </>
@@ -47,6 +47,7 @@ function WelcomeMessage(props) {
 //Login Form
 function LoginForm(props) {
     const [response, setResponse] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log(response);
@@ -55,8 +56,14 @@ function LoginForm(props) {
     const handleLogin = async (e) => {
         const form = document.getElementById("Login");
         const formData = new FormData(form);
+        const res = await login(formData);
 
-        setResponse(await login(formData));
+        setResponse(res);
+
+        if(res.Success){
+            props.refresh(true);
+            navigate("/home");
+        }
 
     };
 
@@ -105,10 +112,7 @@ function LoginForm(props) {
                     </div>
                 )}
             <div className="flexBoxRowGrow" style={{ justifyContent: "center" }}>
-                <Link
-                    to="/Home">
                     <button className="primaryButton sign-in-button" onClick={handleLogin}>Sign In</button>
-                </Link>
             </div>
             <div className="flexBoxRowGrow" style={{ justifyContent: "center", paddingTop: "20px" }}>
                 <p style={{ fontSize: "14px" }}>Don't have an account?</p>

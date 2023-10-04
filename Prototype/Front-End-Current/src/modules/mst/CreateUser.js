@@ -168,8 +168,8 @@ function AddUserForm() {
                     </div>
                     <div className="flexBoxRowGrow" style={{ alignItems: "center", justifyContent: "center", maxWidth: "500px", marginTop: "20px" }}>
                         {registered ? (
-                            <div className="flexBoxColumnGrow" style={{ justifyContent: "center" }}>
-                                <p>User successfully added!</p>
+                            <div className="flexBoxColumnGrow" style={{ alignItems:"center" }}>
+                                <p style={{ color:'green' }}>User successfully added!</p>
                                 <button onClick={resetForm} className="primaryButton" disabled={loading}>Add Another User</button>
                             </div>
                         ) : (

@@ -193,16 +193,13 @@ def QueryInsertModule(new_module: Module):
     db.session.add(new_module)
     db.session.commit()
 
-def QueryInsertModule(new_module: Module):
+def QueryUpadateModule(new_module: Module):
     """ Function to Update Module in DB
         if Module exists delete itself if gotten this far into system
     """
     # If Module Exists Drop it
 
-    existingModule = Module.query.filter_by(prefix = new_module.prefix)
-    existingModule.displayName = new_module.displayName
-
-    existingModule.update()
+    existingModule = Module.query.filter_by(prefix = new_module.prefix).update({"displayName": new_module.displayName})
 
 
 
@@ -408,6 +405,11 @@ def get_module_pages(modulePrefix=None):
         return on_success([ModuleSecurity.toJSON() for ModuleSecurity in ModuleSecurity.query.filter_by(modulePrefix=modulePrefix).all()])
     return accessGranted
 
+def notPYC(filename):
+    if ".pyc" in filename:
+        return False
+    return True
+
 def check_files(temp_dir, module_prefix):
     '''
     Check Old and New content for correct files, 
@@ -421,9 +423,7 @@ def check_files(temp_dir, module_prefix):
         existing_content = [x.split(f'Program/DB/Models/{module_prefix}')[1] for x in
                             dir_tree(f'Program/DB/Models/{module_prefix}', True)]
 
-        for i, filename in enumerate(existing_content):
-            if ".pyc" in filename:
-                existing_content.pop(i)
+        existing_content = list(filter(notPYC,existing_content))
 
         new_content = [x.split(f'Program\\Temp_Module\\{module_prefix}/Tables')[1] for x in dir_tree(table_dir, True)]
 
@@ -540,8 +540,11 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
         i = 0
         module_flag = False
         Directory_flag = False
+        # Check for the 3 imports in the file system and if valid update them.
+        importCheck1 = False
+        importCheck2 = False
         for line in module_definitions:
-            if update and module_name in line:
+            if update and module_name in line and not importCheck1:
                 pattern = "(?<=import { ).*(?= } from)"
                 old_functionName = re.findall(pattern, line)[0]
                 if functionName[0].strip() != old_functionName.strip():
@@ -549,15 +552,31 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
                     return on_error(15,
                                     f"mst.js Export default function name changed, please change back to {old_functionName}")
                 else:
-                    break
-            if line == '//IMPORT_END':
-                import_pos = i
+                    importCheck1 = True
+                    importLine1 = i
+                    i += 1
+                    continue
+            elif module_name in line and update and importCheck1 and not importCheck2:
+                importLine2 = i
+                importCheck2 = True
+                i += 1
+                continue
+            elif module_name in line and update and importCheck2:
+                importLine3 = i
+                i += 1
+                break
 
-            if line == "export const Modules = {":
+            elif update:
+                i += 1
+                continue
+
+            if '//IMPORT_END' in line:
+                import_pos = i
+            if 'export const Modules' in line:
                 module_flag = True
-            if line == "export const Directory = {":
+            if 'export const Directory' in line:
                 Directory_flag = True
-            if line == '}':
+            if '}' in line:
                 if module_flag == True:
                     module_last_pos = i
                     module_flag = False
@@ -581,6 +600,14 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
             new_content = new_content
             module_definitions.append("//REGEX_END")
             module_definitions.insert(0, "//REGEX_START")
+        if update:
+            if page_name != []:
+                module_definitions[importLine1] = 'import {' + f' {page_name[0]}, {functionName[0]} '+ '} from "./modules/' + module_name + '/main.js";'
+            else:
+                module_definitions[importLine1] = 'import {' + f' {functionName[0]} ' + '} from "./modules/' + module_name + '/main.js"'
+
+            module_definitions[importLine2] = f'    {module_name}: {functionName[0]}'
+            module_definitions[importLine3] = f'    {module_name}: {page_name[0]}'
     if os.path.exists(f"{master_dir}/Program/Temp_Module/{module_name}/logo.svg"):
         if os.path.exists(f"{master_dir}/Program/Temp_Module/{module_name}/{module_name}.svg"):
             os.remove(f"{master_dir}/Program/Temp_Module/{module_name}/{module_name}.svg")
@@ -595,6 +622,10 @@ def front_end_installation(temp_dir, module_name, master_dir, update=False):
     if not update:
         with open(front_end_dir + r".\\moduledefs.js", "w") as file:
             file.writelines(line + '\n' for line in (module_definitions + new_content.splitlines()))
+    else:
+        with open(front_end_dir + r".\\moduledefs.js", "w") as file:
+            file.writelines([line + '\n' for line in module_definitions])
+
 
     os.chdir(master_dir)
     return pages
@@ -845,6 +876,7 @@ def upload_module():
         if accessGranted != True:
             return accessGranted
         update = request.values.get('update') == 'true'
+
         master_dir = os.getcwd()
         dl_file = request.files['fileToUpload']
         if dl_file.filename == '':
@@ -857,9 +889,11 @@ def upload_module():
             if '' in [DisplayName, ModulePass.hash]:
                 return on_error(18, "Display Name or Module Password is Missing, Please confirm they are entered correctly")
         module = get_module(modulename)
-
         if module != None and not update:
             return on_error(1, f"Module {modulename}, Already Exists")
+        elif module == None and update:
+            return on_error(1, f"Module cannot be updated as it not installed")
+
         elif update and module != []:
             storedHash = module.moduleKey
             storedHash = storedHash[2:-1]
@@ -919,6 +953,7 @@ def upload_module():
 
         if TableFiles != []:
             from Program.DB.Builder import create_db, add_column
+            old_tables = []
             if update:
                 if new_rows not in [[], [{}]]:
                     success = add_column(new_rows)
@@ -927,14 +962,11 @@ def upload_module():
                 if os.path.exists(Table_outdir) and update:
                     old_tables = dir_tree(Table_outdir)
                     old_tables = convert_to_imports(old_tables)
-                else:
-                    old_tables = []
                 if os.path.exists(Table_outdir):
                     shutil.rmtree(Table_outdir)
             shutil.move(f"{temp_dir}{modulename}\Tables", Table_outdir)
             Table_outdir = dir_tree(Table_outdir)
             tables = convert_to_imports(Table_outdir)
-            print(list(set(tables).difference(set(old_tables))))
             if old_tables != tables:
                 create_db(list(set(tables).difference(set(old_tables))))
             os.chdir(master_dir)

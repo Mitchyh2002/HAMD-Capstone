@@ -11,6 +11,7 @@ function App() {
   const [pages, setPages] = useState([]);
   const [configured, setConfigured] = useState(true)
   const [router, setRouter] = useState();
+  const [refresh, setRefresh] = useState();
 
   //Get all active modules from the server and store in state
   useEffect(() => {
@@ -28,16 +29,18 @@ function App() {
       }else if(data.StatusCode == 1001){
         setModules();
         setConfigured(false);
-        setRouter(createBrowserRouter(allRoutes(modules, true)));
+        setRouter(createBrowserRouter(allRoutes(modules, true, setRefresh)));
       }else{
       setModules(data.Values);
-      setRouter(createBrowserRouter(allRoutes(data.Values, false)));
+      setRouter(createBrowserRouter(allRoutes(data.Values, false, setRefresh)));
       }
     }).catch(err => {
       console.log(err);
-      setRouter(createBrowserRouter(allRoutes(modules, configured)));
+      setRouter(createBrowserRouter(allRoutes(modules, configured, setRefresh)));
     })
-  }, []);
+    
+    setRefresh();
+  }, [refresh]);
 
   return (
     <>

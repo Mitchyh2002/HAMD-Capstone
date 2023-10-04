@@ -65,11 +65,13 @@ def update_config_settings(request):
     current_settings = mst_Setup.query.first()
 
     final_configs = {}
-    db_url = configs.get("DatabaseURL")
-    if db_url != None:
+    db_url = configs.get("databaseURL")
+    if db_url not in [None, '']:
         db_valid = check_db_url(db_url)
         if db_valid is not None:
             return db_valid
+    if db_url in [None, ''] and configs == None:
+        return on_error(2, f"Missing Setting for databaseURL")
     final_configs["DatabaseURL"] = db_url
     registration_email = configs.get("RegistrationEmail")
     welcomeText = request.values.get("welcomeText")
@@ -251,6 +253,7 @@ def update_config_settings(request):
                 return success
 
             final_OBJ.insert()
+            return on_success(final_OBJ.toJSON())
     else:
         if db_url is not None:
             os.chdir(mst_dir)
