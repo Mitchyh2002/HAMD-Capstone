@@ -5,7 +5,7 @@ import { baseUrl } from 'config';
 import { getToken } from 'Functions/User';
 import { useLoaderData } from 'react-router-dom';
 
-export default function Configure() {
+export default function Configure(props) {
     const [selectedFile, setSelectedFile] = useState();
     const [isSelected, setIsSelected] = useState(false);
     const [error, setError] = useState();
@@ -30,6 +30,9 @@ export default function Configure() {
             if (res.Success == true) {
                 setSuccess(true);
                 setError(false);
+                if(props.config){
+                    props.refresh(true);
+                }
             } else {
                 setError(true);
                 setErrorMessage(res.Message);

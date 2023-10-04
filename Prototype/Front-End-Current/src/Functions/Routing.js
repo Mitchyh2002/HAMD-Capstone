@@ -30,7 +30,7 @@ export function allRoutes(Modules, config, setRefresh){
 */
 export function CreateAllPaths(Components, config, setRefresh) {
     const homeElement = () => {
-        return config == true? <Configure /> : <Main modules={Components}/>
+        return config == true? <Configure config={config} refresh={setRefresh}/> : <Main modules={Components}/>
     }
 
     //Create Route Directory
