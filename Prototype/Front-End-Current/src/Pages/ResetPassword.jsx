@@ -7,7 +7,7 @@ import { baseUrl } from "config";
 
 export default function ResetPassword() {
     const response = useLoaderData();
-    
+
     const [changed, setChanged] = useState();
     const { id } = useParams();
 
@@ -20,18 +20,18 @@ export default function ResetPassword() {
                 </div>
                 <div>
                     {response.StatusCode == 200 ? changed ? (
-                        <div className="flexBoxColumnGrow" style={{alignItems:"center"}}>
+                        <div className="flexBoxColumnGrow" style={{ alignItems: "center" }}>
                             <p>You have successfully changed your password!</p>
                             <p>Please click below to login.</p>
                             <Link
                                 to="/Home">
-                                <button style={{border: "none", marginTop:"20px"}}className="formButton home-button">Login</button>
+                                <button style={{ border: "none", marginTop: "20px" }} className="formButton home-button">Login</button>
                             </Link>
                         </div>
                     ) : (
                         <ChangePasswordForm setChanged={setChanged} id={id} />
 
-                    ) :<p>The token provided is either invalid or expired</p>}
+                    ) : <p>The token provided is either invalid or expired</p>}
                 </div>
             </div>
         </div>
@@ -43,11 +43,11 @@ function ChangePasswordForm(props) {
     const [new2PassError, setNew2PassError] = useState();
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
-  
+
     const validateForm = (formData) => {
-        const new1err = setNew1PassError(checkPass(formData.get("newPassword")));
-        const new2err = setNew2PassError(checkPass(formData.get("confPassword")));
-        const confpasserr = setConfPassError(comparePass(formData.get("newPassword"), formData.get("confPassword")));
+        const new1err = checkPass(formData.get("newPassword"));
+        const new2err = checkPass(formData.get("confPassword"));
+        const confpasserr = comparePass(formData.get("password"), formData.get("confPassword"));
 
         setNew1PassError(new1err);
         setNew2PassError(new2err);
@@ -74,7 +74,6 @@ function ChangePasswordForm(props) {
         const valid = validateForm(formData);
         if (valid) {
             fetch(baseUrl + "/mst/user/resetPassword/" + props.id, {
-
                 method: "POST",
                 body: formData,
             }).then(response => (response.json()
@@ -98,18 +97,18 @@ function ChangePasswordForm(props) {
     return (<>
         <form className="password-form" id="Reset Password">
             <div className="password-form-content">
-                    <FormInput
-                        label="New Password"
-                        error={new1PassError}
-                        type={"password"}
-                        name="password"
-                    />
-                    <FormInput
-                        label="Confirm New Password"
-                        error={[new2PassError, confPassError]}
-                        type={"password"}
-                        name="confPassword"
-                    />
+                <FormInput
+                    label="New Password"
+                    error={new1PassError}
+                    type={"password"}
+                    name="password"
+                />
+                <FormInput
+                    label="Confirm New Password"
+                    error={[new2PassError, confPassError]}
+                    type={"password"}
+                    name="confPassword"
+                />
 
             </div>
         </form>
@@ -120,12 +119,10 @@ function ChangePasswordForm(props) {
     </>)
 }
 
-export function comparePass(newPass1, newPass2) {
-    try {
-        if (newPass1 !== newPass2) {
-            return "Passwords do not match.";
-        }
-    } catch {
+function comparePass(newPass1, newPass2) {
 
+    if (newPass1 !== newPass2) {
+        console.log("made it here");
+        return ("Passwords do not match.");
     }
 }
