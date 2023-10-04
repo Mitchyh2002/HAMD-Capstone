@@ -1,3 +1,4 @@
+import { getToken } from "Functions/User";
 import { baseUrl } from "config";
 import { ModuleAccessErrors, GiveUserAccessErrors } from "errorCodes";
 import React, { useState, useEffect } from 'react';
@@ -43,6 +44,7 @@ function AddUsertoModuleForm() {
 
         fetch(baseUrl + "/mst/module/ModuleAccess", {
             method: "POST",
+            headers: {"Authorization" : getToken()},
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {
@@ -63,8 +65,9 @@ function AddUsertoModuleForm() {
         const form = document.getElementById("addUsertoModule");
         const formData = new FormData(form);
 
-        fetch(baseUrl + "/mst/module/ModuleAccess", {
+        fetch(baseUrl + "/mst/module/ModuleAccess/", {
             method: "DELETE",
+            headers: {"Authorization" : getToken()},
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {
@@ -114,7 +117,9 @@ function AddUsertoModuleForm() {
                             placeholder="Module for access"
                         />
                     </div>
-                    <div className="flexBoxRowGrow" style={{ justifyContent: "center"}}>
+                </form>
+                
+                <div className="flexBoxRowGrow" style={{ justifyContent: "center"}}>
                         {response && response.StatusCode === 200 ? (
                             <div>
                                 <p>User access successfully modified.</p>
@@ -129,15 +134,14 @@ function AddUsertoModuleForm() {
                                                 {response.Message}
                                             </div>
                                         )}
-                                </div>
-                                <div className="flexBoxColumnGrow" style={{ alignItems: "center", justifyContent: "center"}}>
-                                    <button onClick={handleAdd} className="primaryButton" style={{ marginTop: "10px" }}>Give Access</button>
-                                    <button onClick={handleDelete} className="primaryButton" style={{ marginTop: "10px" }}>Remove Access</button>
+                                        <div className="flexBoxColumnGrow" style={{ alignItems: "center", justifyContent: "center"}}>
+                                            <button onClick={handleAdd} className="primaryButton" style={{ marginTop: "10px" }}>Give Access</button>
+                                            <button onClick={handleDelete} className="primaryButton" style={{ marginTop: "10px" }}>Remove Access</button>
+                                        </div>
                                 </div>
                             </div>
                         )}
                     </div>
-                </form>
             </div>
         </div>
 
