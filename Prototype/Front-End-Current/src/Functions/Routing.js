@@ -19,8 +19,8 @@ import Configure from "modules/mst/Configure";
     Input: Modules
     Output: List of Routes
 */
-export function allRoutes(Modules, config){
-    return(CreateAllPaths(Modules, config));
+export function allRoutes(Modules, config, setRefresh){
+    return(CreateAllPaths(Modules, config, setRefresh));
 }
 
 /*Create All Paths
@@ -28,9 +28,9 @@ export function allRoutes(Modules, config){
     Input: Components
     Output: An Array of all paths for the application with a all children Routes
 */
-export function CreateAllPaths(Components, config) {
+export function CreateAllPaths(Components, config, setRefresh) {
     const homeElement = () => {
-        return config == true? <Configure /> : <Main modules={Components}/>
+        return config == true? <Configure config={config} refresh={setRefresh}/> : <Main modules={Components}/>
     }
 
     //Create Route Directory
@@ -41,10 +41,10 @@ export function CreateAllPaths(Components, config) {
         }
     },{
         path:"/Login",
-        element: <Login register={false}/>
+        element: <Login register={false} refresh={setRefresh}/>
     },{
         path:"/Register",
-        element: <Login register={true}/>
+        element: <Login register={true} refresh={setRefresh}/>
     },{
         path:"/Confirm/:id",
         element: <ConfirmEmail />,
