@@ -1,3 +1,4 @@
+import { getToken } from "Functions/User";
 import { baseUrl } from "config";
 import { ModuleAccessErrors, GiveUserAccessErrors } from "errorCodes";
 import React, { useState, useEffect } from 'react';
@@ -43,6 +44,7 @@ function AddUsertoModuleForm() {
 
         fetch(baseUrl + "/mst/module/ModuleAccess", {
             method: "POST",
+            header: {"Authorization" : getToken()},
             body: formData,
         }).then(response => (response.json()
         )).then((response) => {
@@ -63,7 +65,7 @@ function AddUsertoModuleForm() {
         const form = document.getElementById("addUsertoModule");
         const formData = new FormData(form);
 
-        fetch(baseUrl + "/mst/module/ModuleAccess", {
+        fetch(baseUrl + "/mst/module/ModuleAccess/", {
             method: "DELETE",
             body: formData,
         }).then(response => (response.json()
