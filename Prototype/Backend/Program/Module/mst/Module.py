@@ -756,7 +756,6 @@ def remove_user_access(user, modulePrefix):
         access.delete()
     return on_success([])
 
-
 @blueprint.route('updatereference', methods=['POST'])
 def update_module_ref():
         """ API Endpoint to update display name & Logo for database
