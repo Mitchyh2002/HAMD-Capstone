@@ -138,7 +138,7 @@ export default function Upload(props) {
                             name="modulePass"
                             error={passError}
                         />
-                        {isSelected ?
+                        {(isSelected && selectedFile)  ?
                             (<div>
                                 <p>Filename: {selectedFile.name}</p>
                                 <p>Filetype: {selectedFile.type}</p>
