@@ -54,7 +54,6 @@ export function CreateAllPaths(Components, config, setRefresh) {
                     method: "POST"
                 });
                 const json = await response.json();
-                console.log(json)
                 return json;
             }catch{
                 return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
@@ -69,7 +68,6 @@ export function CreateAllPaths(Components, config, setRefresh) {
                     method: "GET"
                 });
                 const json = await response.json();
-                console.log(json)
                 return json;
             }catch{
                 return({Message: "Local error/network error encountered", StatusCode: -1, Success: false});
@@ -85,7 +83,6 @@ export function CreateAllPaths(Components, config, setRefresh) {
         element: homeElement(),
         loader: async ()  => {
             const token = getToken();
-            console.log(token);
             if(token == null){
                 return redirect("/login");
             }else{
@@ -99,7 +96,6 @@ export function CreateAllPaths(Components, config, setRefresh) {
     }
 
     Routes.push(Home);
-    console.log(Routes);
     return Routes;
 }
 
@@ -131,8 +127,6 @@ export function createComponentRoutes(module) {
             }
         })
     }
-    console.log("Root")
-    console.log(Root)
 
     return Root;
 }
@@ -144,7 +138,6 @@ export function createComponentRoutes(module) {
 */
 export function CreateParentOutlet (props) {
     const child = useOutlet();
-    console.log(child);
     return(
         <>
             {props.module.pages && <SubMenu module={props.module} /> }

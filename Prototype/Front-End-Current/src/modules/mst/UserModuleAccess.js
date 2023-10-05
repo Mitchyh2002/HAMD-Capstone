@@ -32,7 +32,8 @@ function renderContent(responseCode) {
 }
 
 function AddUsertoModuleForm() {
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState();
+    const [error, setError] = useState();
 
     useEffect(() => {
         console.log(response);
@@ -51,9 +52,11 @@ function AddUsertoModuleForm() {
             if (response.Success == true) {
                 console.log(response);
                 setResponse(response);
+                setError(false);
             } else {
                 console.log(response);
                 setResponse(response);
+                setError(true);
             }
         }
         ).catch(function (error) {
@@ -65,7 +68,7 @@ function AddUsertoModuleForm() {
         const form = document.getElementById("addUsertoModule");
         const formData = new FormData(form);
 
-        fetch(baseUrl + "/mst/module/ModuleAccess/", {
+        fetch(baseUrl + "/mst/module/ModuleAccess", {
             method: "DELETE",
             headers: {"Authorization" : getToken()},
             body: formData,
@@ -92,7 +95,8 @@ function AddUsertoModuleForm() {
         if (moduleField) moduleField.value = "";
 
         // Reset any error messages if needed
-        setResponse(null);
+        setResponse();
+        setError(false);
     };
 
     return (<>

@@ -1,9 +1,10 @@
 import Header from "Components/Header"
 import { Link } from "react-router-dom"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { checkPass, FormInput } from "./Login";
 import { baseUrl } from "config";
 import { getToken } from "Functions/User";
+import { ChangePasswordErrors } from "errorCodes";
 
 export default function ChangePassword(props) {
     const [changed, setChanged] = useState(props.changed);
@@ -14,15 +15,15 @@ export default function ChangePassword(props) {
                 <div className="subNav" style={{ borderRadius: "10px 10px 0px 0px", display: "flex", justifyContent: "center", alignItems: "center", height: "70px" }}>
                     <h3>{changed ? "Password Changed" : "Change Password"}</h3>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems:"center", justifyContent: "center" }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: "center", justifyContent: "center" }}>
 
                     {changed ? (<>
-                            <p>You have successfully changed your password! Please click below to go back.</p>
-                            <Link
-                                to="/home/account">
-                                <button className="formButton change-password-button">Back</button>
-                            </Link>
-                        </>
+                        <p>You have successfully changed your password! Please click below to go back.</p>
+                        <Link
+                            to="/home/account">
+                            <button className="formButton change-password-button">Back</button>
+                        </Link>
+                    </>
                     ) : (
                         <ChangePasswordForm setChanged={setChanged} />
                     )}
@@ -39,9 +40,15 @@ function ChangePasswordForm(props) {
     const [confPassError, setConfPassError] = useState();
     const [loading, setLoading] = useState(false);
 
+    const [response, setResponse] = useState(null);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response]);
+
     const validateForm = (formData) => {
-        const currPass =checkPass(formData.get("currentPassword"));
-        const newPass1 =checkPass(formData.get("newPassword"));
+        const currPass = checkPass(formData.get("currentPassword"));
+        const newPass1 = checkPass(formData.get("newPassword"));
         const newPass2 = checkPass(formData.get("confPassword"));
         const newConf = comparePass(formData.get("newPassword"), formData.get("confPassword"));
 
@@ -83,6 +90,7 @@ function ChangePasswordForm(props) {
                     props.setChanged(true);
                 } else {
                     console.log(response);
+                    setResponse(response);
                     //window.alert(response.error)
                 }
                 setLoading(false);
@@ -97,24 +105,30 @@ function ChangePasswordForm(props) {
     return (<>
         <form className="password-form" id="Change Password" style={{ width: '65vh' }}>
             <div className="password-form-content">
-                    <FormInput
-                        label="Current Password"
-                        error={currentPassError}
-                        type={"password"}
-                        name="currentPassword"
-                    />
-                    <FormInput
-                        label="New Password"
-                        error={new1PassError}
-                        type={"password"}
-                        name="newPassword"
-                    />
-                    <FormInput
-                        label="Confirm New Password"
-                        error={[new2PassError, confPassError]}
-                        type={"password"}
-                        name="confPassword"
-                    />
+                <FormInput
+                    label="Current Password"
+                    error={currentPassError}
+                    type={"password"}
+                    name="currentPassword"
+                />
+                {response && [ChangePasswordErrors.passwordWrong].includes(response.StatusCode)
+                    && (
+                        <div className="error-message">
+                            {response.Message}
+                        </div>
+                    )}
+                <FormInput
+                    label="New Password"
+                    error={new1PassError}
+                    type={"password"}
+                    name="newPassword"
+                />
+                <FormInput
+                    label="Confirm New Password"
+                    error={[new2PassError, confPassError]}
+                    type={"password"}
+                    name="confPassword"
+                />
 
             </div>
         </form>
@@ -123,10 +137,10 @@ function ChangePasswordForm(props) {
             <button className="primaryButton sign-in-button" onClick={handleChange} disabled={loading}>Change Password</button>
         </div>
         <div className="flexBoxRowGrow" style={{ justifyContent: "center", marginTop: "30px" }}>
-        <Link
-                    to="/home/account">
-                    <button className="formButton change-password-button">Back</button>
-                </Link>
+            <Link
+                to="/home/account">
+                <button className="formButton change-password-button">Back</button>
+            </Link>
         </div>
 
     </>)

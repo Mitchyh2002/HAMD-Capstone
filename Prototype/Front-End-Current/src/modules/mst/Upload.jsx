@@ -164,7 +164,7 @@ function checkModulePrefix(prefix) {
     if (!prefix) {
         return "Module prefix is required.";
     } else if (prefix.length > 3) {
-        return "Module prefix should only be 3 characters.";
+        return "Module prefix should only be 3 letters.";
     }
 }
 
