@@ -126,7 +126,7 @@ function AddUsertoModuleForm() {
                 <div className="flexBoxRowGrow" style={{ justifyContent: "center"}}>
                         {response && response.StatusCode === 200 ? (
                             <div>
-                                <p>User access successfully modified.</p>
+                                <p style={{color: "green"}}>User access successfully modified.</p>
                                 <button onClick={resetForm} className="primaryButton">Reset Form</button>
                             </div>
                         ) : (
