@@ -71,7 +71,7 @@ def init_masterPages():
     page3 = create_moduleAccess(1, 'mst','3','Users',5, "Show All Users")
     page4 = create_moduleAccess(1, 'mst', '3.1', 'Add User', 5, "Add User to System")
     page5 = create_moduleAccess(1, 'mst', '4', 'User Account', 5, "Add User to System")
-    page6 = create_moduleAccess(1, 'mst', '6', 'User Module Access', 9, "Configure System UI")
+    page6 = create_moduleAccess(1, 'mst', '6', 'User Module Access', 5, "Configure User Access to Module")
     page7 = create_moduleAccess(1, 'mst', '5', 'Configure', 9, "Configure System UI")
 
     page1.insert()
