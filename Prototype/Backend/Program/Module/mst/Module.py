@@ -691,7 +691,7 @@ def Module_Access_Control():
     user_bearer = request.headers.environ.get('HTTP_AUTHORIZATION')
     accessGranted = userFunctionAuthorisations(user_bearer, 5, 'mst')
     if accessGranted != True:
-        return on_success("TEST")
+        return accessGranted
 
     userID = request.values.get("userID")
     try:
@@ -791,7 +791,8 @@ def update_module_ref():
             values["logo"] = f"./logo/{modulePrefix}.svg"
 
         modulePass = request.values.get('modulePass')
-
+        if modulePass in ['', None]:
+            return on_error(1, 'Missing Key Inputs, please check request is sending correct parameters')
         selectedModule = Module.query.filter(Module.prefix == modulePrefix).first()
         storedHash = selectedModule.moduleKey
         storedHash = storedHash[2:-1]

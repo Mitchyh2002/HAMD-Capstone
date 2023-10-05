@@ -249,7 +249,7 @@ def update_config_settings(request):
 
     if current_settings == None:
         final_OBJ = JSONtoConfig(final_configs)
-        if db_url is not None:
+        if db_url is not None and db_url != '':
             os.chdir(mst_dir)
             success = update_db(db_url)
             if success is not None:
@@ -258,7 +258,7 @@ def update_config_settings(request):
             final_OBJ.insert()
             return on_success(final_OBJ.toJSON())
     else:
-        if db_url is not None:
+        if db_url is not None and db_url != '':
             os.chdir(mst_dir)
             success = update_db(db_url)
             if success is not None:
