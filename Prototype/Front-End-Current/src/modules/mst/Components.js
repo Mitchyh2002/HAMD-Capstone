@@ -244,12 +244,12 @@ export function PagesModal(props) {
             {show && (
                 <div className="modal">
                     <div onClick={toggleModal} className='overlay'></div>
-                    <div className='modal-content' style={{maxWidth: "80vw"}}>
+                    <div className='modal-content' style={{minWidth: "70vw"}}>
                         <button className='close-modal' onClick={toggleModal}>
                             x
                         </button>
                         <h4 className='modal-heading'>Edit</h4>
-                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
+                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated!</label>}
                         {error == true && <label className="modal-label" style={{color: 'Red'}}>{message}</label>}
                         <div className="pluginTable">
                             <table {...getTableProps()}>
@@ -287,6 +287,11 @@ export function PagesModal(props) {
                                     })}
                                 </tbody>
                             </table>
+                            <div style={{display: "flex", paddingTop:"20px", justifyContent:"center"}}>
+                            <button className='buttons confirm-button' onClick={toggleModal} >
+                            Close
+                        </button>
+                        </div>
                         </div>
                     </div>
                 </div>
