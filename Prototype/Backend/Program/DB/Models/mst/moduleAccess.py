@@ -22,6 +22,10 @@ class moduleAccess(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 def create_moduleAccess(userID, modulePrefix):
     created_moduleAccess = moduleAccess()
