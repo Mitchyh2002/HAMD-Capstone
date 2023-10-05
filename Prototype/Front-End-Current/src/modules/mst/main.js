@@ -28,11 +28,6 @@ export const mst_pages = [{
     element: CreateUser,
     loader: adminCheck
 },{
-    path: "User Account/:id",
-    // pageCode: "4",
-    // element: UserAccount,
-    loader: getUser
-},{
     path: "User Module Access",
     pageCode: 6,
     element: UserModuleAccess,
