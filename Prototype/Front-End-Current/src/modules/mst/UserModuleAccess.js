@@ -68,7 +68,7 @@ function AddUsertoModuleForm() {
         const form = document.getElementById("addUsertoModule");
         const formData = new FormData(form);
 
-        fetch(baseUrl + "/mst/module/ModuleAccess/", {
+        fetch(baseUrl + "/mst/module/ModuleAccess", {
             method: "DELETE",
             headers: {"Authorization" : getToken()},
             body: formData,
@@ -107,7 +107,6 @@ function AddUsertoModuleForm() {
                 </div>
                 <form className="add-user-form" id="addUsertoModule">
                     <div className="login-form-content" style={{ display: "flex", flexDirection: "column", rowGap: "8px" }}>
-                        {response&& <p style={error? {color: "red"} : {color: "green"}}>{response}</p>}
                         <FormInput
                             label="User ID"
                             type="number"

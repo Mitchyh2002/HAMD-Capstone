@@ -45,7 +45,7 @@ function ChangePasswordForm(props) {
     const [loading, setLoading] = useState(false);
 
     const validateForm = (formData) => {
-        const new1err = checkPass(formData.get("newPassword"));
+        const new1err = checkPass(formData.get("password"));
         const new2err = checkPass(formData.get("confPassword"));
         const confpasserr = comparePass(formData.get("password"), formData.get("confPassword"));
 

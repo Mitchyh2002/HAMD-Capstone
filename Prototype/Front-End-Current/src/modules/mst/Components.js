@@ -154,15 +154,15 @@ export function PagesModal(props) {
         }, {
             Header: "Description",
             accessor: "description",
-            Cell: ({value, row}) => (<input defaultValue={value} style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "pageName")}/>)
+            Cell: ({value, row}) => (<input defaultValue={value} style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "description")}/>)
 
         }, {
             Header: "Level",
             accessor: "securityLevel",
-            Cell: ({value, row}) => (<input defaultValue={value} type="number" style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "pageName")}/>)
+            Cell: ({value, row}) => (<input defaultValue={value} type="number" style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "securityLevel")}/>)
 
         }
-    ], []);
+    ], [pages]);
 
     /* Setting react useTable */
     const tableInstance = useTable({ columns, data });
@@ -175,9 +175,13 @@ export function PagesModal(props) {
     }
 
     const updateValue = (e, index, modifer) => {
-        let data = pages;
-        pages[index][modifer] = e.target.value;
-        setPages(data);
+        console.log(pages)
+        try {
+             pages[index][modifer] = e.target.value;
+             setPages(data);
+        } catch (error) {
+            console.log(error)   
+        }
     }
 
     const updatePage = async (index) => {
@@ -226,6 +230,7 @@ export function PagesModal(props) {
             })
             const json = await res.json();
             if(json.Success){
+                console.log(json.Values)
                 setPages(json.Values);
                 setError(false)
             }else{

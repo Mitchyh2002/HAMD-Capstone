@@ -15,6 +15,7 @@ export default function Login(props) {
 
     return (
         <>
+        <div style={{maxHeight: "100vh", overflowY: "hidden", display: "flex", flexDirection: "column"}}>
             <Header />
             <div className="maindiv">
                 <WelcomeMessage />
@@ -29,6 +30,7 @@ export default function Login(props) {
                                 <RegisterForm setEmail={setEmail} /> : <LoginForm setForgotPassword={setForgotPassword} refresh={props.refresh}/>}
                 </div>
             </div>
+            </div>
         </>
     )
 }
@@ -38,8 +40,12 @@ export default function Login(props) {
 function WelcomeMessage(props) {
     return (
         <div className="seconddiv">
-            <div><img className="login-image" alt="login-image" /></div>
-            <h2 className="welcome-text">Welcome to <br />Bee Aware</h2>
+            <div style={{display: "flex", flexGrow: 1, overflowY: "hidden"}}>
+                <div>
+                <img className="login-image" alt="login-image" />
+                </div>
+                <h2 className="welcome-text">Welcome to <br />Bee Aware</h2>
+            </div>
         </div>
     )
 }
