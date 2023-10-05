@@ -26,7 +26,7 @@ export default function Upload(props) {
         //Check Errors
         const prefix = checkModulePrefix(formData.get("prefixName"));
         const name = checkDisplayName(formData.get("displayName"));
-        const code = checkModuleCode(formData.get("pluginFile"));
+        const code = checkModuleCode(formData.get("fileToUpload"));
         const pass = checkPassword(formData.get("modulePass"));
 
         setPrefixError(prefix);
