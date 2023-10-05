@@ -17,16 +17,18 @@ export default function Breadcrumbs(props) {
         .map(crumb => {
             crumb = decodeURI(crumb);
             currentLink += `/${crumb}`
-            const module = props.modules.find(obj => obj.prefix == crumb)
-            if(module){
-                crumb = module.displayName;
-                currentModule = module;
-            }
+                if(props.modules){
+                const module = props.modules.find(obj => obj.prefix == crumb)
+                if(module){
+                    crumb = module.displayName;
+                    currentModule = module;
+                }
 
-            if (currentModule){
-                const page = Directory[currentModule.prefix].find(obj => obj.path == crumb);
-                if(page){
-                    crumb = currentModule.pages.find(obj => obj.pageCode == page.pageCode).pageName;
+                if (currentModule){
+                    const page = Directory[currentModule.prefix].find(obj => obj.path == crumb);
+                    if(page){
+                        crumb = currentModule.pages.find(obj => obj.pageCode == page.pageCode).pageName;
+                    }
                 }
             }
             return(
