@@ -252,7 +252,7 @@ export function PagesModal(props) {
                         {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated!</label>}
                         {error == true && <label className="modal-label" style={{color: 'Red'}}>{message}</label>}
                         <div className="pluginTable">
-                            <table {...getTableProps()}>
+                            <table style={{boxShadow:"none"}}{...getTableProps()}>
                                 <thead>
                                     {headerGroups.map((headerGroup) => (
                                         <tr {...headerGroup.getHeaderGroupProps()}>
