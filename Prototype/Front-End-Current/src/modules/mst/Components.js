@@ -1,6 +1,10 @@
 import { activateModule, deactivateModule, updateName } from "./loaderFunctions";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import "./admin.css";
+import { baseUrl } from "config";
+import { getToken } from "Functions/User";
+import { useTable } from "react-table";
+
 
 
 export function Modal(props) {
@@ -128,6 +132,170 @@ export function ActivateModal(props) {
         </>
     )
 }
+
+export function PagesModal(props) {
+
+    let show = props.show;
+    const [error, setError] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [refresh, setRefresh] = useState(false);
+    const [pages, setPages] = useState([]);
+    const [message, setMessage] = useState();
+
+    const data = useMemo(() => pages, [pages]);
+    const columns = useMemo(() => [
+        {
+            Header: "Code",
+            accessor: "pageCode"
+        }, {
+            Header: "Name",
+            accessor: "pageName",
+            Cell: ({value, row}) => (<input defaultValue={value} style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "pageName")}/>)
+        }, {
+            Header: "Description",
+            accessor: "description",
+            Cell: ({value, row}) => (<input defaultValue={value} style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "pageName")}/>)
+
+        }, {
+            Header: "Level",
+            accessor: "securityLevel",
+            Cell: ({value, row}) => (<input defaultValue={value} type="number" style={{fontSize: "16px", padding: "0px", background: "none"}} onChange={(e) => updateValue(e, row.index, "pageName")}/>)
+
+        }
+    ], []);
+
+    /* Setting react useTable */
+    const tableInstance = useTable({ columns, data });
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
+
+    /* Setting the state for the modal */
+    const toggleModal = () => {
+        show = false;
+        props.change(false);
+    }
+
+    const updateValue = (e, index, modifer) => {
+        let data = pages;
+        pages[index][modifer] = e.target.value;
+        setPages(data);
+    }
+
+    const updatePage = async (index) => {
+        const form = new FormData();
+        form.append("modulePrefix", props.prefix)
+        form.append("pageName", pages[index].pageName)
+        form.append("pageDescription", pages[index].description)
+        form.append("securityLevel", pages[index].securityLevel)
+        form.append("pageCode", pages[index].pageCode)
+        console.log(form)
+
+        try {
+            const res = await fetch(baseUrl + "/mst/module/updatePage", {
+                method: "POST",
+                headers: {"Authorization": getToken()},
+                body: form
+            });
+            const json = await res.json();
+
+            if(json.Success){
+                setSuccess(true);
+                setError(false)
+            }else{
+                setError(true)
+                setSuccess(false)
+                setMessage(json.message);
+            }
+        } catch (error) {
+            console.log(error);
+            setError(true);
+            setSuccess(false);
+            setMessage("Uh-oh looks like something went wrong. If the issue persists try refreshing the page");
+        }
+
+    }
+
+    const getPages = async () => {
+        try {
+            const form = new FormData();
+            form.append("modulePrefix", props.prefix);
+
+            const res = await fetch(baseUrl + "/mst/module/getall_pages", {
+                method: "POST",
+                headers: {"Authorization" : getToken()},
+                body: form
+            })
+            const json = await res.json();
+            if(json.Success){
+                setPages(json.Values);
+                setError(false)
+            }else{
+                setError(true);
+                setMessage(json.Message)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {getPages()}, []);
+
+    return (
+        <>
+            {show && (
+                <div className="modal">
+                    <div onClick={toggleModal} className='overlay'></div>
+                    <div className='modal-content' style={{maxWidth: "80vw"}}>
+                        <button className='close-modal' onClick={toggleModal}>
+                            x
+                        </button>
+                        <h4 className='modal-heading'>Edit</h4>
+                        {success == true && <label className="modal-label" style={{color: 'Green'}}>Your module has been updated</label>}
+                        {error == true && <label className="modal-label" style={{color: 'Red'}}>{message}</label>}
+                        <div className="pluginTable">
+                            <table {...getTableProps()}>
+                                <thead>
+                                    {headerGroups.map((headerGroup) => (
+                                        <tr {...headerGroup.getHeaderGroupProps()}>
+                                            {headerGroup.headers.map((column) => (
+                                                <th{...column.getHeaderProps()}>
+                                                    {column.render("Header")}
+                                                </th>
+                                            ))}
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    ))}
+                                </thead>
+                                <tbody {...getTableBodyProps()}>
+                                    {rows.map((row) => {
+                                        prepareRow(row)
+                                        return (
+                                            <tr{...row.getRowProps()}>
+                                                {row.cells.map((cell) => (
+                                                    <td className="pluginTableCell"{...cell.getCellProps()}>
+                                                        {cell.render("Cell")}
+                                                    </td>
+                                                ))}
+                                                <td>
+                                                    <button onClick={() => {updatePage(row.index)}} className="btn-modal">
+                                                        Submit
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    )
+}
+
+
 
 export const ToolTip = ({ text, children }) => {
     const[isVisible, setIsVisible] = useState(false);

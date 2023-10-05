@@ -21,7 +21,7 @@ export default function Main(props) {
 
     return(<> { landing ?
         <div style={{display: 'flex', flexDirection: 'column', height: "100vh"}}>
-            <Header breadcrumbs = {<Breadcrumbs prefix="Mst" moduleName="Admin"/>} setLanding={setLanding} setModule={setModule} accountButton={accountButton} logoutButton={logoutButton}/>
+            <Header breadcrumbs = {<Breadcrumbs modules={props.modules}/>} setLanding={setLanding} setModule={setModule} accountButton={accountButton} logoutButton={logoutButton}/>
             <Content modules={props.modules}/>
         </div> :
         <div>

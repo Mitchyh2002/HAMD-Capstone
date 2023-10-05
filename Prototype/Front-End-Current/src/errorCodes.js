@@ -145,6 +145,10 @@ export const LoginErrors = {
     accountUncomfirmed: 30,
 };
 
+export const ChangePasswordErrors = {
+    passwordWrong: 21
+}
+
 export const RegisterErrors = {
     emailEmpty: 10,
     emailInvalid: 11,

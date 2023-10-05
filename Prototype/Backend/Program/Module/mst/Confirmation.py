@@ -22,11 +22,10 @@ def generate_confirmation_token(email):
    serializer = URLSafeTimedSerializer(export_key())
    return serializer.dumps(email, salt=email_salt)
 
+# Validates the email token
 def confirm_token(token, expiration=3600):
     serializer = URLSafeTimedSerializer(export_key())
     try:
-        print(export_key())
-        print(export_salt())
         email = serializer.loads(
             token,
             salt=email_salt,
@@ -37,8 +36,10 @@ def confirm_token(token, expiration=3600):
         return False
     return email
 
+# Confirms email for user accounts
 @blueprint.route('/<token>', methods=['POST'])
 def confirm_email(token):
+    # Checks if token is valid
     email = confirm_token(token)
     try:
         if not email:
@@ -47,27 +48,32 @@ def confirm_email(token):
     except:
         pass
 
+    # Checks if user already confirmed
     user = QuerySelectUser(email)
     if user.confirmed:
         return on_error(61, "Account has already been confirmed. Please Login.")
     else:
+        # Confirms account
         user.confirmed = True
         user.confirmedDate = date.today()
         db.session.add(user)
         db.session.commit()
         return on_success("You have successfully confirmed your account") 
-    
+
+# Resend confirmation email
 @blueprint.route('/resend', methods=["POST"])
 def resend_email():
+    # Grabs destination email
     input = request.values
     inputEmail = input.get('email')
     user = QuerySelectUser(inputEmail)
-    print(user)
 
     if user is not None:
+        # Checks if user is already confirmed
         if user.confirmed:
             return on_error(61, "Account has already been confirmed. Please Login")
         else:
+            # Creates new email
             token = generate_confirmation_token(user.email)
             confirm_url = export_front_end_link() + '/Confirm/' + token
             html = render_template('activate.html', confirm_url=confirm_url)
