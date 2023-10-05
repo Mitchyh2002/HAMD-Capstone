@@ -751,13 +751,9 @@ def give_user_access(user, modulePrefix):
 
 
 def remove_user_access(user, modulePrefix):
-    print('Q1:')
-    print(moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=int(user.userID)).first())
     access = moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=int(user.userID)).all()
     for access in access:
         access.delete()
-    print('q2')
-    print(moduleAccess.query.filter_by(modulePrefix=modulePrefix, userID=int(user.userID)).first())
     return on_success([])
 
 
