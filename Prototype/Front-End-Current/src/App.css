@@ -1,7 +1,7 @@
 /*Setting Variables*/
 :root {
-  --font1: ms-Cursive, serif;
-  --font2: ms-Cursive, sans-serif;
+  --font1: "Merriweather", serif;
+  --font2: "Lato", sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
   --header: rgba(146, 180, 236);
@@ -14,7 +14,7 @@
   --logo: url("../public/logo.png");
   --loginImage: url("/public/login-image.jpg");
   --bee: url("../public/misc.png");
-  --welcomeText: "1";
+  --welcomeText: "Welcome to Bee Aware";
   --landingImage: url("/public/landing-image.jpg");
   --mainTitle: "Bee Aware";
 }
@@ -143,7 +143,6 @@ button{
   background-color: var(--navbar70);
   cursor: pointer;
   border: 1px;
-  text-shadow: 1.3px 1.3px #C0A080;
   transition: all 0.3s ease 0s;
 }
 
