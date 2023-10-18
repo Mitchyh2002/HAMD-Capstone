@@ -1,7 +1,7 @@
 /*Setting Variables*/
 :root {
-  --font1: "Merriweather", serif;
-  --font2: "Lato", sans-serif;
+  --font1: Merriweather, serif;
+  --font2: Lato, sans-serif;
   --black: rgba(0, 0, 0);
   --white: rgba(255, 255, 255);
   --header: rgba(146, 180, 236);
@@ -16,7 +16,7 @@
   --bee: url("../public/misc.png");
   --welcomeText: "Welcome to Bee Aware";
   --landingImage: url("/public/landing-image.jpg");
-  --mainTitle: "Bee Aware";
+  --mainTitle: "BeeAware";
 }
 
 /* DEFAULTS - default styling for plugin developers */
